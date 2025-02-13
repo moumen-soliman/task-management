@@ -55,7 +55,7 @@ export default function Dashboard() {
             <div className="flex gap-2">
               {task.deleted ? (
                 <button onClick={() => undoDeleteTask(task.id)} className="text-blue-500">
-                  🔄 Undo
+                  Undo
                 </button>
               ) : (
                 <>
