@@ -35,4 +35,5 @@ export interface TaskStore {
     removeTaskFromSprint: (taskId: number, sprintId: number) => void;
     getSprintNames: (sprintIds: number[]) => string[];
     getAssignedUserNames: (userIds: number[]) => string[];
+    getTaskById: (id: number | string) => Task | undefined;
   }

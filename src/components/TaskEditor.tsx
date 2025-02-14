@@ -1,7 +1,7 @@
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
-import { EditorProvider, useCurrentEditor } from '@tiptap/react'
+import { EditorProvider, useCurrentEditor, Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import React from 'react'
 import { Badge } from "@/components/ui/badge"
@@ -28,7 +28,7 @@ const EditorButton: React.FC<EditorButtonProps> = ({
   </Badge>
 )
 
-const HeadingButtons = ({ editor }) => {
+const HeadingButtons = ({ editor }: { editor: Editor }) => {
   const headingLevels = [1, 2, 3, 4, 5, 6]
   
   return headingLevels.map(level => (
@@ -112,14 +112,19 @@ const editorExtensions = [
   }),
 ]
 
-const TaskEditor = () => (
+interface TaskEditorProps {
+  value: string;
+}
+
+const TaskEditor: React.FC<TaskEditorProps> = ({ value }) => { 
+  return (
   <div className='border border-gray-200 rounded p-4'>
-      <EditorProvider 
-        slotBefore={<MenuBar />} 
-        extensions={editorExtensions} 
-        content=""
-      />
+    <EditorProvider 
+      slotBefore={<MenuBar />} 
+      extensions={editorExtensions} 
+      content={value}
+    />
   </div>
-)
+)}
 
 export default TaskEditor

@@ -5,7 +5,7 @@ export type SheetMode = "view" | "edit" | "create" | null;
 interface SheetState {
   isOpen: boolean;
   mode: SheetMode;
-  taskId: number | null;
+  taskId: string | number | null;
   openSheet: (mode: SheetMode, taskId?: number) => void;
   closeSheet: () => void;
 }
@@ -16,5 +16,8 @@ export const useSheetStore = create<SheetState>((set) => ({
   taskId: null,
   
   openSheet: (mode, taskId = null) => set({ isOpen: true, mode, taskId }),
-  closeSheet: () => set({ isOpen: false, mode: null, taskId: null }),
+  closeSheet: () => {  
+    window.history.replaceState(null, "", window.location.pathname); // Clears query
+    set({ isOpen: false, mode: null, taskId: null });
+  },
 }));

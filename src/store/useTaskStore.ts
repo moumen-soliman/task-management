@@ -137,4 +137,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set({ tasks: updatedTasks });
   },
+
+  getTaskById: (taskId: number | string | null) => {
+    return get().tasks.find((task) => task.id === taskId);
+  }
 }));
