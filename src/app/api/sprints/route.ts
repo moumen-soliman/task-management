@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 // Sprints list
 const SPRINTS = [
-  { id: 1, name: "Sprint Alpha", tasks: [1, 2, 3] },
-  { id: 2, name: "Sprint Beta", tasks: [4, 5] },
+  { id: 1, name: "Sprint Alpha" },
+  { id: 2, name: "Sprint Beta" },
 ];
 
 export async function GET() {

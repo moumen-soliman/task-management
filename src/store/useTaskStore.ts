@@ -22,11 +22,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     set({ tasks, users, sprints, loading: false });
   },
 
-// Add a new task
+  // Add a new task
   addTask: (task) => {
+    console.log(task)
     const newTask = { id: get().tasks.length + 1, ...task, deleted: false };
-    const updatedTasks = [...get().tasks, newTask];
+    const updatedTasks = [newTask, ...get().tasks];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+    // get().addTaskToSprint(newTask.id, task.sprints[0]);
+    // newTask.assign.forEach((userId) => get().assignUserToTask(newTask.id, userId));
     set({ tasks: updatedTasks });
   },
 

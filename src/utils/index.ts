@@ -1,5 +1,6 @@
 import { apiFetch } from "@/services";
 
+// Retrieves data from local storage if available, otherwise fetches from API and stores it
 export async function loadFromStorageOrFetch(key: string, endpoint: string) {
   const stored = localStorage.getItem(key);
   if (stored) {

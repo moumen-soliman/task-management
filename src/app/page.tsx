@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useInView } from "react-intersection-observer";
 
+import SheetPanel from "@/components/SheetPanel";
+import { useSheetStore } from "@/store/useSheetStore";
+
 export default function Dashboard() {
   const {
     tasks,
@@ -20,6 +23,7 @@ export default function Dashboard() {
 
   const [visibleCount, setVisibleCount] = useState(10);
   const { ref, inView } = useInView({ threshold: 1 });
+  const { openSheet } = useSheetStore();
 
   useEffect(() => {
     fetchAllData();
@@ -35,6 +39,9 @@ export default function Dashboard() {
 
   return (
     <div className="p-4">
+      <button onClick={() => openSheet("create")} className="bg-blue-500 text-white px-4 py-2 rounded mb-4">
+        ➕ Add Task
+      </button>
       <h2 className="text-2xl font-bold">Task Management v1</h2>
 
       <ul>
@@ -109,6 +116,8 @@ export default function Dashboard() {
       <div ref={ref} className="h-10 mt-4 text-center text-gray-500">
         {visibleCount < tasks.length ? "Loading more tasks..." : "No more tasks"}
       </div>
+
+      <SheetPanel />
     </div>
   );
 }

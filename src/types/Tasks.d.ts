@@ -15,6 +15,7 @@ export type Task = {
     assign: number[]; // User IDs
     deleted: boolean;
     error?: string | null;
+    description: string;
   };
 
 export interface TaskStore {
