@@ -5,15 +5,9 @@ import { EditorProvider, useCurrentEditor, Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import React from 'react'
 import { Badge } from "@/components/ui/badge"
+import { EditorButtonProps } from '@/types/Form'
 
 // Separate button component for reusability
-interface EditorButtonProps {
-  onClick: () => void;
-  disabled?: boolean;
-  isActive?: boolean;
-  children: React.ReactNode;
-}
-
 const EditorButton: React.FC<EditorButtonProps> = ({ 
   onClick, 
   isActive = false, 
@@ -29,7 +23,7 @@ const EditorButton: React.FC<EditorButtonProps> = ({
 )
 
 const HeadingButtons = ({ editor }: { editor: Editor }) => {
-  const headingLevels = [1, 2, 3, 4, 5, 6]
+  const headingLevels = [1, 2, 3, 4, 5, 6] as const
   
   return headingLevels.map(level => (
     <EditorButton
@@ -97,9 +91,7 @@ const editorExtensions = [
   Color.configure({ 
     types: [TextStyle.name, ListItem.name] 
   }),
-  TextStyle.configure({ 
-    types: [ListItem.name] 
-  }),
+  TextStyle,
   StarterKit.configure({
     bulletList: {
       keepMarks: true,
@@ -114,6 +106,7 @@ const editorExtensions = [
 
 interface TaskEditorProps {
   value: string;
+  onChange?: (value: string) => void;
 }
 
 const TaskEditor: React.FC<TaskEditorProps> = ({ value }) => { 

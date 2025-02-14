@@ -12,6 +12,7 @@ import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import TaskEditor from "./TaskEditor";
 import MultiSelect from "./ui/multiSelect";
 import { useEffect } from "react";
+import { CreateTaskFormProps } from "@/types/Form";
 
 // Schema Validation
 const taskSchema = z.object({
@@ -23,13 +24,7 @@ const taskSchema = z.object({
     assign: z.array(z.string()).optional(),
 });
 
-interface CreateTaskFormProps {
-    mode: "create" | "edit";
-    taskId?: number;
-    task: z.infer<typeof taskSchema> | undefined;
-}
-
-export default function CreateTaskForm({ mode, taskId, task }: CreateTaskFormProps) {
+export default function CreateTaskForm({ mode, task }: CreateTaskFormProps) {
     const { addTask, updateTask, users, sprints } = useTaskStore();
     const { closeSheet } = useSheetStore();
     const form = useForm<z.infer<typeof taskSchema>>({
@@ -56,8 +51,8 @@ export default function CreateTaskForm({ mode, taskId, task }: CreateTaskFormPro
 
         if (mode === "create") {
             addTask(taskData);
-        } else if (mode === "edit" && taskId) {
-            updateTask(taskId, taskData);
+        } else if (mode === "edit" && task?.id) {
+            updateTask(task?.id, taskData);
         }
         closeSheet();
     };
