@@ -181,7 +181,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   updateCustomField: (taskId: number, fieldName: string, value: any) => {
     const updatedTasks = get().tasks.map((task) =>
       task.id === taskId
-        ? { ...task, [fieldName]: value }
+        ? Object.assign({}, task, { [fieldName]: value })
         : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));

@@ -39,45 +39,50 @@ const taskSchema = z.object({
 });
     const form = useForm<z.infer<typeof taskSchema>>({
         resolver: zodResolver(taskSchema),
-        defaultValues: getDefaultValues(mode, task),
+        defaultValues: getDefaultValues(mode, task, customFields),
     });
 
     useEffect(() => {
         if (mode === "edit" && task) {
-            form.reset(getDefaultValues(mode, task));
+            form.reset(getDefaultValues(mode, task, customFields));
         }
-    }, [task, mode, form]);
+    }, [task, mode, form, customFields]);
 
     const onSubmit = (values: z.infer<typeof taskSchema>) => {
+
         const taskData = {
             title: values.title,
             status: values.status,
             priority: values.priority,
-            description: values.description || '',
-            sprints: [Number(values.sprints)],
+            description: values.description,
+            sprints: values.sprints ? [Number(values.sprints)] : [],
             assign: (values.assign || []).map(Number),
             deleted: false,
             ...customFields.reduce((acc, field) => {
-                acc[field.name] = values[field.name] || (field.type === "checkbox" ? false : "");
+                if (field.type === "number") {
+                  acc[field.name] = Number(field.value);
+                } else if (field.type === "boolean") {
+                  acc[field.name] = field.value === "true" || field.value === "1"; // Ensure correct boolean conversion
+                } else {
+                  acc[field.name] = field.value;
+                }
                 return acc;
-            }, {}),
+              }, {} as Record<string, any>)
         };
-
+    
         if (mode === "create") {
             addTask(taskData);
         } else if (mode === "edit" && task?.id) {
             updateTask(task?.id, taskData);
         }
+        closeSheet();
     };
 
     return (
         <div className="space-y-4 py-5">
         <FormProvider {...form}>
             <Form {...form}>
-                <form onSubmit={() => {
-                    form.handleSubmit(onSubmit);
-                    closeSheet();
-                }} className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
                         control={form.control}
                         name="title"
@@ -98,7 +103,6 @@ const taskSchema = z.object({
                             <FormItem>
                                 <FormLabel>Task Description</FormLabel>
                                 <TaskEditor 
-                                    key={field.value} // Add key to force re-render on reset
                                     value={field.value || ""}
                                     onChange={field.onChange}
                                 />
@@ -197,7 +201,7 @@ const taskSchema = z.object({
                             </FormItem>
                         )}
                     />
-                    <CustomFieldEditor mode={mode} task={task} form={form} />
+                    <CustomFieldEditor />
                     {Object.entries(task || {}).map(([key, value]) => {
                         if (!['title', 'priority', 'status', 'description', 'sprints', 'assign', 'id', 'deleted'].includes(key)) {
                             return (
@@ -259,9 +263,13 @@ function getDefaultValues(mode: "create" | "edit", task: z.infer<typeof taskSche
             title: task.title,
             priority: task.priority,
             status: task.status,
-            description: task.description,
+            description: task.description || "",
             sprints: task.sprints?.[0]?.toString(),
             assign: task.assign?.map(String),
+            ...customFields.reduce((acc, field) => {
+                acc[field.name] = task[field.name] || (field.type === "checkbox" ? false : "");
+                return acc;
+            }, {})
         };
         
         return defaultValues;
@@ -274,5 +282,9 @@ function getDefaultValues(mode: "create" | "edit", task: z.infer<typeof taskSche
         description: "",
         sprints: "",
         assign: [] as string[],
+        ...customFields.reduce((acc, field) => {
+            acc[field.name] = field.type === "checkbox" ? false : "";
+            return acc;
+        }, {})
     };
 }

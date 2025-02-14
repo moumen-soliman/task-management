@@ -6,69 +6,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSheetStore } from "@/store/useSheetStore";
 
-export default function CustomFieldEditor(mode, task) {
-  const { customFields, addCustomField, removeCustomField, updateCustomField } = useTaskStore();
-  const [isEditing, setIsEditing] = useState(false);
+export default function CustomFieldEditor() {
+  const { customFields, addCustomField, removeCustomField, updateCustomField, getTaskById, updateTask } = useTaskStore();
+  const {mode, taskId} = useSheetStore();
+  const task = getTaskById(taskId); 
+   const [isEditing, setIsEditing] = useState(false);
   const [fieldName, setFieldName] = useState("");
   const [fieldType, setFieldType] = useState("text");
   const [fieldValue, setFieldValue] = useState<string | number | boolean>("");
 
   const handleAddField = () => {
-    if (fieldName.trim() !== "" && !customFields.some((f) => f.name === fieldName)) {
-      addCustomField(fieldName, fieldType, fieldValue, task?.id);
+      if (task && mode === "edit") {
+        updateCustomField(taskId, fieldName, fieldValue);
+      } else {
+        addCustomField(fieldName, fieldType, fieldValue);
+      }
       // Reset form
       setFieldName("");
       setFieldType("text");
       setFieldValue("");
       setIsEditing(false);
-    }
-  };
-  const renderNewFieldInput = () => {
-    switch (fieldType) {
-      case 'text':
-        return (
-          <Input
-            value={String(fieldValue) || ''}
-            onChange={(e) => {
-              setFieldValue(e.target.value);
-              if (task && mode === "edit") {
-                updateCustomField(task.id, fieldName, e.target.value);
-              }
-            }}
-            placeholder="Enter field value"
-          />
-        );
-      case 'number':
-        return (
-          <Input
-            type="number"
-            value={Number(fieldValue) || 0}
-            onChange={(e) => {
-              const value = Number(e.target.value);
-              setFieldValue(value);
-              if (task && mode === "edit") {
-                updateCustomField(task.id, fieldName, value);
-              }
-            }}
-            placeholder="Enter number value"
-          />
-        );
-      case 'checkbox':
-        return (
-          <Checkbox
-            checked={Boolean(fieldValue)}
-            onCheckedChange={(checked: boolean) => {
-              setFieldValue(checked);
-              if (task && mode === "edit") {
-                updateCustomField(task.id, fieldName, checked);
-              }
-            }}
-          />
-        );
-      default:
-        return null;
-    }
   };
 
   return (
@@ -109,7 +68,25 @@ export default function CustomFieldEditor(mode, task) {
           {/* New Field Value Input */}
           <div className="flex gap-4 items-center">
             <Label>Field Value:</Label>
-            {renderNewFieldInput()}
+            {fieldType === 'text' ? (
+              <Input
+              value={String(fieldValue) || ''}
+              onChange={(e) => setFieldValue(e.target.value)}
+              placeholder="Enter field value"
+              />
+            ) : fieldType === 'number' ? (
+              <Input
+              type="number"
+              value={Number(fieldValue) || 0}
+              onChange={(e) => setFieldValue(Number(e.target.value || 0))}
+              placeholder="Enter number value"
+              />
+            ) : fieldType === 'checkbox' ? (
+              <Checkbox
+              checked={Boolean(fieldValue)}
+              onCheckedChange={(checked: boolean) => setFieldValue(checked)}
+              />
+            ) : null}
           </div>
           
           <div className="flex gap-2">
@@ -125,7 +102,7 @@ export default function CustomFieldEditor(mode, task) {
       )}
 
       {/* List of Custom Fields */}
-      {/* <div className="space-y-4">
+      {mode !== "edit" && <div className="space-y-4">
         {customFields.map((field) => (
           <div key={field.id} className="flex items-center gap-4 border p-4 rounded">
             <div className="flex-1">
@@ -137,7 +114,6 @@ export default function CustomFieldEditor(mode, task) {
                   field.value
                 )}
               </div>
-              {renderNewFieldInput()}
             </div>
             <Button 
               variant="destructive" 
@@ -148,7 +124,7 @@ export default function CustomFieldEditor(mode, task) {
             </Button>
           </div>
         ))}
-      </div> */}
+      </div>}
     </div>
   );
 }

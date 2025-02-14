@@ -1,13 +1,13 @@
 import { Color } from '@tiptap/extension-color'
 import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
-import { EditorProvider, useCurrentEditor, Editor } from '@tiptap/react'
+import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Badge } from "@/components/ui/badge"
 import { EditorButtonProps } from '@/types/Form'
 
-// Separate button component for reusability
+// Reusable Editor Button
 const EditorButton: React.FC<EditorButtonProps> = ({ 
   onClick, 
   isActive = false, 
@@ -22,9 +22,9 @@ const EditorButton: React.FC<EditorButtonProps> = ({
   </Badge>
 )
 
-const HeadingButtons = ({ editor }: { editor: Editor }) => {
+const HeadingButtons = ({ editor }: { editor: any }) => {
   const headingLevels = [1, 2, 3, 4, 5, 6] as const
-  
+
   return headingLevels.map(level => (
     <EditorButton
       key={`heading-${level}`}
@@ -36,61 +36,57 @@ const HeadingButtons = ({ editor }: { editor: Editor }) => {
   ))
 }
 
-const MenuBar = () => {
+const MenuBar = ({ onChange }: { onChange: (value: string) => void }) => {
   const { editor } = useCurrentEditor()
+
+  useEffect(() => {
+    if (!editor) return;
+    const updateHandler = () => {
+      onChange(editor.getHTML()) // Ensure onChange is triggered with the latest content
+    };
+    editor.on('update', updateHandler);
+    return () => {
+      editor.off('update', updateHandler);
+    };
+  }, [editor, onChange]);
 
   if (!editor) return null
 
-  const basicMarkButtons = [
-    {
-      label: 'Bold',
-      action: () => editor.chain().focus().toggleBold().run(),
-      isActive: editor.isActive('bold'),
-      canRun: editor.can().chain().focus().toggleBold().run(),
-    },
-    {
-      label: 'Italic',
-      action: () => editor.chain().focus().toggleItalic().run(),
-      isActive: editor.isActive('italic'),
-      canRun: editor.can().chain().focus().toggleItalic().run(),
-    },
-  ]
-
   return (
     <div className='space-x-2'>
-        {basicMarkButtons.map(({ label, action, isActive, canRun }) => (
-          <EditorButton
-            key={label}
-            onClick={action}
-            disabled={!canRun}
-            isActive={isActive}
-          >
-            {label}
-          </EditorButton>
-        ))}
-        
-        <HeadingButtons editor={editor} />
+      <EditorButton
+        onClick={() => editor.chain().focus().toggleBold().run()}
+        isActive={editor.isActive('bold')}
+      >
+        Bold
+      </EditorButton>
+      <EditorButton
+        onClick={() => editor.chain().focus().toggleItalic().run()}
+        isActive={editor.isActive('italic')}
+      >
+        Italic
+      </EditorButton>
 
-        <EditorButton
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          isActive={editor.isActive('bulletList')}
-        >
-          Bullet list
-        </EditorButton>
-        <EditorButton
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          isActive={editor.isActive('orderedList')}
-        >
-          Ordered list
-        </EditorButton>
-      </div>
+      <HeadingButtons editor={editor} />
+
+      <EditorButton
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        isActive={editor.isActive('bulletList')}
+      >
+        Bullet list
+      </EditorButton>
+      <EditorButton
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        isActive={editor.isActive('orderedList')}
+      >
+        Ordered list
+      </EditorButton>
+    </div>
   )
 }
 
 const editorExtensions = [
-  Color.configure({ 
-    types: [TextStyle.name, ListItem.name] 
-  }),
+  Color.configure({ types: [TextStyle.name, ListItem.name] }),
   TextStyle,
   StarterKit.configure({
     bulletList: {
@@ -106,18 +102,20 @@ const editorExtensions = [
 
 interface TaskEditorProps {
   value: string;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
 }
 
-const TaskEditor: React.FC<TaskEditorProps> = ({ value }) => { 
+const TaskEditor: React.FC<TaskEditorProps> = ({ value, onChange }) => {
   return (
-  <div className='border border-gray-200 rounded p-4'>
-    <EditorProvider 
-      slotBefore={<MenuBar />} 
-      extensions={editorExtensions} 
-      content={value}
-    />
-  </div>
-)}
+    <div className='border border-gray-200 rounded p-4'>
+      <EditorProvider 
+        slotBefore={<MenuBar onChange={onChange} />} 
+        extensions={editorExtensions} 
+        content={value}
+        onUpdate={({ editor }) => onChange(editor.getHTML())} // Ensure updates trigger onChange
+      />
+    </div>
+  )
+}
 
 export default TaskEditor
