@@ -8,6 +8,7 @@ interface SheetState {
   taskId: string | number | null;
   openSheet: (mode: SheetMode, taskId?: number) => void;
   closeSheet: () => void;
+  resetSheet: () => void;
 }
 
 export const useSheetStore = create<SheetState>((set) => ({
@@ -20,4 +21,5 @@ export const useSheetStore = create<SheetState>((set) => ({
     window.history.replaceState(null, "", window.location.pathname); // Clears query
     set({ isOpen: false, mode: null, taskId: null });
   },
+  resetSheet: () => set({ isOpen: false, mode: null, taskId: null }),
 }));

@@ -24,6 +24,7 @@ export interface TaskStore {
     sprints: Sprint[];
     loading: boolean;
     error?: string | null;
+    customFields: { id: number; name: string; type: string; value: string | boolean }[];
     fetchAllData: () => Promise<void>;
     addTask: (task: Omit<Task, "id">) => void;
     updateTask: (id: number, updatedTask: Partial<Task>) => void;

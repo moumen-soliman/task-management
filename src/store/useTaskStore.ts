@@ -8,6 +8,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   users: [],
   sprints: [],
   loading: true,
+  customFields: [],
 
 // Fetch all data from the server
   fetchAllData: async () => {
@@ -140,5 +141,50 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   getTaskById: (taskId: number | string | null) => {
     return get().tasks.find((task) => task.id === taskId);
-  }
+  },
+
+  // Add a custom field
+  addCustomField: (fieldName, fieldType, fieldValue, taskId?) => {
+    const newField = { id: get().customFields.length + 1, name: fieldName, type: fieldType, value: fieldValue };
+    const updatedFields = [...get().customFields, newField];
+    set({ customFields: updatedFields });
+
+    if (taskId) {
+      // Update only the specific task if taskId is provided
+      const updatedTasks = get().tasks.map((task) =>
+        task.id === taskId ? {
+          ...task,
+          [fieldName]: fieldType === "checkbox" ? false : "",
+        } : task
+      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+      set({ tasks: updatedTasks });
+    }
+    // If no taskId is provided, the field will be added to new tasks when created
+  },
+
+  // Remove a custom field
+  removeCustomField: (id) => {
+    const fieldToRemove = get().customFields.find((field) => field.id === id);
+    const updatedFields = get().customFields.filter((field) => field.id !== id);
+    set({ customFields: updatedFields });
+
+    // Update all tasks to remove the custom field
+    const updatedTasks = get().tasks.map((task) => {
+      const { [fieldToRemove.name]: _, ...rest } = task;
+      return rest;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+    set({ tasks: updatedTasks });
+  },
+
+  updateCustomField: (taskId: number, fieldName: string, value: any) => {
+    const updatedTasks = get().tasks.map((task) =>
+      task.id === taskId
+        ? { ...task, [fieldName]: value }
+        : task
+    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+    set({ tasks: updatedTasks });
+  },
 }));
