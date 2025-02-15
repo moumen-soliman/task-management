@@ -13,7 +13,7 @@ interface AssignedUsersProps {
 }
 
 export default function AssignedUsers({ getAssignedUser }: AssignedUsersProps) {
-    const assignedUsers = getAssignedUser;
+  const assignedUsers = getAssignedUser;
   return (
     <div className="flex -space-x-2 overflow-hidden">
       {assignedUsers.length > 0 ? (

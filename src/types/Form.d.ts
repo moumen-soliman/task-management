@@ -1,7 +1,7 @@
 export interface CreateTaskFormProps {
-    mode: "create" | "edit";
-    taskId?: number;
-    task: z.infer<typeof taskSchema> | undefined;
+  mode: "create" | "edit";
+  taskId?: number;
+  task: z.infer<typeof taskSchema> | undefined;
 }
 
 export interface EditorButtonProps {

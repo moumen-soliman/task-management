@@ -31,24 +31,14 @@ export default function CustomFieldEditor() {
     <div className="space-y-4">
       <h2 className="text-lg font-bold">Manage Custom Fields</h2>
 
-      {!isEditing && (
-        <Button onClick={() => setIsEditing(true)}>
-          ➕ Add New Field
-        </Button>
-      )}
+      {!isEditing && <Button onClick={() => setIsEditing(true)}>➕ Add New Field</Button>}
 
       {isEditing && (
-        <CustomFieldForm 
-          onSave={handleAddField} 
-          onCancel={() => setIsEditing(false)} 
-        />
+        <CustomFieldForm onSave={handleAddField} onCancel={() => setIsEditing(false)} />
       )}
 
       {mode !== "edit" && (
-        <CustomFieldList 
-          customFields={customFields} 
-          onRemove={removeCustomField} 
-        />
+        <CustomFieldList customFields={customFields} onRemove={removeCustomField} />
       )}
     </div>
   );

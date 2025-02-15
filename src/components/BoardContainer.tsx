@@ -33,7 +33,7 @@ export default function BoardContainer() {
   return (
     <div className="p-4">
       <DataViewActionsBar />
-      {dataView?.includes("table") ?  <Table /> :  <Kanban />}
+      {dataView?.includes("table") ? <Table /> : <Kanban />}
     </div>
   );
 }

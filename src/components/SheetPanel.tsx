@@ -22,9 +22,7 @@ export default function SheetPanel() {
   return (
     <Sheet open={isOpen} onOpenChange={handleCloseSheet}>
       <SheetContent side="right" className="p-6 w-[700px] overflow-scroll max-w-full">
-        <SheetTitle>
-          {mode === "create" ? "Create Task" : task?.title}
-        </SheetTitle>
+        <SheetTitle>{mode === "create" ? "Create Task" : task?.title}</SheetTitle>
         <TaskForm mode={mode as "create" | "edit"} task={task} />
       </SheetContent>
     </Sheet>

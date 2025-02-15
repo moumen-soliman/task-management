@@ -54,24 +54,26 @@ export const useFilteredTasks = () => {
   return useMemo(() => {
     console.time("FilteringTasks");
     let filteredTasks = allTasks.filter((task) => {
-
-      if (filters.title && !task.title.toLowerCase().includes(filters.title.toLowerCase())) return false;
+      if (filters.title && !task.title.toLowerCase().includes(filters.title.toLowerCase()))
+        return false;
       if (filters.priority && task.priority !== filters.priority) return false;
       if (filters.status && task.status !== filters.status) return false;
       return true;
     });
 
     if (sortColumn) {
-        if (sortColumn === null) {
-          filteredTasks = [...allTasks];
-        } else {
-          filteredTasks = filteredTasks.toSorted((a, b) => {
-            if (a[sortColumn as keyof Task] < b[sortColumn as keyof Task]) return sortDirection === "asc" ? -1 : 1;
-            if (a[sortColumn as keyof Task] > b[sortColumn as keyof Task]) return sortDirection === "asc" ? 1 : -1;
-            return 0;
-          });
-        }
-    }      
+      if (sortColumn === null) {
+        filteredTasks = [...allTasks];
+      } else {
+        filteredTasks = filteredTasks.toSorted((a, b) => {
+          if (a[sortColumn as keyof Task] < b[sortColumn as keyof Task])
+            return sortDirection === "asc" ? -1 : 1;
+          if (a[sortColumn as keyof Task] > b[sortColumn as keyof Task])
+            return sortDirection === "asc" ? 1 : -1;
+          return 0;
+        });
+      }
+    }
     console.timeEnd("FilteringTasks");
     return filteredTasks;
   }, [allTasks, sortColumn, sortDirection, filters]);

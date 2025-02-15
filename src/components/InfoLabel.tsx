@@ -7,5 +7,3 @@ const InfoLabel = ({ name }: { name: string }) => {
 };
 
 export default InfoLabel;
-
-  

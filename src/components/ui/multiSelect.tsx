@@ -1,4 +1,3 @@
-
 "use client";
 import Select from "react-select";
 
@@ -14,7 +13,12 @@ interface MultiSelectProps {
   placeholder?: string;
 }
 
-export default function MultiSelect({ options, value, onChange, placeholder = "Select options..." }: MultiSelectProps) {
+export default function MultiSelect({
+  options,
+  value,
+  onChange,
+  placeholder = "Select options...",
+}: MultiSelectProps) {
   return (
     <Select
       isMulti

@@ -5,9 +5,9 @@ export const useSheetStore = create<SheetState>((set) => ({
   isOpen: false,
   mode: null,
   taskId: null,
-  
+
   openSheet: (mode, taskId = null) => set({ isOpen: true, mode, taskId }),
-  closeSheet: () => {  
+  closeSheet: () => {
     window.history.replaceState(null, "", window.location.pathname);
     set({ isOpen: false, mode: null, taskId: null });
   },

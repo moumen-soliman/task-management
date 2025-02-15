@@ -46,9 +46,7 @@ const DataViewActionsBar: React.FC = () => {
   return (
     <div className="md:flex flex-wrap items-center justify-between gap-4 py-5 space-x-5">
       <div>
-        <Button onClick={handleAddTaskClick}>
-            ➕ Create Task
-        </Button>
+        <Button onClick={handleAddTaskClick}>➕ Create Task</Button>
       </div>
 
       <div className="">

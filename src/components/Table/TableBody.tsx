@@ -10,11 +10,7 @@ const TableBody = () => {
   return (
     <tbody>
       {filteredTasks.slice(0, visibleCount).map((task, index) => (
-        <TaskRow
-          key={`${task.id}-${index}`}
-          task={task}
-          index={index}
-        />
+        <TaskRow key={`${task.id}-${index}`} task={task} index={index} />
       ))}
     </tbody>
   );

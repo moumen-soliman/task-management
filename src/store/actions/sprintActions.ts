@@ -12,9 +12,7 @@ export const sprintActions = (set, get) => ({
   },
   removeTaskFromSprint: (taskId, sprintId) => {
     const updatedTasks = get().tasks.map((task) =>
-      task.id === taskId
-        ? { ...task, sprints: task.sprints.filter((id) => id !== sprintId) }
-        : task
+      task.id === taskId ? { ...task, sprints: task.sprints.filter((id) => id !== sprintId) } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set({ tasks: updatedTasks });

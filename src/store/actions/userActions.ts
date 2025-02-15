@@ -12,15 +12,12 @@ export const userActions = (set, get) => ({
   },
   removeUserFromTask: (taskId, userId) => {
     const updatedTasks = get().tasks.map((task) =>
-      task.id === taskId
-        ? { ...task, assign: task.assign.filter((id) => id !== userId) }
-        : task
+      task.id === taskId ? { ...task, assign: task.assign.filter((id) => id !== userId) } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set({ tasks: updatedTasks });
   },
   getAssignedUser: (userIds) => {
-    return get()
-      .users.filter((user) => userIds?.includes(user.id));
+    return get().users.filter((user) => userIds?.includes(user.id));
   },
 });

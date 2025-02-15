@@ -16,11 +16,11 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   fetchAllData: async () => {
     set({ loading: true });
-    
+
     const [tasks, users, sprints] = await Promise.all([
-        loadFromStorageOrFetch(STORAGE_KEY, '/api/tasks'),
-        loadFromStorageOrFetch(USER_STORAGE_KEY, '/api/users'),
-        loadFromStorageOrFetch(SPRINT_STORAGE_KEY, '/api/sprints')
+      loadFromStorageOrFetch(STORAGE_KEY, "/api/tasks"),
+      loadFromStorageOrFetch(USER_STORAGE_KEY, "/api/users"),
+      loadFromStorageOrFetch(SPRINT_STORAGE_KEY, "/api/sprints"),
     ]);
 
     set({ tasks, users, sprints, loading: false });

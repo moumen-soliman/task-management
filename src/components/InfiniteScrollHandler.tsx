@@ -9,7 +9,7 @@ const InfiniteScrollHandler: React.FC<{ indicator: Task[] }> = ({ indicator, chi
 
   useEffect(() => {
     if (inView) {
-     setVisibleCount((prev: number) => Math.min(prev + 10, indicator.length));
+      setVisibleCount((prev: number) => Math.min(prev + 10, indicator.length));
     }
   }, [inView, indicator.length, setVisibleCount]);
 
@@ -25,4 +25,3 @@ const InfiniteScrollHandler: React.FC<{ indicator: Task[] }> = ({ indicator, chi
 };
 
 export default InfiniteScrollHandler;
-

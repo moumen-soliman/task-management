@@ -20,7 +20,12 @@ const Kanban = () => {
     <DndProvider backend={HTML5Backend}>
       <div className="flex space-x-4 p-4">
         {STATUS_LIST.map((status) => (
-          <TaskColumn key={status} status={status} moveTask={moveTask} filteredTasks={filteredTasks} />
+          <TaskColumn
+            key={status}
+            status={status}
+            moveTask={moveTask}
+            filteredTasks={filteredTasks}
+          />
         ))}
       </div>
     </DndProvider>

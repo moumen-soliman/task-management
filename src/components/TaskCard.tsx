@@ -1,6 +1,12 @@
 import React, { use, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTaskStore } from "@/store/useTaskStore";
@@ -23,7 +29,7 @@ const TaskCard = ({ task, index }) => {
     removeTaskFromSprint,
     getAssignedUser,
     getSprintNames,
-    moveTask
+    moveTask,
   } = useTaskStore();
 
   const { openSheet } = useSheetStore();
@@ -31,7 +37,7 @@ const TaskCard = ({ task, index }) => {
   const ref = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableTask, setEditableTask] = useState(task);
-const dataView = useDataViewStore((state) => state.dataView);
+  const dataView = useDataViewStore((state) => state.dataView);
 
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
@@ -76,29 +82,24 @@ const dataView = useDataViewStore((state) => state.dataView);
 
   if (dataView === "kanban") {
     return (
-      <div
-        ref={drag}
-        key={task.id}
-        className={`p-1 rounded-lg  ${isDragging ? "opacity-50" : ""}`}
-      >
+      <div ref={drag} key={task.id} className={`p-1 rounded-lg  ${isDragging ? "opacity-50" : ""}`}>
         <Card>
           <CardHeader>
             <CardTitle className="font-semibold m-w-[50%]">{task.title}</CardTitle>
           </CardHeader>
           <CardContent>
-            <CardDescription className="text-sm text-gray-600">
-              {task.description}
-            </CardDescription>
+            <CardDescription className="text-sm text-gray-600">{task.description}</CardDescription>
             <CardDescription className="text-sm text-gray-600">
               <AssignedUsers getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
             </CardDescription>
             <div className="flex items-center justify-between pt-5">
               <div className="flex gap-2 items-center">
-
                 <InfoLabel name={`#${task.id}`} />
-                {getSprintNames(task.sprints).map((sprint, index) => <InfoLabel name={sprint} key={`${sprint}-${index}`} />)}
+                {getSprintNames(task.sprints).map((sprint, index) => (
+                  <InfoLabel name={sprint} key={`${sprint}-${index}`} />
+                ))}
               </div>
-                <PriorityHandler priority={task.priority}  />
+              <PriorityHandler priority={task.priority} />
             </div>
           </CardContent>
         </Card>
@@ -122,7 +123,10 @@ const dataView = useDataViewStore((state) => state.dataView);
       </td>
       <td className="py-2 px-2">
         {isEditing ? (
-          <Select onValueChange={(value) => handleChange("status", value)} value={editableTask.status}>
+          <Select
+            onValueChange={(value) => handleChange("status", value)}
+            value={editableTask.status}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={editableTask.status} />
             </SelectTrigger>
@@ -140,7 +144,10 @@ const dataView = useDataViewStore((state) => state.dataView);
       </td>
       <td className="py-2 px-2">
         {isEditing ? (
-          <Select onValueChange={(value) => handleChange("priority", value)} value={editableTask.priority}>
+          <Select
+            onValueChange={(value) => handleChange("priority", value)}
+            value={editableTask.priority}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={editableTask.priority} />
             </SelectTrigger>
@@ -153,16 +160,18 @@ const dataView = useDataViewStore((state) => state.dataView);
             </SelectContent>
           </Select>
         ) : (
-            <PriorityHandler priority={task.priority} />
+          <PriorityHandler priority={task.priority} />
         )}
       </td>
       <td className="py-2 px-4">
-        <AssignedUsers assignedUserIds={task.assign?.map(Number)} getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
+        <AssignedUsers
+          assignedUserIds={task.assign?.map(Number)}
+          getAssignedUser={getAssignedUser(task.assign?.map(Number))}
+        />
       </td>
       <td className="py-2 px-4">
-      <InfoLabel name={getSprintNames(task.sprints).join(", ") || "None"} />
-
-        </td>
+        <InfoLabel name={getSprintNames(task.sprints).join(", ") || "None"} />
+      </td>
       <td className="py-2 px-4">
         <div className="flex gap-2">
           {isEditing ? (
@@ -170,7 +179,10 @@ const dataView = useDataViewStore((state) => state.dataView);
               Save
             </Button>
           ) : (
-            <PencilLineIcon onClick={() => setIsEditing(true)} className="h-5 w-5 text-gray-500 cursor-pointer" />
+            <PencilLineIcon
+              onClick={() => setIsEditing(true)}
+              className="h-5 w-5 text-gray-500 cursor-pointer"
+            />
           )}
           {task.deleted ? (
             <button onClick={() => undoDeleteTask(task.id)} className="text-blue-500">

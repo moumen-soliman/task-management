@@ -40,7 +40,9 @@ const PriorityHandler: React.FC<PriorityHandlerProps> = ({ priority = "none" }) 
   const { bg, text, icon } = priorityStyles[priority] || priorityStyles.none;
 
   return (
-    <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${bg}`}>
+    <span
+      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${bg}`}
+    >
       {icon}
       {text}
     </span>

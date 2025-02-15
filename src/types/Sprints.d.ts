@@ -1,6 +1,5 @@
-  export type Sprint = {
-    id: number;
-    name: string;
-    tasks: number[];
-  };
-  
+export type Sprint = {
+  id: number;
+  name: string;
+  tasks: number[];
+};

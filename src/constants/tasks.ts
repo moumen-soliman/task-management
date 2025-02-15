@@ -5,4 +5,4 @@ export const SPRINT_STORAGE_KEY = "sprints";
 
 // Task priorities and statuses
 export const PRIORITIES_LIST = ["none", "low", "medium", "high", "urgent"] as const;
-export const STATUS_LIST = [ "not_started", "in_progress", "completed" ] as const;
+export const STATUS_LIST = ["not_started", "in_progress", "completed"] as const;

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,10 +31,13 @@ export default function CustomFieldForm({ onSave, onCancel }) {
           value={fieldName}
           onChange={(e) => setFieldName(e.target.value)}
         />
-        <Select onValueChange={(value) => {
-          setFieldType(value);
-          setFieldValue(""); // Reset value when type changes
-        }} defaultValue="text">
+        <Select
+          onValueChange={(value) => {
+            setFieldType(value);
+            setFieldValue(""); // Reset value when type changes
+          }}
+          defaultValue="text"
+        >
           <SelectTrigger>
             <SelectValue placeholder="Field Type" />
           </SelectTrigger>
@@ -39,33 +48,37 @@ export default function CustomFieldForm({ onSave, onCancel }) {
           </SelectContent>
         </Select>
       </div>
-      
+
       <div className="flex gap-4 items-center">
         <Label>Field Value:</Label>
-        {fieldType === 'text' ? (
+        {fieldType === "text" ? (
           <Input
-            value={String(fieldValue) || ''}
+            value={String(fieldValue) || ""}
             onChange={(e) => setFieldValue(e.target.value)}
             placeholder="Enter field value"
           />
-        ) : fieldType === 'number' ? (
+        ) : fieldType === "number" ? (
           <Input
             type="number"
             value={Number(fieldValue) || 0}
             onChange={(e) => setFieldValue(Number(e.target.value || 0))}
             placeholder="Enter number value"
           />
-        ) : fieldType === 'checkbox' ? (
+        ) : fieldType === "checkbox" ? (
           <Checkbox
             checked={Boolean(fieldValue)}
             onCheckedChange={(checked: boolean) => setFieldValue(checked)}
           />
         ) : null}
       </div>
-      
+
       <div className="flex gap-2">
-        <Button type="button" onClick={handleSave}>Save</Button>
-        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
+        <Button type="button" onClick={handleSave}>
+          Save
+        </Button>
+        <Button variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
       </div>
     </div>
   );

@@ -21,8 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className}`}>
         <ThemeProvider>
-        <ThemeToggleButton />
-          {children}</ThemeProvider>
+          <ThemeToggleButton />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
