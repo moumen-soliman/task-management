@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   const [visibleCount, setVisibleCount] = useState(10);
   const { ref, inView } = useInView({ threshold: 1 });
-  const { openSheet } = useSheetStore();
+  const { openSheet, resetSheet } = useSheetStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -50,6 +50,7 @@ export default function Dashboard() {
   };
 
   const handleAddTaskClick = () => {
+    resetSheet();
     openSheet("create");
     router.replace(window.location.pathname, { scroll: false });
   }
