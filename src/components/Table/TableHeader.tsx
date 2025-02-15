@@ -16,13 +16,21 @@ const taskColumns = [
     { key: 'sprint', label: 'Sprint' }
 ];
 
-const TableHeader: React.FC<TableHeaderProps> = ({ columns = taskColumns }) => {
+const TableHeader: React.FC<TableHeaderProps> = () => {
     return (
-        <div className='flex items-center justify-between'>
-                {columns.map((column) => (
-                    <span key={column.key}>{column.label}</span>
+        <thead>
+            <tr>
+                {taskColumns.map((column) => (
+                    <th
+                        key={column.key}
+                        className="py-2 px-4 border-b-2 border-gray-300 text-left"
+                    >
+                        {column.label}
+                    </th>
                 ))}
-        </div>
+                <th className="py-2 px-4 border-b-2 border-gray-300 text-left">Actions</th>
+            </tr>
+        </thead>
     );
 };
 

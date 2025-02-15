@@ -8,11 +8,13 @@ import MultiSelect from "../ui/multiSelect";
 import CustomFieldEditor from "../CustomFieldEditor";
 import { UseFormReturn } from "react-hook-form";
 import { TaskFormValues } from "@/schemas/taskSchema";
+import { User } from "@/types/Users";
+import { Sprint } from "@/types/Sprints";
 
 interface TaskFormFieldsProps {
     form: UseFormReturn<TaskFormValues>;
-    users: any[];
-    sprints: any[];
+    users: User[];
+    sprints: Sprint[];
 }
 
 export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
