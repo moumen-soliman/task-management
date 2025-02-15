@@ -5,7 +5,12 @@ import { useTaskStore } from "@/store/useTaskStore";
 import TaskForm from "./TaskForm";
 
 export default function SheetPanel() {
-  const { isOpen, mode, taskId, closeSheet, resetSheet } = useSheetStore();
+  const isOpen = useSheetStore((state) => state.isOpen);
+  const mode = useSheetStore((state) => state.mode);
+  const taskId = useSheetStore((state) => state.taskId);
+  const closeSheet = useSheetStore((state) => state.closeSheet);
+  const resetSheet = useSheetStore((state) => state.resetSheet);
+
   const { getTaskById } = useTaskStore();
   const task = getTaskById(taskId as number);
 

@@ -1,15 +1,5 @@
+import { SheetState } from "@/types/Sheet";
 import { create } from "zustand";
-
-export type SheetMode = "view" | "edit" | "create" | null;
-
-interface SheetState {
-  isOpen: boolean;
-  mode: SheetMode;
-  taskId: string | number | null;
-  openSheet: (mode: SheetMode, taskId?: number) => void;
-  closeSheet: () => void;
-  resetSheet: () => void;
-}
 
 export const useSheetStore = create<SheetState>((set) => ({
   isOpen: false,

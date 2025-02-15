@@ -1,3 +1,4 @@
+import { STORAGE_KEY } from "@/constants/tasks";
 import { apiFetch } from "@/services";
 
 // Retrieves data from local storage if available, otherwise fetches from API and stores it
@@ -13,7 +14,7 @@ export async function loadFromStorageOrFetch(key: string, endpoint: string) {
 
 export const subscribeToTaskUpdates = (onUpdate) => {
   const handleStorageChange = (event) => {
-    if (event.key === "tasks") {
+    if (event.key === STORAGE_KEY) {
       const updatedTasks = JSON.parse(event.newValue);
       onUpdate(updatedTasks);
     }

@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import TaskRow from "./TaskRow";
 import { useTaskStore } from "@/store/useTaskStore";
-import { useInView } from "react-intersection-observer";
+import { useDataViewStore, useFilteredTasks } from "@/store/useDataViewStore";
 
-const TableBody = ({ visibleCount }) => {
-  const {
-    tasks,
-  } = useTaskStore();
+const TableBody = () => {
+  const { filteredTasksList, visibleCount } = useDataViewStore();
+  const filteredTasks = useFilteredTasks();
 
   return (
     <tbody>
-      {tasks.slice(0, visibleCount).map((task, index) => (
+      {filteredTasks.slice(0, visibleCount).map((task, index) => (
         <TaskRow
           key={`${task.id}-${index}`}
           task={task}
+          index={index}
         />
       ))}
     </tbody>

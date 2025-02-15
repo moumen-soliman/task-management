@@ -7,9 +7,15 @@ import CustomFieldForm from "./CustomFieldForm";
 import CustomFieldList from "./CustomFieldList";
 
 export default function CustomFieldEditor() {
-  const { customFields, addCustomField, removeCustomField, updateCustomField, getTaskById } = useTaskStore();
-  const { mode, taskId } = useSheetStore();
-  const task = getTaskById(taskId); 
+  const customFields = useTaskStore((state) => state.customFields);
+  const addCustomField = useTaskStore((state) => state.addCustomField);
+  const removeCustomField = useTaskStore((state) => state.removeCustomField);
+  const updateCustomField = useTaskStore((state) => state.updateCustomField);
+  const getTaskById = useTaskStore((state) => state.getTaskById);
+  const mode = useSheetStore((state) => state.mode);
+  const taskId = useSheetStore((state) => state.taskId);
+
+  const task = getTaskById(taskId);
   const [isEditing, setIsEditing] = useState(false);
 
   const handleAddField = (fieldName, fieldType, fieldValue) => {

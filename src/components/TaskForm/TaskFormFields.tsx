@@ -3,13 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import { Checkbox } from "@/components/ui/checkbox";
-import TaskEditor from "../TaskEditor";
 import MultiSelect from "../ui/multiSelect";
 import CustomFieldEditor from "../CustomFieldEditor";
 import { UseFormReturn } from "react-hook-form";
 import { TaskFormValues } from "@/schemas/taskSchema";
 import { User } from "@/types/Users";
 import { Sprint } from "@/types/Sprints";
+import DescEditor from "@/components/DescEditor";
 
 interface TaskFormFieldsProps {
     form: UseFormReturn<TaskFormValues>;
@@ -39,7 +39,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>Task Description</FormLabel>
-                        <TaskEditor value={field.value || ""} onChange={field.onChange} />
+                        <DescEditor value={field.value || ""} onChange={field.onChange} />
                         <FormMessage />
                     </FormItem>
                 )}

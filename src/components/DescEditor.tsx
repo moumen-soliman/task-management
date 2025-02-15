@@ -7,7 +7,6 @@ import React, { useEffect } from 'react'
 import { Badge } from "@/components/ui/badge"
 import { EditorButtonProps } from '@/types/Form'
 
-// Reusable Editor Button
 const EditorButton: React.FC<EditorButtonProps> = ({ 
   onClick, 
   isActive = false, 
@@ -42,7 +41,7 @@ const MenuBar = ({ onChange }: { onChange: (value: string) => void }) => {
   useEffect(() => {
     if (!editor) return;
     const updateHandler = () => {
-      onChange(editor.getHTML()) // Ensure onChange is triggered with the latest content
+      onChange(editor.getHTML());
     };
     editor.on('update', updateHandler);
     return () => {
@@ -100,12 +99,12 @@ const editorExtensions = [
   }),
 ]
 
-interface TaskEditorProps {
+interface DescEditorProps {
   value: string;
   onChange: (value: string) => void;
 }
 
-const TaskEditor: React.FC<TaskEditorProps> = ({ value, onChange }) => {
+const DescEditor: React.FC<DescEditorProps> = ({ value, onChange }) => {
   return (
     <div className='border border-gray-200 rounded p-4'>
       <EditorProvider 
@@ -118,4 +117,4 @@ const TaskEditor: React.FC<TaskEditorProps> = ({ value, onChange }) => {
   )
 }
 
-export default TaskEditor
+export default DescEditor
