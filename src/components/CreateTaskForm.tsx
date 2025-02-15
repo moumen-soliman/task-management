@@ -14,12 +14,9 @@ import MultiSelect from "./ui/multiSelect";
 import { useEffect } from "react";
 import { CreateTaskFormProps } from "@/types/Form";
 import CustomFieldEditor from "./CustomFieldEditor";
+import { Checkbox } from "./ui/checkbox";
 
-
-export default function CreateTaskForm({ mode, task }: CreateTaskFormProps) {
-    const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
-    const { closeSheet } = useSheetStore();
-    // Schema Validation
+// Schema Validation
 const taskSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
     priority: z.enum(PRIORITIES_LIST),
@@ -27,16 +24,12 @@ const taskSchema = z.object({
     description: z.string().optional(),
     sprints: z.string().optional(),
     assign: z.array(z.string()).optional(),
-    ...customFields.reduce((acc, field) => {
-        const fieldSchema = field.type === "checkbox" 
-            ? z.boolean().optional()
-            : field.type === "number"
-                ? z.coerce.number().optional()
-                : z.string().optional();
-        acc[field.name] = fieldSchema;
-        return acc;
-    }, {})
 });
+
+export default function CreateTaskForm({ mode, task }: CreateTaskFormProps) {
+    const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
+    const { closeSheet } = useSheetStore();
+
     const form = useForm<z.infer<typeof taskSchema>>({
         resolver: zodResolver(taskSchema),
         defaultValues: getDefaultValues(mode, task, customFields),
@@ -49,11 +42,7 @@ const taskSchema = z.object({
     }, [task, mode, form, customFields]);
 
     const onSubmit = (values: z.infer<typeof taskSchema>) => {
-
         const taskData = {
-            title: values.title,
-            status: values.status,
-            priority: values.priority,
             description: values.description,
             sprints: values.sprints ? [Number(values.sprints)] : [],
             assign: (values.assign || []).map(Number),
@@ -67,7 +56,8 @@ const taskSchema = z.object({
                   acc[field.name] = field.value;
                 }
                 return acc;
-              }, {} as Record<string, any>)
+              }, {} as Record<string, any>),
+            ...form.getValues(),
         };
     
         if (mode === "create") {
@@ -202,46 +192,33 @@ const taskSchema = z.object({
                         )}
                     />
                     <CustomFieldEditor />
-                    {Object.entries(task || {}).map(([key, value]) => {
-                        if (!['title', 'priority', 'status', 'description', 'sprints', 'assign', 'id', 'deleted'].includes(key)) {
-                            return (
-                                <FormField
-                                    key={key}
-                                    control={form.control}
-                                    name={key as any}
-                                    defaultValue={value}
-                                    render={({ field }) => {
-                                        return (
-                                        <FormItem>
-                                            <FormLabel className="capitalize">{key.replace(/_/g, ' ')}</FormLabel>
-                                            <FormControl>
-                                                {typeof value === 'boolean' ? (
-                                                    <Input 
-                                                        type="checkbox" 
-                                                        checked={field.value}
-                                                        onChange={e => field.onChange(e.target.checked)}
-                                                    />
-                                                ) : typeof value === 'number' ? (
-                                                    <Input 
-                                                        type="number" 
-                                                        value={field.value ?? ''}
-                                                        onChange={e => field.onChange(Number(e.target.value))}
-                                                    />
-                                                ) : (
-                                                    <Input 
-                                                        value={field.value ?? ''}
-                                                        onChange={e => field.onChange(e.target.value)}
-                                                    />
-                                                )}
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}}
-                                />
-                            );
-                        }
-                        return null;
-                    })}
+                    {Object.entries(form.getValues() || {}).map(([key, value]) => {
+    if (!['title', 'priority', 'status', 'description', 'sprints', 'assign', 'id', 'deleted'].includes(key)) {
+        return (
+            <FormItem key={key}>
+                <FormLabel className="capitalize">{key.replace(/_/g, ' ')}</FormLabel>
+                <FormControl>
+                    {typeof value === 'boolean' ? (
+                        <Checkbox 
+                            {...form.register(key)}
+                            checked={Boolean(form.watch(key))}
+                            onCheckedChange={(checked) => form.setValue(key, checked)}
+                        />
+                    ) : (
+                        <Input 
+                            {...form.register(key)}
+                            defaultValue={form.watch(key) ?? ""}
+                        />
+                    )}
+                </FormControl>
+                <FormMessage />
+            </FormItem>
+        );
+    }
+    return null;
+})}
+
+
                     <div className="flex items-center gap-10">
                         <Button type="submit" className="w-full">
                             Save
@@ -267,9 +244,15 @@ function getDefaultValues(mode: "create" | "edit", task: z.infer<typeof taskSche
             sprints: task.sprints?.[0]?.toString(),
             assign: task.assign?.map(String),
             ...customFields.reduce((acc, field) => {
-                acc[field.name] = task[field.name] || (field.type === "checkbox" ? false : "");
+                acc[field.name] = task ? task[field.name] || (field.type === "checkbox" ? false : "") : "";
                 return acc;
-            }, {})
+            }, {} as Record<string, any>),
+            ...Object.entries(task).reduce((acc, [key, value]) => {
+                if (!['title', 'priority', 'status', 'description', 'sprints', 'assign', 'id', 'deleted'].includes(key)) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {} as Record<string, any>)
         };
         
         return defaultValues;
