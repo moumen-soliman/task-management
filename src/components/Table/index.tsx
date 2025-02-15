@@ -17,7 +17,6 @@ const Table: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <h2 className="text-2xl font-bold">Task Management v1</h2>
       <InfiniteScrollHandler indicator={tasks}>
         <table className="min-w-full">
           <TableHeader />

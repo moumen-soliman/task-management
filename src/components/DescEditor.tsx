@@ -111,7 +111,7 @@ const DescEditor: React.FC<DescEditorProps> = ({ value, onChange }) => {
         slotBefore={<MenuBar onChange={onChange} />} 
         extensions={editorExtensions} 
         content={value}
-        onUpdate={({ editor }) => onChange(editor.getHTML())} // Ensure updates trigger onChange
+        onUpdate={({ editor }) => onChange(editor.getHTML())}
       />
     </div>
   )

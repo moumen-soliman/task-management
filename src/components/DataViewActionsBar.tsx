@@ -83,8 +83,7 @@ const DataViewActionsBar: React.FC = () => {
         onChange={(value) => handleSortChange("title", value as "asc" | "desc" | null)}
       />
 
-    <div className="">
-      <div className="flex ">
+      <div className="flex">
         <Button
           variant="ghost"
           onClick={() => setDataView("table")}
@@ -100,7 +99,6 @@ const DataViewActionsBar: React.FC = () => {
           <Kanban name="kanban" />
         </Button>
       </div>
-    </div>
     </div>
   );
 };

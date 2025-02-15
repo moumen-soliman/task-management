@@ -8,11 +8,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    document.documentElement.classList.add("dark"); // ✅ Force dark mode on first load
+    document.documentElement.classList.add("dark");
   }, []);
 
   if (!mounted) {
-    return <>{children}</>; // Prevent hydration errors
+    return <>{children}</>;
   }
 
   return (
