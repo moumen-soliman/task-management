@@ -2,7 +2,7 @@
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useSheetStore } from "@/store/useSheetStore";
 import { useTaskStore } from "@/store/useTaskStore";
-import CreateTaskForm from "./CreateTaskForm";
+import TaskForm from "./TaskForm";
 
 export default function SheetPanel() {
   const { isOpen, mode, taskId, closeSheet, resetSheet } = useSheetStore();
@@ -20,7 +20,7 @@ export default function SheetPanel() {
         <SheetTitle>
           {mode === "create" ? "Create Task" : task?.title}
         </SheetTitle>
-        <CreateTaskForm mode={mode} task={task} />
+        <TaskForm mode={mode} task={task} />
       </SheetContent>
     </Sheet>
   );

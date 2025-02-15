@@ -7,11 +7,11 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { CreateTaskFormProps } from "@/types/Form";
-import { TaskFormFields } from "./TaskForm/TaskFormFields";
+import { TaskFormFields } from "./TaskFormFields";
 import { taskSchema, TaskFormValues } from "@/schemas/taskSchema";
 import { getDefaultValues } from "@/utils/formHelpers";
 
-export default function CreateTaskForm({ mode, task }: CreateTaskFormProps) {
+export default function TaskForm({ mode, task }: CreateTaskFormProps) {
     const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
     const { closeSheet } = useSheetStore();
 
