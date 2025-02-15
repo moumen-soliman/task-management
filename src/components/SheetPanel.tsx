@@ -7,7 +7,7 @@ import TaskForm from "./TaskForm";
 export default function SheetPanel() {
   const { isOpen, mode, taskId, closeSheet, resetSheet } = useSheetStore();
   const { getTaskById } = useTaskStore();
-  const task = getTaskById(taskId);
+  const task = getTaskById(taskId as number);
 
   const handleCloseSheet = () => {
     closeSheet();
@@ -20,7 +20,7 @@ export default function SheetPanel() {
         <SheetTitle>
           {mode === "create" ? "Create Task" : task?.title}
         </SheetTitle>
-        <TaskForm mode={mode} task={task} />
+        <TaskForm mode={mode as "create" | "edit"} task={task} />
       </SheetContent>
     </Sheet>
   );

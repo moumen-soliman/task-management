@@ -53,7 +53,7 @@ const MenuBar = ({ onChange }: { onChange: (value: string) => void }) => {
   if (!editor) return null
 
   return (
-    <div className='space-x-2'>
+    <div className='space-x-2 mb-5'>
       <EditorButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive('bold')}

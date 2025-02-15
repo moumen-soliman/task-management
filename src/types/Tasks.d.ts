@@ -35,6 +35,6 @@ export interface TaskStore {
     addTaskToSprint: (taskId: number, sprintId: number) => void;
     removeTaskFromSprint: (taskId: number, sprintId: number) => void;
     getSprintNames: (sprintIds: number[]) => string[];
-    getAssignedUserNames: (userIds: number[]) => string[];
+    getAssignedUser: (userIds: number[]) => string[];
     getTaskById: (id: number | string) => Task | undefined;
   }

@@ -10,10 +10,12 @@ import { CreateTaskFormProps } from "@/types/Form";
 import { TaskFormFields } from "./TaskFormFields";
 import { taskSchema, TaskFormValues } from "@/schemas/taskSchema";
 import { getDefaultValues } from "@/utils/formHelpers";
+import { useToast } from "@/hooks/use-toast"
 
 export default function TaskForm({ mode, task }: CreateTaskFormProps) {
     const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
     const { closeSheet } = useSheetStore();
+    const { toast } = useToast()
 
     const form = useForm<TaskFormValues>({
         resolver: zodResolver(taskSchema),
@@ -42,6 +44,10 @@ export default function TaskForm({ mode, task }: CreateTaskFormProps) {
         } else if (mode === "edit" && task?.id) {
             updateTask(task?.id, taskData);
         }
+        toast({
+            title: `${values.title} has been saved`,
+            description: "Task has been saved successfully",
+          })
         closeSheet();
     };
 

@@ -71,20 +71,17 @@ body {
   }
 }
 .tiptap {
-  :first-child {
-    margin-top: 15px;
-    min-height: 15.625rem;
-  }
-
+  min-height: 15.625rem;
+  
   /* List styles */
   ul, 
   ol {
     padding: 0 1rem;
-    margin: 1.25rem 1rem 1.25rem 0.4rem;
+    margin: 0.5rem 1rem 1.25rem 0.4rem;
+    list-style: unset;
     
     li p {
       margin-top: 0.25em;
-      margin-bottom: 0.25em;
     }
   }
 

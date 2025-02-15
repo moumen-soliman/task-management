@@ -10,3 +10,16 @@ export async function loadFromStorageOrFetch(key: string, endpoint: string) {
   localStorage.setItem(key, JSON.stringify(data));
   return data;
 }
+
+export const subscribeToTaskUpdates = (onUpdate) => {
+  const handleStorageChange = (event) => {
+    if (event.key === "tasks") {
+      const updatedTasks = JSON.parse(event.newValue);
+      onUpdate(updatedTasks);
+    }
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => window.removeEventListener("storage", handleStorageChange);
+};

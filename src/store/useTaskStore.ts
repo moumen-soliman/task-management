@@ -113,10 +113,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
     // Resolve user names for a given task's user IDs
-  getAssignedUserNames: (userIds) => {
+  getAssignedUser: (userIds) => {
     return get()
-      .users.filter((user) => userIds?.includes(user.id))
-      .map((user) => user.name);
+      .users.filter((user) => userIds?.includes(user.id));
   },
 
   // Update a task's status
@@ -186,5 +185,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set({ tasks: updatedTasks });
+  },
+
+  // Reorder tasks
+  reorderTasks: (startIndex, endIndex) => {
+    const result = Array.from(get().tasks);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+    set({ tasks: result });
   },
 }));
