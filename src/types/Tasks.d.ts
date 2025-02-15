@@ -11,8 +11,8 @@ export type Task = {
     title: string;
     status: Status;
     priority: Priorities;
-    sprints: number[]; // Sprint IDs
-    assign: number[]; // User IDs
+    sprints: number[];
+    assign: number[];
     deleted: boolean;
     error?: string | null;
     description: string;

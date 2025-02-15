@@ -8,7 +8,7 @@ export const useSheetStore = create<SheetState>((set) => ({
   
   openSheet: (mode, taskId = null) => set({ isOpen: true, mode, taskId }),
   closeSheet: () => {  
-    window.history.replaceState(null, "", window.location.pathname); // Clears query
+    window.history.replaceState(null, "", window.location.pathname);
     set({ isOpen: false, mode: null, taskId: null });
   },
   resetSheet: () => set({ isOpen: false, mode: null, taskId: null }),
