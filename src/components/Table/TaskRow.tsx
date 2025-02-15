@@ -127,7 +127,7 @@ const TaskRow = ({ task, index }) => {
               <TooltipProvider key={`${user.id}-${index}`}>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Avatar className="inline-block h-8 w-8 rounded-full ring-2 ring-white">
+                    <Avatar className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-200">
                       <AvatarImage src={user?.image?.url ?? ""} alt={user?.name ?? ""} />
                       <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
                     </Avatar>
