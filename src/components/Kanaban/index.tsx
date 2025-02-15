@@ -15,11 +15,14 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TaskActionContext } from "./BoardContainer";
+import { useFilteredTasks } from "@/store/useDataViewStore";
+import AssignedUsers from "../AssignedUsers";
 
 const Kanban = () => {
-  const { tasks, updateTaskStatus } = useTaskStore();
+  const { updateTaskStatus } = useTaskStore();
+  const filteredTasks = useFilteredTasks();
+ const getAssignedUser = useTaskStore((state) => state.getAssignedUser);
 
-  // 🏗️ Drag & Drop Handlers
   const moveTask = (taskId: number, newStatus: string) => {
     updateTaskStatus(taskId, newStatus);
   };
@@ -37,7 +40,7 @@ const Kanban = () => {
       <div
         ref={drag}
         key={task.id}
-        className={`bg-white p-2 rounded-lg shadow-sm ${
+        className={`p-2 rounded-lg shadow-sm ${
           isDragging ? "opacity-50" : ""
         }`}
       >
@@ -48,6 +51,10 @@ const Kanban = () => {
           <CardContent>
             <CardDescription className="text-sm text-gray-600">
               {task.description}
+            </CardDescription>
+            <CardDescription className="text-sm text-gray-600">
+                      <AssignedUsers getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
+            
             </CardDescription>
           </CardContent>
         </Card>
@@ -67,12 +74,12 @@ const Kanban = () => {
       <ScrollArea
         ref={drop}
         key={status}
-        className="flex-1 bg-gray-100 p-4 rounded-lg shadow-md h-[80vh]"
+        className="flex-1 p-4 rounded-lg border h-[80vh]"
       >
-        <h2 className="text-xl font-bold mb-4">{status}</h2>
+        <h2 className="text-xl font-bold mb-4 capitalize">{status.replaceAll("_", " ")}</h2>
         <div className="space-y-2">
-          {tasks
-            .filter((task) => task.status === status)
+          {filteredTasks
+            ?.filter((task) => task.status === status)
             .map((task) => (
               <TaskCard key={task.id} task={task} />
             ))}

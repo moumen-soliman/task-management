@@ -5,6 +5,7 @@ import { createSelectorHooks } from "auto-zustand-selectors-hook";
 import { useMemo } from "react";
 
 interface DataViewState {
+  dataView: "table" | "kanban";
   filteredTasksList: Task[];
   visibleCount: number;
   sortColumn: keyof Task | null;
@@ -21,6 +22,7 @@ interface DataViewState {
 }
 
 export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
+  dataView: "table",
   filteredTasksList: [],
   visibleCount: 10,
   sortColumn: null,
@@ -30,6 +32,7 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
     priority: "",
     status: "",
   },
+  setDataView: (dataView) => set({ dataView }),
   setVisibleCount: (fn) =>
     set((state) => ({
       visibleCount: typeof fn === "function" ? fn(state.visibleCount) : fn,
@@ -51,21 +54,24 @@ export const useFilteredTasks = () => {
   return useMemo(() => {
     console.time("FilteringTasks");
     let filteredTasks = allTasks.filter((task) => {
-      // 🚀 Combined Filtering in One Pass (O(N))
+
       if (filters.title && !task.title.toLowerCase().includes(filters.title.toLowerCase())) return false;
       if (filters.priority && task.priority !== filters.priority) return false;
       if (filters.status && task.status !== filters.status) return false;
       return true;
     });
 
-    // 🚀 Sorting in O(N log N) if needed
     if (sortColumn) {
-      filteredTasks = filteredTasks.toSorted((a, b) => {
-        if (a[sortColumn] < b[sortColumn]) return sortDirection === "asc" ? -1 : 1;
-        if (a[sortColumn] > b[sortColumn]) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
+        if (sortColumn === null) {
+          filteredTasks = [...allTasks];
+        } else {
+          filteredTasks = filteredTasks.toSorted((a, b) => {
+            if (a[sortColumn as keyof Task] < b[sortColumn as keyof Task]) return sortDirection === "asc" ? -1 : 1;
+            if (a[sortColumn as keyof Task] > b[sortColumn as keyof Task]) return sortDirection === "asc" ? 1 : -1;
+            return 0;
+          });
+        }
+    }      
     console.timeEnd("FilteringTasks");
     return filteredTasks;
   }, [allTasks, sortColumn, sortDirection, filters]);

@@ -4,7 +4,7 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { useDataViewStore, useFilteredTasks } from "@/store/useDataViewStore";
 
 const TableBody = () => {
-  const { filteredTasksList, visibleCount } = useDataViewStore();
+  const { visibleCount } = useDataViewStore();
   const filteredTasks = useFilteredTasks();
 
   return (

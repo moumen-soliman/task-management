@@ -1,69 +1,108 @@
-import React from 'react';
-import { useDataViewStore } from '@/store/useDataViewStore';
-import { useSheetStore } from '@/store/useSheetStore';
-import { useRouter } from 'next/navigation';
-import { PRIORITIES_LIST, STATUS_LIST } from '@/constants/tasks';
+import React from "react";
+import { useDataViewStore } from "@/store/useDataViewStore";
+import { useSheetStore } from "@/store/useSheetStore";
+import { useRouter } from "next/navigation";
+import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Kanban, Table } from "lucide-react";
+import DropdownFilter from "./DropdownFilter";
 
 const DataViewActionsBar: React.FC = () => {
-    const setFilter = useDataViewStore((state) => state.setFilter);
-    const setSortColumn = useDataViewStore((state) => state.setSortColumn);
-    const setSortDirection = useDataViewStore((state) => state.setSortDirection);
-    const openSheet = useSheetStore((state) => state.openSheet);
-    const resetSheet = useSheetStore((state) => state.resetSheet);
-    const router = useRouter();
+  const setFilter = useDataViewStore((state) => state.setFilter);
+  const dataView = useDataViewStore((state) => state.dataView);
+  const setDataView = useDataViewStore((state) => state.setDataView);
+  const setSortColumn = useDataViewStore((state) => state.setSortColumn);
+  const filters = useDataViewStore((state) => state.filters);
+  const setSortDirection = useDataViewStore((state) => state.setSortDirection);
+  const openSheet = useSheetStore((state) => state.openSheet);
+  const resetSheet = useSheetStore((state) => state.resetSheet);
+  const router = useRouter();
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFilter({ title: e.target.value });
-    };
+  const handleSortChange = (column: keyof Task, direction: "asc" | "desc" | null) => {
+    if (!direction) {
+      setSortColumn(null);
+      setSortDirection(null);
+    } else {
+      setSortColumn(column);
+      setSortDirection(direction);
+    }
+  };
 
-    const handlePriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setFilter({ priority: e.target.value });
-    };
+  const handleAddTaskClick = () => {
+    resetSheet();
+    openSheet("create");
+    router.replace(window.location.pathname, { scroll: false });
+  };
 
-    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setFilter({ status: e.target.value });
-    };
+  return (
+    <div className="md:flex flex-wrap items-center justify-between gap-4 py-5 space-x-5">
+      <div>
+        <Button onClick={handleAddTaskClick}>
+            ➕ Create Task
+        </Button>
+      </div>
 
-    const handleSortChange = (column: keyof Task, direction: 'asc' | 'desc') => {
-        setSortColumn(column);
-        setSortDirection(direction);
-    };
+      <div className="">
+        <Input
+          type="text"
+          placeholder="Search by title"
+          onChange={(e) => setFilter({ title: e.target.value })}
+        />
+      </div>
 
-    const handleAddTaskClick = () => {
-        resetSheet();
-        openSheet("create");
-        router.replace(window.location.pathname, { scroll: false });
-    };
+      <DropdownFilter
+        label="Priorities"
+        options={PRIORITIES_LIST}
+        placeholder="All Priorities"
+        value={filters.priority}
+        onChange={(value) => setFilter({ priority: value })}
+      />
 
-    return (
-        <div className='flex justify-between items-center mb-4'>
-            <button
-                onClick={handleAddTaskClick}
-                className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-            >
-                ➕ Add Task
-            </button>
-            <input type="text" placeholder="Search by title" onChange={handleSearchChange} />
-            <select onChange={handlePriorityChange}>
-                <option value="">All Priorities</option>
-                {PRIORITIES_LIST.map((priority) => (
-                    <option key={priority} value={priority}>
-                        {priority}
-                    </option>
-                ))}
-            </select>
-            <select onChange={handleStatusChange}>
-                <option value="">All Statuses</option>
-                {STATUS_LIST.map((status) => (
-                    <option key={status} value={status}>
-                        {status}
-                    </option>
-                ))}
-            </select>
-            <button onClick={() => handleSortChange('title', 'asc')}>Sort by Title Asc</button>
-            <button onClick={() => handleSortChange('title', 'desc')}>Sort by Title Desc</button>
-        </div>
-    );
+      <DropdownFilter
+        label="Statuses"
+        options={STATUS_LIST}
+        placeholder="All Statuses"
+        value={filters.status}
+        onChange={(value) => setFilter({ status: value })}
+      />
+
+      <DropdownFilter
+        label="Sort by Title"
+        options={["asc", "desc"]}
+        placeholder="All"
+        value={filters.title}
+        onChange={(value) => handleSortChange("title", value as "asc" | "desc" | null)}
+      />
+
+    <div className="">
+      <div className="flex ">
+        <Button
+          variant="ghost"
+          onClick={() => setDataView("table")}
+          className={`transition-opacity ${dataView === "table" ? "opacity-100" : "opacity-50"}`}
+        >
+          <Table name="table" />
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => setDataView("kanban")}
+          className={`transition-opacity ${dataView === "kanban" ? "opacity-100" : "opacity-50"}`}
+        >
+          <Kanban name="kanban" />
+        </Button>
+      </div>
+    </div>
+    </div>
+  );
 };
 
 export default DataViewActionsBar;

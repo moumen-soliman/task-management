@@ -8,6 +8,8 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { useSheetStore } from "@/store/useSheetStore";
 import { useRouter } from "next/navigation";
 import { PencilLineIcon } from "lucide-react";
+import AssignedUsers from "../AssignedUsers";
+import { Button } from "@/components/ui/button";
 
 const TaskRow = ({ task, index }) => {
   const {
@@ -121,35 +123,15 @@ const TaskRow = ({ task, index }) => {
         )}
       </td>
       <td className="py-2 px-4">
-        <div className="flex -space-x-2 overflow-hidden">
-          {task.assign && task.assign.length > 0 ? (
-            getAssignedUser(task.assign.map(Number))?.map((user, index) => (
-              <TooltipProvider key={`${user.id}-${index}`}>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Avatar className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-200">
-                      <AvatarImage src={user?.image?.url ?? ""} alt={user?.name ?? ""} />
-                      <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
-                    </Avatar>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{user?.name}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))
-          ) : (
-            <span className="text-gray-500">None</span>
-          )}
-        </div>
+        <AssignedUsers assignedUserIds={task.assign?.map(Number)} getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
       </td>
       <td className="py-2 px-4">{getSprintNames(task.sprints).join(", ") || "None"}</td>
       <td className="py-2 px-4">
         <div className="flex gap-2">
           {isEditing ? (
-            <button onClick={handleSaveClick} className="text-green-500">
+            <Button onClick={handleSaveClick} className="text-green-500">
               Save
-            </button>
+            </Button>
           ) : (
             <PencilLineIcon onClick={handleEditClick} className="h-5 w-5 text-gray-500 cursor-pointer" />
           )}
