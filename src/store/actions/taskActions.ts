@@ -1,4 +1,5 @@
 import { PRIORITIES_LIST, STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
+import { useDataViewStore } from "../useDataViewStore";
 
 export const taskActions = (set, get) => ({
   addTask: (task) => {
@@ -80,6 +81,26 @@ export const taskActions = (set, get) => ({
     );
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
     set({ customColumns: updatedColumns });
+  },
+  updateCustomColumnFilter: (columnKey, filterStatus, filterValue) => {
+    const updatedColumns = get().customColumns.map((col) =>
+      col.key === columnKey
+        ? {
+            ...col,
+            filter: filterStatus,
+            filterValue: filterStatus ? filterValue : undefined,
+          }
+        : col
+    );
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
+    set({ customColumns: updatedColumns });
+
+    // Clear the filter value from DataViewStore when disabling filter
+    if (!filterStatus) {
+      const setFilter = useDataViewStore.getState().setFilter;
+
+      setFilter({ [columnKey]: undefined });
+    }
   },
   moveTask: (fromIndexOrId, toIndexOrPriority, isKanban) => {
     set((state) => {

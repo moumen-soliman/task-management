@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, MoreHorizontal, Pencil } from "lucide-react";
 import {
@@ -9,7 +9,6 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { useTaskStore } from "@/store/useTaskStore";
-import { useDataViewStore } from "@/store/useDataViewStore";
 import { useRouter } from "next/navigation";
 import { useSheetStore } from "@/store/useSheetStore";
 

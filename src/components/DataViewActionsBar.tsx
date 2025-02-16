@@ -13,6 +13,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTaskStore } from "@/store/useTaskStore";
 
 const DataViewActionsBar: React.FC = () => {
   const setFilter = useDataViewStore((state) => state.setFilter);
@@ -24,6 +25,7 @@ const DataViewActionsBar: React.FC = () => {
   const openSheet = useSheetStore((state) => state.openSheet);
   const resetSheet = useSheetStore((state) => state.resetSheet);
   const router = useRouter();
+  const customColumns = useTaskStore((state) => state.customColumns);
 
   const handleSortChange = (column: keyof Task, direction: "asc" | "desc" | null) => {
     if (!direction) {
@@ -78,6 +80,39 @@ const DataViewActionsBar: React.FC = () => {
         value={filters.title}
         onChange={(value) => handleSortChange("title", value as "asc" | "desc" | null)}
       />
+
+      {customColumns
+        .filter((column) => column.filter)
+        .map((column) => (
+          <div key={`${column.id}-${column.key}`}>
+            {column.type === "text" && (
+              <Input
+                type="text"
+                placeholder={`Search by ${column.label}`}
+                value={filters[column.id] || ""}
+                onChange={(e) => setFilter({ [column.id]: e.target.value })}
+              />
+            )}
+            {column.type === "number" && (
+              <Input
+                type="number"
+                placeholder={`Search by ${column.label}`}
+                value={filters[column.id] || ""}
+                onChange={(e) => setFilter({ [column.id]: e.target.value })}
+              />
+            )}
+            {column.type === "checkbox" && (
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={filters[column.id] || false}
+                  onChange={(e) => setFilter({ [column.id]: e.target.checked })}
+                />
+                <label className="ml-2">{column.label}</label>
+              </div>
+            )}
+          </div>
+        ))}
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
