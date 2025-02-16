@@ -8,7 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Kanban, Table } from "lucide-react";
 import DropdownFilter from "./DropdownFilter";
 import CustomColumnForm from "./CustomColumnForm";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const DataViewActionsBar: React.FC = () => {
   const setFilter = useDataViewStore((state) => state.setFilter);
@@ -83,7 +87,6 @@ const DataViewActionsBar: React.FC = () => {
           <CustomColumnForm />
         </DropdownMenuContent>
       </DropdownMenu>
-
 
       <div className="flex">
         <Button

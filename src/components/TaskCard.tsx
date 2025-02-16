@@ -170,28 +170,23 @@ const TaskCard = ({ task, index }) => {
       {customColumns.map((column) => (
         <td key={column.key} className="py-2 px-4">
           {isEditing ? (
-        column.type === 'checkbox' ? (
-          <Checkbox
-            checked={editableTask[column.key]}
-            onCheckedChange={(checked) => handleChange(column.key, checked)}
-          />
-        ) : (
-          <Input
-            type={column.type}
-            value={editableTask[column.key]}
-            onChange={(e) => handleChange(column.key, e.target.value)}
-            className="w-full border rounded px-2 py-1"
-          />
-        )
+            column.type === "checkbox" ? (
+              <Checkbox
+                checked={editableTask[column.key]}
+                onCheckedChange={(checked) => handleChange(column.key, checked)}
+              />
+            ) : (
+              <Input
+                type={column.type}
+                value={editableTask[column.key]}
+                onChange={(e) => handleChange(column.key, e.target.value)}
+                className="w-full border rounded px-2 py-1"
+              />
+            )
+          ) : column.type === "checkbox" ? (
+            <Checkbox checked={task[column.key]} disabled />
           ) : (
-        column.type === 'checkbox' ? (
-          <Checkbox
-            checked={task[column.key]}
-            disabled
-          />
-        ) : (
-          task[column.key]
-        )
+            task[column.key]
           )}
         </td>
       ))}

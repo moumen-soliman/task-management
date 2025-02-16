@@ -34,7 +34,15 @@ const CustomColumnForm: React.FC = () => {
     },
   });
 
-  const { register, handleSubmit, control, watch, setValue, formState: { errors }, reset } = methods;
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+    reset,
+  } = methods;
   const type = watch("type");
 
   const onSubmit = (data) => {
@@ -47,11 +55,18 @@ const CustomColumnForm: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-md">
-        <Input placeholder="Field Name" {...register("label")} onChange={(e) => {
-          setValue("label", e.target.value);
-          setValue("key", e.target.value.toLowerCase().replace(/\s/g, "_"));
-        }} />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-md"
+      >
+        <Input
+          placeholder="Field Name"
+          {...register("label")}
+          onChange={(e) => {
+            setValue("label", e.target.value);
+            setValue("key", e.target.value.toLowerCase().replace(/\s/g, "_"));
+          }}
+        />
         {errors.label && <FormMessage>{errors.label.message}</FormMessage>}
 
         <Controller
@@ -72,11 +87,13 @@ const CustomColumnForm: React.FC = () => {
         />
         {errors.type && <FormMessage>{errors.type.message}</FormMessage>}
 
-        {type === "text" && (
-          <Input placeholder="Default Value" {...register("defaultValue")} />
-        )}
+        {type === "text" && <Input placeholder="Default Value" {...register("defaultValue")} />}
         {type === "number" && (
-          <Input type="number" placeholder="Default Value" {...register("defaultValue", { valueAsNumber: true })} />
+          <Input
+            type="number"
+            placeholder="Default Value"
+            {...register("defaultValue", { valueAsNumber: true })}
+          />
         )}
         {type === "checkbox" && (
           <Controller

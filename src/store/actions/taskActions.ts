@@ -1,6 +1,5 @@
 import { PRIORITIES_LIST, STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
 
-
 export const taskActions = (set, get) => ({
   addTask: (task) => {
     const newTask = { id: get().tasks.length + 1, ...task, deleted: false };
@@ -52,7 +51,7 @@ export const taskActions = (set, get) => ({
   addCustomColumn: (column) => {
     const updatedColumns = [...get().customColumns, column];
     set({ customColumns: updatedColumns });
-    const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || '[]');
+    const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]");
     const mergedColumns = [...existingColumns, column];
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(mergedColumns));
 
