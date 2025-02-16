@@ -24,7 +24,7 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
   };
 
   const handleTaskClick = (taskId: string) => {
-    if (!isEditing) {
+    if (!isEditing && task) {
       openSheet("edit", Number(taskId));
       router.replace(`?task=${taskId}`, undefined);
     }
@@ -61,11 +61,11 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem className="cursor-pointer" onClick={() => softDeleteTask(task.id)}>
-            Delete
-          </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer" onClick={() => handleTaskClick(task.id)}>
             Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer" onClick={() => softDeleteTask(task.id)}>
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

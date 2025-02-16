@@ -18,7 +18,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TableActions from "@/components/Table/TableActions";
 
 const TaskCard = ({ task, index }) => {
-  const { softDeleteTask, getAssignedUser, getSprintNames, moveTask } = useTaskStore();
+  const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } =
+    useTaskStore();
   const toggleSelection = useDataViewStore((state) => state.toggleSelection);
   const selectedIds = useDataViewStore((state) => state.selectedIds);
   const ref = useRef(null);
@@ -165,6 +166,20 @@ const TaskCard = ({ task, index }) => {
       <td className="py-2 px-4">
         <InfoLabel name={getSprintNames(task.sprints).join(", ") || "None"} />
       </td>
+      {customColumns.map((column) => (
+        <td key={column.key} className="py-2 px-2">
+          {isEditing ? (
+            <input
+              type="text"
+              value={editableTask[column.key]}
+              onChange={(e) => handleChange(column.key, e.target.value)}
+              className="w-full border rounded px-2 py-1"
+            />
+          ) : (
+            task[column.key]
+          )}
+        </td>
+      ))}
       <td className="py-2 px-4">
         <TableActions
           task={task}

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Kanban, Table } from "lucide-react";
 import DropdownFilter from "./DropdownFilter";
+import CustomColumnForm from "./CustomColumnForm";
 
 const DataViewActionsBar: React.FC = () => {
   const setFilter = useDataViewStore((state) => state.setFilter);
@@ -72,6 +73,8 @@ const DataViewActionsBar: React.FC = () => {
         value={filters.title}
         onChange={(value) => handleSortChange("title", value as "asc" | "desc" | null)}
       />
+
+      <CustomColumnForm />
 
       <div className="flex">
         <Button

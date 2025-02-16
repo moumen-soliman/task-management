@@ -1,6 +1,7 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDataViewStore, useFilteredTasks } from "@/store/useDataViewStore";
+import { useTaskStore } from "@/store/useTaskStore";
 
 const taskColumns = [
   { key: "title", label: "Title" },
@@ -14,6 +15,7 @@ const TableHeader: React.FC = () => {
   const { selectedIds, selectAll, clearSelection } = useDataViewStore();
   const filteredTasks = useFilteredTasks(); // ✅ Get only visible tasks
   const isAllSelected = filteredTasks.length > 0 && selectedIds.length === filteredTasks.length;
+  const { customColumns, removeCustomColumn } = useTaskStore();
 
   const handleSelectAll = () => {
     if (isAllSelected) {
@@ -35,6 +37,15 @@ const TableHeader: React.FC = () => {
             className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
           >
             {column.label}
+          </th>
+        ))}
+        {customColumns.map((column) => (
+          <th
+            key={column.key}
+            className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
+          >
+            {column.label}
+            <button onClick={() => removeCustomColumn(column.key)}>🗑️</button>
           </th>
         ))}
         <th className="w-24 px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left">

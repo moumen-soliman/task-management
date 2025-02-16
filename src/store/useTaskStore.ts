@@ -13,6 +13,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   sprints: [],
   loading: true,
   customFields: [],
+  customColumns: [],
 
   fetchAllData: async () => {
     set({ loading: true });
@@ -25,7 +26,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     set({ tasks, users, sprints, loading: false });
   },
-
   ...taskActions(set, get),
   ...userActions(set, get),
   ...sprintActions(set, get),

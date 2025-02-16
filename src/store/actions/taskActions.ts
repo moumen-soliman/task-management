@@ -48,6 +48,27 @@ export const taskActions = (set, get) => ({
     return get().tasks.find((task) => task.id === taskId);
   },
 
+  addCustomColumn: (column) => {
+    const updatedColumns = [...get().customColumns, column];
+    set({ customColumns: updatedColumns });
+
+    get().tasks.forEach((task) => {
+      const updatedTask = { ...task, [column.key]: column.defaultValue };
+      get().updateTask(task.id, updatedTask);
+    });
+  },
+
+  removeCustomColumn: (columnKey) => {
+    const updatedColumns = get().customColumns.filter((col) => col.key !== columnKey);
+    set({ customColumns: updatedColumns });
+  },
+
+  updateCustomColumn: (columnKey, newColumn) => {
+    const updatedColumns = get().customColumns.map((col) =>
+      col.key === columnKey ? newColumn : col
+    );
+    set({ customColumns: updatedColumns });
+  },
   moveTask: (fromIndexOrId, toIndexOrPriority, isKanban) => {
     set((state) => {
       let tasks = [...state.tasks];
