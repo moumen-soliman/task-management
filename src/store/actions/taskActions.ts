@@ -1,4 +1,5 @@
-import { PRIORITIES_LIST, STORAGE_KEY } from "@/constants/tasks";
+import { PRIORITIES_LIST, STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
+
 
 export const taskActions = (set, get) => ({
   addTask: (task) => {
@@ -51,6 +52,9 @@ export const taskActions = (set, get) => ({
   addCustomColumn: (column) => {
     const updatedColumns = [...get().customColumns, column];
     set({ customColumns: updatedColumns });
+    const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || '[]');
+    const mergedColumns = [...existingColumns, column];
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(mergedColumns));
 
     get().tasks.forEach((task) => {
       const updatedTask = { ...task, [column.key]: column.defaultValue };
@@ -60,13 +64,22 @@ export const taskActions = (set, get) => ({
 
   removeCustomColumn: (columnKey) => {
     const updatedColumns = get().customColumns.filter((col) => col.key !== columnKey);
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
     set({ customColumns: updatedColumns });
+
+    const updatedTasks = get().tasks.map((task) => {
+      const { [columnKey]: _, ...rest } = task;
+      return rest;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+    set({ tasks: updatedTasks });
   },
 
   updateCustomColumn: (columnKey, newColumn) => {
     const updatedColumns = get().customColumns.map((col) =>
       col.key === columnKey ? newColumn : col
     );
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
     set({ customColumns: updatedColumns });
   },
   moveTask: (fromIndexOrId, toIndexOrPriority, isKanban) => {
