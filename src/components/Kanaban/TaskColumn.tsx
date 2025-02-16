@@ -1,6 +1,7 @@
 import { useDrop } from "react-dnd";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TaskCard from "@/components/TaskCard";
+import { Task } from "@/types/Tasks";
 
 const TaskColumn = ({
   priority,
@@ -9,7 +10,7 @@ const TaskColumn = ({
 }: {
   priority: string;
   moveTask: (taskId: number, newPriority: string, isKanban: boolean) => void;
-  filteredTasks: any[];
+  filteredTasks: Task[];
 }) => {
   const [{ isOver }, drop] = useDrop({
     accept: "TASK",

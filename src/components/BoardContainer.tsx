@@ -12,10 +12,10 @@ import { useDataViewStore } from "@/store/useDataViewStore";
 export const TaskActionContext = createContext({ handleAddTaskClick: () => {} });
 
 export default function BoardContainer() {
+  const { openSheet } = useSheetStore();
+  const searchParams = useSearchParams();
   const dataView = useDataViewStore((state) => state.dataView);
   const fetchAllData = useTaskStore((state) => state.fetchAllData);
-  const searchParams = useSearchParams();
-  const { openSheet } = useSheetStore();
 
   useEffect(() => {
     fetchAllData();

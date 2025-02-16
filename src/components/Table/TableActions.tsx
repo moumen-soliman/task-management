@@ -11,6 +11,7 @@ import {
 import { useTaskStore } from "@/store/useTaskStore";
 import { useDataViewStore } from "@/store/useDataViewStore";
 import { useRouter } from "next/navigation";
+import { useSheetStore } from "@/store/useSheetStore";
 
 const TableActions = ({
   task,
@@ -20,7 +21,7 @@ const TableActions = ({
   editableTask
 }) => {
   const updateTask = useTaskStore((state) => state.updateTask);
-  const openSheet = useDataViewStore((state) => state.openSheet);
+  const openSheet = useSheetStore((state) => state.openSheet);
   const router = useRouter();
 
   const handleSaveClick = () => {
