@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm, FormProvider, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useTaskStore } from "@/store/useTaskStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,58 +12,88 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FormMessage } from "./ui/form";
+
+const schema = z.object({
+  label: z.string().min(1, "Field Name is required"),
+  key: z.string().min(1, "Key is required"),
+  type: z.enum(["text", "number", "checkbox"]),
+  defaultValue: z.union([z.string(), z.number(), z.boolean()]),
+});
 
 const CustomColumnForm: React.FC = () => {
-  const [label, setLabel] = useState("");
-  const [key, setKey] = useState("");
-  const [type, setType] = useState("text");
-  const [defaultValue, setDefaultValue] = useState("");
-  const { addCustomColumn } = useTaskStore();
+  const { addCustomColumn, customColumns } = useTaskStore();
+  const methods = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      label: "",
+      key: "",
+      type: "text",
+      defaultValue: "",
+    },
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addCustomColumn({ label, key, type, defaultValue });
-    setLabel("");
-    setKey("");
-    setType("text");
-    setDefaultValue("");
+  const { register, handleSubmit, control, watch, setValue, formState: { errors }, reset } = methods;
+  const type = watch("type");
+
+  const onSubmit = (data) => {
+    if (customColumns.some((column) => column.key === data.key)) {
+      return;
+    }
+    addCustomColumn(data);
+    reset();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-md"
-    >
-        <Input
-          type="text"
-          placeholder="Field Name"
-          value={label}
-          onChange={(e) => {
-            setLabel(e.target.value)
-            setKey(e.target.value.toLowerCase().replace(/\s/g, "_"))
-          }}
-          required
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-md">
+        <Input placeholder="Field Name" {...register("label")} onChange={(e) => {
+          setValue("label", e.target.value);
+          setValue("key", e.target.value.toLowerCase().replace(/\s/g, "_"));
+        }} />
+        {errors.label && <FormMessage>{errors.label.message}</FormMessage>}
+
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <Select {...field} onValueChange={field.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Field Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="text">Text</SelectItem>
+                <SelectItem value="number">Number</SelectItem>
+                <SelectItem value="checkbox">Checkbox</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         />
-      <Select value={type} onValueChange={setType}>
-        <SelectTrigger>
-          <SelectValue placeholder="Select Field Type" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="text">Text</SelectItem>
-          <SelectItem value="number">Number</SelectItem>
-          <SelectItem value="checkbox">Checkbox</SelectItem>
-        </SelectContent>
-      </Select>
-      <Input
-        type="text"
-        placeholder="Default Value (Optional)"
-        value={defaultValue}
-        onChange={(e) => setDefaultValue(e.target.value)}
-      />
-      <Button type="submit" className="w-full">
-        Add Field
-      </Button>
-    </form>
+        {errors.type && <FormMessage>{errors.type.message}</FormMessage>}
+
+        {type === "text" && (
+          <Input placeholder="Default Value" {...register("defaultValue")} />
+        )}
+        {type === "number" && (
+          <Input type="number" placeholder="Default Value" {...register("defaultValue", { valueAsNumber: true })} />
+        )}
+        {type === "checkbox" && (
+          <Controller
+            name="defaultValue"
+            control={control}
+            render={({ field }) => (
+              <Checkbox checked={!!field.value} onCheckedChange={field.onChange} />
+            )}
+          />
+        )}
+        {errors.defaultValue && <FormMessage>{errors.defaultValue.message}</FormMessage>}
+
+        <Button type="submit" className="w-full">
+          Add Field
+        </Button>
+      </form>
+    </FormProvider>
   );
 };
 

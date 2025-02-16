@@ -16,6 +16,7 @@ import PriorityHandler from "./PriorityHandler";
 import InfoLabel from "./InfoLabel";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableActions from "@/components/Table/TableActions";
+import { Input } from "./ui/input";
 
 const TaskCard = ({ task, index }) => {
   const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } =
@@ -167,16 +168,30 @@ const TaskCard = ({ task, index }) => {
         <InfoLabel name={getSprintNames(task.sprints).join(", ") || "None"} />
       </td>
       {customColumns.map((column) => (
-        <td key={column.key} className="py-2 px-2">
+        <td key={column.key} className="py-2 px-4">
           {isEditing ? (
-            <input
-              type="text"
-              value={editableTask[column.key]}
-              onChange={(e) => handleChange(column.key, e.target.value)}
-              className="w-full border rounded px-2 py-1"
-            />
+        column.type === 'checkbox' ? (
+          <Checkbox
+            checked={editableTask[column.key]}
+            onCheckedChange={(checked) => handleChange(column.key, checked)}
+          />
+        ) : (
+          <Input
+            type={column.type}
+            value={editableTask[column.key]}
+            onChange={(e) => handleChange(column.key, e.target.value)}
+            className="w-full border rounded px-2 py-1"
+          />
+        )
           ) : (
-            task[column.key]
+        column.type === 'checkbox' ? (
+          <Checkbox
+            checked={task[column.key]}
+            disabled
+          />
+        ) : (
+          task[column.key]
+        )
           )}
         </td>
       ))}
