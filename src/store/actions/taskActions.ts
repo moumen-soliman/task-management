@@ -1,4 +1,4 @@
-import { STORAGE_KEY } from "@/constants/tasks";
+import { PRIORITIES_LIST, STORAGE_KEY } from "@/constants/tasks";
 
 export const taskActions = (set, get) => ({
   addTask: (task) => {
@@ -36,20 +36,52 @@ export const taskActions = (set, get) => ({
     set({ tasks: updatedTasks });
   },
   updateTaskPriority: (taskId, newPriority) => {
-    const updatedTasks = get().tasks.map((task) =>
-      task.id === taskId ? { ...task, priority: newPriority } : task
-    );
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state) => {
+      const updatedTasks = state.tasks.map((task) =>
+        task.id === taskId ? { ...task, priority: newPriority } : task
+      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+      return { tasks: updatedTasks };
+    });
   },
   getTaskById: (taskId) => {
     return get().tasks.find((task) => task.id === taskId);
   },
-  moveTask: (dragIndex, hoverIndex) => {
-    const tasks = Array.from(get().tasks);
-    const [draggedTask] = tasks.splice(dragIndex, 1);
-    tasks.splice(hoverIndex, 0, draggedTask);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    set({ tasks });
+
+  moveTask: (fromIndexOrId, toIndexOrPriority, isKanban) => {
+    set((state) => {
+      let tasks = [...state.tasks];
+
+      if (isKanban && typeof toIndexOrPriority === "string") {
+        // Kanban View: Change priority
+        const taskIndex = tasks.findIndex((task) => task.id === fromIndexOrId);
+        if (taskIndex !== -1) {
+          tasks = tasks.map((task, index) =>
+            index === taskIndex ? { ...task, priority: toIndexOrPriority } : task
+          );
+        }
+      } else if (
+        !isKanban &&
+        typeof fromIndexOrId === "number" &&
+        typeof toIndexOrPriority === "number"
+      ) {
+        // Table View: Change index
+        if (
+          fromIndexOrId < 0 ||
+          fromIndexOrId >= tasks.length ||
+          toIndexOrPriority < 0 ||
+          toIndexOrPriority >= tasks.length
+        ) {
+          return state;
+        }
+        const updatedTasks = [...tasks];
+        const [movedTask] = updatedTasks.splice(fromIndexOrId, 1);
+        updatedTasks.splice(toIndexOrPriority, 0, movedTask);
+        tasks = updatedTasks;
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      return { tasks: [...tasks] }; // Ensure state updates correctly
+    });
   },
 });

@@ -1,4 +1,4 @@
-import React, { use, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import {
   Select,
@@ -10,30 +10,17 @@ import {
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTaskStore } from "@/store/useTaskStore";
-import { useSheetStore } from "@/store/useSheetStore";
-import { useRouter } from "next/navigation";
-import { Delete, DeleteIcon, PencilLineIcon } from "lucide-react";
 import AssignedUsers from "./AssignedUsers";
-import { Button } from "@/components/ui/button";
 import { useDataViewStore } from "@/store/useDataViewStore";
 import PriorityHandler from "./PriorityHandler";
 import InfoLabel from "./InfoLabel";
+import { Checkbox } from "@/components/ui/checkbox";
+import TableActions from "@/components/Table/TableActions";
 
 const TaskCard = ({ task, index }) => {
-  const {
-    updateTask,
-    softDeleteTask,
-    undoDeleteTask,
-    assignUserToTask,
-    addTaskToSprint,
-    removeTaskFromSprint,
-    getAssignedUser,
-    getSprintNames,
-    moveTask,
-  } = useTaskStore();
-
-  const { openSheet } = useSheetStore();
-  const router = useRouter();
+  const { softDeleteTask, getAssignedUser, getSprintNames, moveTask } = useTaskStore();
+  const toggleSelection = useDataViewStore((state) => state.toggleSelection);
+  const selectedIds = useDataViewStore((state) => state.selectedIds);
   const ref = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableTask, setEditableTask] = useState(task);
@@ -41,40 +28,33 @@ const TaskCard = ({ task, index }) => {
 
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
-    item: { id: task.id, status: task.status, index },
+    item: { id: task.id, index, priority: task.priority },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
+  // Only use drop for table view
   const [, drop] = useDrop({
     accept: "TASK",
     hover(item: { index: number }) {
       if (dataView === "table" && item.index !== index) {
-        moveTask(item.index, index);
+        moveTask(item.index, index, false);
         item.index = index;
-      }
-    },
-    drop: (item: { id: number; status: string }) => {
-      if (dataView === "kanban") {
-        moveTask(item.id, task.status);
       }
     },
   });
 
-  drag(drop(ref));
-
-  const handleTaskClick = (taskId: string) => {
-    if (!isEditing) {
-      openSheet("edit", Number(taskId));
-      router.replace(`?task=${taskId}`, undefined);
+  // Apply refs correctly based on view
+  useEffect(() => {
+    if (ref.current) {
+      if (dataView === "kanban") {
+        drag(ref.current);
+      } else {
+        drag(drop(ref.current));
+      }
     }
-  };
-
-  const handleSaveClick = () => {
-    updateTask(task.id, editableTask);
-    setIsEditing(false);
-  };
+  }, [drag, drop, dataView]);
 
   const handleChange = (field, value) => {
     setEditableTask({ ...editableTask, [field]: value });
@@ -82,24 +62,29 @@ const TaskCard = ({ task, index }) => {
 
   if (dataView === "kanban") {
     return (
-      <div ref={drag} key={task.id} className={`p-1 rounded-lg  ${isDragging ? "opacity-50" : ""}`}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-semibold m-w-[50%]">{task.title}</CardTitle>
+      <div ref={ref} key={task.id}>
+        <Card
+          className={`${selectedIds.includes(task.id) && "border-gray-500 "} ${isDragging ? "opacity-50" : ""}`}
+        >
+          <CardHeader className="flex">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={selectedIds.includes(task.id)}
+                onCheckedChange={() => toggleSelection(task.id)}
+              />
+              <CardTitle className="font-semibold">{task.title}</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <CardDescription className="text-sm text-gray-600">{task.description}</CardDescription>
             <CardDescription className="text-sm text-gray-600">
               <AssignedUsers getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
             </CardDescription>
-            <div className="flex items-center justify-between pt-5">
-              <div className="flex gap-2 items-center">
-                <InfoLabel name={`#${task.id}`} />
-                {getSprintNames(task.sprints).map((sprint, index) => (
-                  <InfoLabel name={sprint} key={`${sprint}-${index}`} />
-                ))}
-              </div>
-              <PriorityHandler priority={task.priority} />
+            <div className="flex gap-2 items-center pt-5">
+              <InfoLabel name={`#${task.id}`} />
+              {getSprintNames(task.sprints).map((sprint, index) => (
+                <InfoLabel name={sprint} key={`${sprint}-${index}`} />
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -108,8 +93,17 @@ const TaskCard = ({ task, index }) => {
   }
 
   return (
-    <tr ref={ref} className={`border-b ${isDragging ? "opacity-50" : ""}`}>
-      <td className="py-2 px-4" onClick={() => handleTaskClick(task.id)}>
+    <tr
+      ref={ref}
+      className={`border-b ${selectedIds.includes(task.id) && "bg-gray-100 dark:bg-gray-800"} ${isDragging ? "opacity-50" : ""}`}
+    >
+      <td className="py-2 pl-2">
+        <Checkbox
+          checked={selectedIds.includes(task.id)}
+          onClick={() => toggleSelection(task.id)}
+        />
+      </td>
+      <td className="py-2 px-4">
         {isEditing ? (
           <input
             type="text"
@@ -173,29 +167,13 @@ const TaskCard = ({ task, index }) => {
         <InfoLabel name={getSprintNames(task.sprints).join(", ") || "None"} />
       </td>
       <td className="py-2 px-4">
-        <div className="flex gap-2">
-          {isEditing ? (
-            <Button onClick={handleSaveClick} className="text-green-500">
-              Save
-            </Button>
-          ) : (
-            <PencilLineIcon
-              onClick={() => setIsEditing(true)}
-              className="h-5 w-5 text-gray-500 cursor-pointer"
-            />
-          )}
-          {task.deleted ? (
-            <button onClick={() => undoDeleteTask(task.id)} className="text-blue-500">
-              Undo
-            </button>
-          ) : (
-            <>
-              <button onClick={() => softDeleteTask(task.id)} className="text-red-500">
-                <DeleteIcon className="h-5 w-5" />
-              </button>
-            </>
-          )}
-        </div>
+        <TableActions
+          task={task}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          softDeleteTask={softDeleteTask}
+          editableTask={editableTask}
+        />
       </td>
     </tr>
   );

@@ -3,27 +3,37 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import TaskCard from "@/components/TaskCard";
 
 const TaskColumn = ({
-  status,
+  priority,
   moveTask,
   filteredTasks,
 }: {
-  status: string;
-  moveTask: (taskId: number, newStatus: string) => void;
+  priority: string;
+  moveTask: (taskId: number, newPriority: string, isKanban: boolean) => void;
   filteredTasks: any[];
 }) => {
-  const [, drop] = useDrop({
+  const [{ isOver }, drop] = useDrop({
     accept: "TASK",
-    drop: (item: { id: number; status: string }) => {
-      moveTask(item.id, status);
+    drop: (item: { id: number; priority: string }) => {
+      if (item.priority !== priority) {
+        moveTask(item.id, priority, true);
+      }
     },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
   });
 
   return (
-    <ScrollArea ref={drop} key={status} className="flex-1 p-4 rounded-lg border h-[80vh]">
-      <h2 className="text-xl font-bold mb-4 capitalize">{status.replaceAll("_", " ")}</h2>
+    <ScrollArea
+      ref={drop}
+      className={`flex-1 p-4 rounded-lg border h-[80vh] min-w-[320px] max-w-xs snap-start ${
+        isOver ? "bg-gray-100" : ""
+      }`}
+    >
+      <h2 className="text-xl font-bold mb-4 capitalize">{priority.replaceAll("_", " ")}</h2>
       <div className="space-y-2">
         {filteredTasks
-          ?.filter((task) => task.status === status)
+          ?.filter((task) => task.priority === priority)
           .map((task) => <TaskCard key={task.id} task={task} />)}
       </div>
     </ScrollArea>

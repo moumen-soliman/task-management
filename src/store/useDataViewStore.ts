@@ -15,6 +15,10 @@ interface DataViewState {
     priority: string;
     status: string;
   };
+  selectedIds: number[];
+  toggleSelection: (id: number) => void;
+  selectAll: (ids: number[]) => void;
+  clearSelection: () => void;
   setVisibleCount: (count: number | ((prev: number) => number)) => void;
   setSortColumn: (column: keyof Task) => void;
   setSortDirection: (direction: "asc" | "desc") => void;
@@ -24,6 +28,7 @@ interface DataViewState {
 export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
   dataView: "table",
   filteredTasksList: [],
+  selectedIds: [],
   visibleCount: 10,
   sortColumn: null,
   sortDirection: null,
@@ -43,6 +48,27 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
     set((state) => ({
       filters: { ...state.filters, ...filter },
     })),
+  toggleSelection: (id) => {
+    set((state) => {
+      const isSelected = state.selectedIds.includes(id);
+      return {
+        selectedIds: isSelected
+          ? state.selectedIds.filter((selectedId) => selectedId !== id)
+          : [...state.selectedIds, id],
+      };
+    });
+  },
+
+  selectAll: (ids) => set({ selectedIds: ids }),
+
+  clearSelection: () => set({ selectedIds: [] }),
+
+  updateSelectedTasks: (updates) => {
+    const { selectedIds } = get();
+    const { updateTask } = useTaskStore.getState();
+
+    selectedIds.forEach((taskId) => updateTask(taskId, updates));
+  },
 }));
 
 export const useDataViewStore = createSelectorHooks(useDataViewStoreBase);

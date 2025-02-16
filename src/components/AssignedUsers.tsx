@@ -1,5 +1,6 @@
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useMemo } from "react";
 
 interface User {
   id: number;
@@ -13,7 +14,8 @@ interface AssignedUsersProps {
 }
 
 export default function AssignedUsers({ getAssignedUser }: AssignedUsersProps) {
-  const assignedUsers = getAssignedUser;
+  const assignedUsers = useMemo(() => getAssignedUser, [getAssignedUser]);
+
   return (
     <div className="flex -space-x-2 overflow-hidden">
       {assignedUsers.length > 0 ? (
@@ -33,7 +35,7 @@ export default function AssignedUsers({ getAssignedUser }: AssignedUsersProps) {
           </TooltipProvider>
         ))
       ) : (
-        <span className="text-gray-500">None</span>
+        <span className="text-gray-500">Not Assigned</span>
       )}
     </div>
   );
