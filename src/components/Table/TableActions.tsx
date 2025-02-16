@@ -13,13 +13,7 @@ import { useDataViewStore } from "@/store/useDataViewStore";
 import { useRouter } from "next/navigation";
 import { useSheetStore } from "@/store/useSheetStore";
 
-const TableActions = ({
-  task,
-  isEditing,
-  setIsEditing,
-  softDeleteTask,
-  editableTask
-}) => {
+const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableTask }) => {
   const updateTask = useTaskStore((state) => state.updateTask);
   const openSheet = useSheetStore((state) => state.openSheet);
   const router = useRouter();

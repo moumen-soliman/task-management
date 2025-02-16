@@ -24,17 +24,22 @@ const TableHeader: React.FC = () => {
   };
 
   return (
-    <thead>
-      <tr>
-        <th className="py-2 border-b-2 border-gray-300 text-left  pl-2">
+    <thead className="border bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
+      <tr className="h-12">
+        <th className="w-12 border-b-2 border-gray-300 dark:border-gray-800 text-left pl-2">
           <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} />
         </th>
         {taskColumns.map((column) => (
-          <th key={column.key} className="py-2 px-4 border-b-2 border-gray-300 text-left">
+          <th
+            key={column.key}
+            className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
+          >
             {column.label}
           </th>
         ))}
-        <th className="py-2 px-4 border-b-2 border-gray-300 text-left">Actions</th>
+        <th className="w-24 px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left">
+          Actions
+        </th>
       </tr>
     </thead>
   );

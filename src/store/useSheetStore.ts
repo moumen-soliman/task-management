@@ -15,11 +15,11 @@ export const useSheetStore = create<SheetState>((set) => ({
       taskDefaults: typeof taskOrId === "object" ? taskOrId : undefined,
     });
   },
-  
+
   closeSheet: () => {
     window.history.replaceState(null, "", window.location.pathname);
     set({ isOpen: false, mode: null, taskId: null, taskDefaults: undefined });
   },
-  
+
   resetSheet: () => set({ isOpen: false, mode: null, taskId: null, taskDefaults: undefined }),
 }));

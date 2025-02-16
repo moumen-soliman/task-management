@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { ThemeToggleButton } from "@/components/ThemeToggleButton";
+import Container from "@/components/ui/container";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,7 @@ export default function RootLayout({
       <body className={`${inter.className}`}>
         <ThemeProvider>
           <ThemeToggleButton />
-          {children}
+          <Container>{children}</Container>
         </ThemeProvider>
       </body>
     </html>

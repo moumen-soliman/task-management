@@ -64,7 +64,7 @@ const TaskCard = ({ task, index }) => {
     return (
       <div ref={ref} key={task.id}>
         <Card
-          className={`${selectedIds.includes(task.id) && "border-gray-500 "} ${isDragging ? "opacity-50" : ""}`}
+          className={`${selectedIds.includes(task.id) && "border-gray-500 "} ${isDragging ? "opacity-50" : ""} cursor-pointer hover:border-black`}
         >
           <CardHeader className="flex">
             <div className="flex items-center gap-3">
@@ -76,7 +76,6 @@ const TaskCard = ({ task, index }) => {
             </div>
           </CardHeader>
           <CardContent>
-            <CardDescription className="text-sm text-gray-600">{task.description}</CardDescription>
             <CardDescription className="text-sm text-gray-600">
               <AssignedUsers getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
             </CardDescription>
@@ -95,7 +94,7 @@ const TaskCard = ({ task, index }) => {
   return (
     <tr
       ref={ref}
-      className={`border-b ${selectedIds.includes(task.id) && "bg-gray-100 dark:bg-gray-800"} ${isDragging ? "opacity-50" : ""}`}
+      className={`border-b h-12 table-fixed w-full ${selectedIds.includes(task.id) ? "bg-gray-100 dark:bg-gray-800" : ""} ${isDragging ? "opacity-50" : ""}`}
     >
       <td className="py-2 pl-2">
         <Checkbox
@@ -103,7 +102,7 @@ const TaskCard = ({ task, index }) => {
           onClick={() => toggleSelection(task.id)}
         />
       </td>
-      <td className="py-2 px-4">
+      <td className="w-[420px] truncate whitespace-wrap overflow-hidden">
         {isEditing ? (
           <input
             type="text"

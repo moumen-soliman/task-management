@@ -70,6 +70,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+[data-radix-scroll-area-viewport] {
+  overflow-x: auto !important;
+}
+
 .tiptap {
   min-height: 15.625rem;
 
