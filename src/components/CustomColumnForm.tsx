@@ -31,13 +31,22 @@ const CustomColumnForm: React.FC = () => {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-md"
     >
-      <Input
-        type="text"
-        placeholder="Field Name (Column Label)"
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        required
-      />
+      <div className="flex flex-col gap-2">
+        <Input
+          type="text"
+          placeholder="Field Label"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          required
+        />
+        <Input
+          type="text"
+          placeholder="Field Name (Column Key)"
+          value={key}
+          onChange={(e) => setKey(e.target.value)}
+          required
+        />
+      </div>
       <Select value={type} onValueChange={setType}>
         <SelectTrigger>
           <SelectValue placeholder="Select Field Type" />
