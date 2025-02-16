@@ -27,7 +27,7 @@ const TaskColumn = ({
     <ScrollArea
       ref={drop}
       className={`flex-1 p-4 rounded-lg border h-[80vh] min-w-[320px] max-w-xs snap-start ${
-        isOver ? "bg-gray-100" : ""
+        isOver ? "bg-gray-100 dark:bg-gray-800" : ""
       }`}
     >
       <h2 className="text-xl font-bold mb-4 capitalize">{priority.replaceAll("_", " ")}</h2>
