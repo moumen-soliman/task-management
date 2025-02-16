@@ -50,14 +50,15 @@ export const taskActions = (set, get) => ({
   },
 
   addCustomColumn: (column) => {
-    const updatedColumns = [...get().customColumns, column];
-    set({ customColumns: updatedColumns });
     const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]");
-    const mergedColumns = [...existingColumns, column];
+    const newColumn = { ...column, id: (existingColumns.length + 1) };
+    const updatedColumns = [...get().customColumns, newColumn];
+    set({ customColumns: updatedColumns });
+    const mergedColumns = [...existingColumns, newColumn];
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(mergedColumns));
 
     get().tasks.forEach((task) => {
-      const updatedTask = { ...task, [column.key]: column.defaultValue };
+      const updatedTask = { ...task, [newColumn.key]: newColumn.defaultValue };
       get().updateTask(task.id, updatedTask);
     });
   },
@@ -135,7 +136,7 @@ export const taskActions = (set, get) => ({
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-      return { tasks: [...tasks] }; // Ensure state updates correctly
+      return { tasks: [...tasks] };
     });
   },
 });

@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 interface DropdownFilterProps<T> {
   label: string;
