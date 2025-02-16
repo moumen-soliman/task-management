@@ -14,17 +14,23 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function TaskForm({ mode, task }: CreateTaskFormProps) {
   const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
-  const { closeSheet } = useSheetStore();
+  const { closeSheet, taskDefaults } = useSheetStore();
   const { toast } = useToast();
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
-    defaultValues: getDefaultValues(mode, task, []),
+    defaultValues: {
+      ...getDefaultValues(mode, task, []),
+      ...(taskDefaults || {}),
+    },
   });
 
   useEffect(() => {
-    form.reset(getDefaultValues(mode, mode === "edit" ? task : undefined, []));
-  }, [task, mode, form, customFields]);
+    form.reset({
+      ...getDefaultValues(mode, mode === "edit" ? task : undefined, []),
+      ...(taskDefaults || {}),
+    });
+  }, [task, mode, form, customFields, taskDefaults]);
 
   const onSubmit = (values: TaskFormValues) => {
     const taskData = {
