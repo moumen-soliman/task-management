@@ -56,7 +56,11 @@ const DataViewActionsBar: React.FC = () => {
           value={filters.title || ""}
           onChange={(e) => setFilter({ title: e.target.value })}
         />
-        <X className="absolute right-2 cursor-pointer" size={16} onClick={() => setFilter({ title: undefined })} />
+        <X
+          className="absolute right-2 cursor-pointer"
+          size={16}
+          onClick={() => setFilter({ title: undefined })}
+        />
       </div>
 
       <DropdownFilter
@@ -92,7 +96,6 @@ const DataViewActionsBar: React.FC = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-
       <div className="flex">
         <Button
           variant="ghost"
@@ -109,13 +112,12 @@ const DataViewActionsBar: React.FC = () => {
           <Kanban name="kanban" />
         </Button>
       </div>
-      
+
       {customColumns
         .filter((column) => column.filter)
         .map((column) => (
-          <div key={`${column.id}-${column.key}`}
-           className="relative flex items-center">
-            {column.type === "checkbox" ?(
+          <div key={`${column.id}-${column.key}`} className="relative flex items-center">
+            {column.type === "checkbox" ? (
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -123,17 +125,22 @@ const DataViewActionsBar: React.FC = () => {
                   onChange={(e) => setFilter({ [column.id]: e.target.checked })}
                 />
                 <label className="ml-2">{column.label}</label>
-                <X className="absolute right-2 cursor-pointer" size={16} onClick={() => setFilter({ [column.id]: "" })} />
+                <X
+                  className="absolute right-2 cursor-pointer"
+                  size={16}
+                  onClick={() => setFilter({ [column.id]: "" })}
+                />
               </div>
-            ): <Input
+            ) : (
+              <Input
                 type={column.type}
                 placeholder={`Search by ${column.label}`}
                 value={filters[column.id] || ""}
                 onChange={(e) => setFilter({ [column.id]: e.target.value })}
-              />}
+              />
+            )}
           </div>
         ))}
-
     </div>
   );
 };

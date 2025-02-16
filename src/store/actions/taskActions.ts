@@ -51,7 +51,7 @@ export const taskActions = (set, get) => ({
 
   addCustomColumn: (column) => {
     const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]");
-    const newColumn = { ...column, id: (existingColumns.length + 1) };
+    const newColumn = { ...column, id: existingColumns.length + 1 };
     const updatedColumns = [...get().customColumns, newColumn];
     set({ customColumns: updatedColumns });
     const mergedColumns = [...existingColumns, newColumn];
