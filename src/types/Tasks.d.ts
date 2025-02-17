@@ -6,7 +6,7 @@ export type Priorities = "none" | "low" | "medium" | "high" | "urgent";
 export type Status = "not_started" | "in_progress" | "completed";
 
 export type Task = {
-  id: number;
+  id: number | string;
   title: string;
   status: Status;
   priority: Priorities;

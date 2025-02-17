@@ -115,16 +115,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
 
   return (
     <tr
-      ref={ref}
       onClick={handleCardClick}
       className={`cursor-pointer border-b h-12 table-fixed w-full hover:bg-gray-200 dark:hover:bg-gray-800 
-        ${selectedIds.includes(task.id) ? "bg-gray-100 dark:bg-gray-800" : ""} 
+        ${selectedIds.includes(task.id as number) ? "bg-gray-100 dark:bg-gray-800" : ""} 
         ${isDragging ? "opacity-50" : ""}`}
     >
       <td className="py-2 pl-2">
         <Checkbox
-          checked={selectedIds.includes(task.id)}
-          onClick={() => toggleSelection(task.id)}
+          checked={selectedIds.includes(task.id as number)}
+          onClick={() => toggleSelection(task.id  as number)}
         />
       </td>
       <td className="w-[420px] truncate whitespace-wrap overflow-hidden">

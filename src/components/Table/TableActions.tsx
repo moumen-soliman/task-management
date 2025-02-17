@@ -12,18 +12,25 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { useRouter } from "next/navigation";
 import { useSheetStore } from "@/store/useSheetStore";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import { Task } from "@/types/Tasks";
 
-const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableTask }) => {
+const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableTask }: {
+  task: { id: number | string };
+  isEditing: boolean;
+  setIsEditing: (value: boolean) => void;
+  softDeleteTask: (id: number | string) => void;
+  editableTask: Partial<Task>;
+}) => {
   const updateTask = useTaskStore((state) => state.updateTask);
   const openSheet = useSheetStore((state) => state.openSheet);
   const router = useRouter();
 
   const handleSaveClick = () => {
-    updateTask(task.id, editableTask);
+    updateTask(Number(task.id), editableTask);
     setIsEditing(false);
   };
 
-  const handleTaskClick = (taskId: string) => {
+  const handleTaskClick = (taskId: number) => {
     if (!isEditing && task) {
       openSheet("edit", Number(taskId));
       router.replace(`?task=${taskId}`, undefined);
@@ -74,7 +81,7 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
             className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
-              handleTaskClick(task.id);
+              handleTaskClick(Number(task.id));
             }}
           >
             Edit
