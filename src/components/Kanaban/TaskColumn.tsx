@@ -42,7 +42,7 @@ const TaskColumn = ({
         <div className="space-y-2">
           {filteredTasks
             ?.filter((task) => task.priority === priority)
-            .map((task) => <TaskCard key={task.id} task={task} />)}
+            .map((task) => <TaskCard index={task.id} key={task.id} task={task} />)}
         </div>
       </ScrollArea>
     </div>

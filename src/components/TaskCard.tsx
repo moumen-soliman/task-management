@@ -48,10 +48,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
   const [, drop] = useDrop({
     accept: "TASK",
     hover(item: { index: number }) {
-      if (dataView === "table" && item.index !== index) {
         moveTask(item.index, index, false);
         item.index = index;
-      }
     },
   });
 
@@ -115,6 +113,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
 
   return (
     <tr
+      key={task.id}
       onClick={handleCardClick}
       className={`cursor-pointer border-b h-12 table-fixed w-full hover:bg-gray-200 dark:hover:bg-gray-800 
         ${selectedIds.includes(task.id as number) ? "bg-gray-100 dark:bg-gray-800" : ""} 
