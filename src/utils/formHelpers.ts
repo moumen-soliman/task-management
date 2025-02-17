@@ -1,4 +1,4 @@
-import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
+import { PRIORITIES_LIST, SKIPED_KEYS, STATUS_LIST } from "@/constants/tasks";
 import { TaskFormValues } from "@/schemas/taskSchema";
 
 export function getDefaultValues(
@@ -25,18 +25,7 @@ export function getDefaultValues(
       ),
       ...Object.entries(task).reduce(
         (acc, [key, value]) => {
-          if (
-            ![
-              "title",
-              "priority",
-              "status",
-              "description",
-              "sprints",
-              "assign",
-              "id",
-              "deleted",
-            ].includes(key)
-          ) {
+          if (!SKIPED_KEYS.includes(key)) {
             acc[key] = value;
           }
           return acc;

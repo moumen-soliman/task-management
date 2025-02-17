@@ -7,3 +7,22 @@ export const CUSTOM_COLUMNS_KEY = "custom_columns";
 // Task priorities and statuses
 export const PRIORITIES_LIST = ["none", "low", "medium", "high", "urgent"] as const;
 export const STATUS_LIST = ["not_started", "in_progress", "completed"] as const;
+
+export const SKIPED_KEYS = [
+  "id",
+  "title",
+  "priority",
+  "status",
+  "description",
+  "sprints",
+  "assign",
+  "deleted",
+];
+
+export const TASK_COLUMNS = [
+  { key: "title", label: "Title" },
+  { key: "status", label: "Status" },
+  { key: "priority", label: "Priority" },
+  { key: "assign", label: "Assign" },
+  { key: "sprint", label: "Sprint" },
+];

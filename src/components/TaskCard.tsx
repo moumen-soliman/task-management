@@ -17,6 +17,7 @@ import InfoLabel from "./InfoLabel";
 import { Checkbox } from "@/components/ui/checkbox";
 import TableActions from "@/components/Table/TableActions";
 import { Input } from "./ui/input";
+import { useTaskDetailsModalStore } from "@/store/useTaskDetailsModalStore";
 
 const TaskCard = ({ task, index }) => {
   const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } =
@@ -27,6 +28,7 @@ const TaskCard = ({ task, index }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableTask, setEditableTask] = useState(task);
   const dataView = useDataViewStore((state) => state.dataView);
+  const { openModal } = useTaskDetailsModalStore();
 
   const [{ isDragging }, drag] = useDrag({
     type: "TASK",
@@ -58,14 +60,26 @@ const TaskCard = ({ task, index }) => {
     }
   }, [drag, drop, dataView]);
 
-  const handleChange = (field, value) => {
+  const handleChange = (field: keyof typeof editableTask, value: any) => {
     setEditableTask({ ...editableTask, [field]: value });
   };
 
+  const handleCardClick = (e) => {
+    if (isEditing) return;
+
+    // Check if the clicked element is an interactive element
+    if (e.target.closest("button") || e.target.closest("input")) {
+      e.stopPropagation(); // Prevent modal from opening
+      return;
+    }
+
+    openModal(task);
+  };
   if (dataView === "kanban") {
     return (
       <div ref={ref} key={task.id}>
         <Card
+          onClick={handleCardClick}
           className={`${selectedIds.includes(task.id) && "border-gray-500 "} ${isDragging ? "opacity-50" : ""} cursor-pointer hover:border-black`}
         >
           <CardHeader className="flex">
@@ -96,7 +110,10 @@ const TaskCard = ({ task, index }) => {
   return (
     <tr
       ref={ref}
-      className={`border-b h-12 table-fixed w-full ${selectedIds.includes(task.id) ? "bg-gray-100 dark:bg-gray-800" : ""} ${isDragging ? "opacity-50" : ""}`}
+      onClick={handleCardClick}
+      className={`cursor-pointer border-b h-12 table-fixed w-full hover:bg-gray-200 dark:hover:bg-gray-800 
+        ${selectedIds.includes(task.id) ? "bg-gray-100 dark:bg-gray-800" : ""} 
+        ${isDragging ? "opacity-50" : ""}`}
     >
       <td className="py-2 pl-2">
         <Checkbox

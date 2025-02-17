@@ -13,14 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { Button } from "../ui/button";
-
-const taskColumns = [
-  { key: "title", label: "Title" },
-  { key: "status", label: "Status" },
-  { key: "priority", label: "Priority" },
-  { key: "assign", label: "Assign" },
-  { key: "sprint", label: "Sprint" },
-];
+import { TASK_COLUMNS } from "@/constants/tasks";
 
 const TableHeader: React.FC = () => {
   const { selectedIds, selectAll, clearSelection } = useDataViewStore();
@@ -46,7 +39,7 @@ const TableHeader: React.FC = () => {
         <th className="w-12 border-b-2 border-gray-300 dark:border-gray-800 text-left pl-2">
           <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} />
         </th>
-        {taskColumns.map((column) => (
+        {TASK_COLUMNS.map((column) => (
           <th
             key={column.key}
             className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
@@ -75,12 +68,8 @@ const TableHeader: React.FC = () => {
                   />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-200" />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                >
- <ConfirmDeleteDialog
-    onDelete={() => removeCustomColumn(column.key)}
-  />
+                <DropdownMenuItem className="cursor-pointer">
+                  <ConfirmDeleteDialog onDelete={() => removeCustomColumn(column.key)} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

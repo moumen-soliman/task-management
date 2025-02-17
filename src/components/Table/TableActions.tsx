@@ -61,7 +61,13 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleTaskClick(task.id)}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleTaskClick(task.id);
+            }}
+          >
             Edit
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer">

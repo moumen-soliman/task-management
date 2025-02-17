@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
+import { PRIORITIES_LIST, SKIPED_KEYS, STATUS_LIST } from "@/constants/tasks";
 import { Checkbox } from "@/components/ui/checkbox";
 import MultiSelect from "../ui/multiSelect";
 import CustomFieldEditor from "../CustomFieldEditor";
@@ -130,7 +130,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
               <SelectContent>
                 {sprints.map((sprint) => (
                   <SelectItem className="capitalize" key={sprint.id} value={String(sprint.id)}>
-                    {sprint.name.replaceAll("_", " ")}
+                    {sprint?.name?.replaceAll("_", " ")}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -159,18 +159,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
         ) : null
       )}
       {Object.entries(form.getValues() || {}).map(([key, value]) => {
-        if (
-          ![
-            "title",
-            "priority",
-            "status",
-            "description",
-            "sprints",
-            "assign",
-            "id",
-            "deleted",
-          ].includes(key)
-        ) {
+        if (!SKIPED_KEYS.includes(key)) {
           return (
             <FormItem key={key}>
               <FormLabel className="capitalize">{key.replace(/_/g, " ")}</FormLabel>
