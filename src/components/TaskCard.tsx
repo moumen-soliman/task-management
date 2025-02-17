@@ -18,13 +18,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import TableActions from "@/components/Table/TableActions";
 import { Input } from "./ui/input";
 import { useTaskDetailsModalStore } from "@/store/useTaskDetailsModalStore";
+import { Task } from "@/types/Tasks"; // Assuming you have a Task type defined in your types file
 
-const TaskCard = ({ task, index }) => {
+interface TaskCardProps {
+  task: Task;
+  index: number;
+}
+
+const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
   const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } =
     useTaskStore();
   const toggleSelection = useDataViewStore((state) => state.toggleSelection);
   const selectedIds = useDataViewStore((state) => state.selectedIds);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableTask, setEditableTask] = useState(task);
   const dataView = useDataViewStore((state) => state.dataView);
@@ -64,11 +70,11 @@ const TaskCard = ({ task, index }) => {
     setEditableTask({ ...editableTask, [field]: value });
   };
 
-  const handleCardClick = (e) => {
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (isEditing) return;
 
     // Check if the clicked element is an interactive element
-    if (e.target.closest("button") || e.target.closest("input")) {
+    if ((e.target as HTMLElement).closest("button") || (e.target as HTMLElement).closest("input")) {
       e.stopPropagation(); // Prevent modal from opening
       return;
     }
