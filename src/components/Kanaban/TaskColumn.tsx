@@ -31,7 +31,7 @@ const TaskColumn = ({
     <div>
       <ScrollArea
         ref={drop}
-        className={`flex-1 p-4 rounded-lg border h-[80vh] min-w-[320px] max-w-xs snap-start ${
+        className={`flex-1 p-4 rounded-lg border h-[85vh] min-w-[320px] max-w-xs snap-start ${
           isOver ? "bg-gray-100 dark:bg-gray-800" : ""
         }`}
       >

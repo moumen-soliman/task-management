@@ -8,6 +8,7 @@ import Kanban from "@/components/Kanaban";
 import Table from "./Table";
 import DataViewActionsBar from "./DataViewActionsBar";
 import { useDataViewStore } from "@/store/useDataViewStore";
+import SelectedActionsAlert from "./SelectedActionsAlert";
 
 export const TaskActionContext = createContext({ handleAddTaskClick: () => {} });
 
@@ -34,6 +35,7 @@ export default function BoardContainer() {
     <div className="p-4">
       <DataViewActionsBar />
       {dataView?.includes("table") ? <Table /> : <Kanban />}
+      <SelectedActionsAlert />
     </div>
   );
 }

@@ -11,6 +11,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
+import { Button } from "../ui/button";
 
 const taskColumns = [
   { key: "title", label: "Title" },
@@ -22,15 +24,15 @@ const taskColumns = [
 
 const TableHeader: React.FC = () => {
   const { selectedIds, selectAll, clearSelection } = useDataViewStore();
-  const filteredTasks = useFilteredTasks(); // ✅ Get only visible tasks
+  const filteredTasks = useFilteredTasks();
   const isAllSelected = filteredTasks.length > 0 && selectedIds.length === filteredTasks.length;
   const { customColumns, removeCustomColumn, updateCustomColumnFilter } = useTaskStore();
 
   const handleSelectAll = () => {
     if (isAllSelected) {
-      clearSelection(); // ✅ Unselect all
+      clearSelection();
     } else {
-      selectAll(filteredTasks.map((task) => task.id)); // ✅ Select only visible tasks
+      selectAll(filteredTasks.map((task) => task.id));
     }
   };
 
@@ -75,9 +77,10 @@ const TableHeader: React.FC = () => {
                 <DropdownMenuSeparator className="bg-gray-200" />
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => removeCustomColumn(column.key)}
                 >
-                  Delete
+ <ConfirmDeleteDialog
+    onDelete={() => removeCustomColumn(column.key)}
+  />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

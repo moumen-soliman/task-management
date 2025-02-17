@@ -11,6 +11,7 @@ import {
 import { useTaskStore } from "@/store/useTaskStore";
 import { useRouter } from "next/navigation";
 import { useSheetStore } from "@/store/useSheetStore";
+import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 
 const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableTask }) => {
   const updateTask = useTaskStore((state) => state.updateTask);
@@ -63,8 +64,8 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
           <DropdownMenuItem className="cursor-pointer" onClick={() => handleTaskClick(task.id)}>
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer" onClick={() => softDeleteTask(task.id)}>
-            Delete
+          <DropdownMenuItem className="cursor-pointer">
+            <ConfirmDeleteDialog onDelete={() => softDeleteTask(task.id)} />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

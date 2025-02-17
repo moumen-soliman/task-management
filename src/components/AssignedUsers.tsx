@@ -1,6 +1,5 @@
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useMemo } from "react";
 
 interface User {
   id: number;
@@ -14,7 +13,7 @@ interface AssignedUsersProps {
 }
 
 export default function AssignedUsers({ getAssignedUser }: AssignedUsersProps) {
-  const assignedUsers = useMemo(() => getAssignedUser, [getAssignedUser]);
+  const assignedUsers = () => getAssignedUser;
 
   return (
     <div className="flex -space-x-2 overflow-hidden">

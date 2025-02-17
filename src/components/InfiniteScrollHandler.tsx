@@ -5,7 +5,7 @@ import { Task } from "@/types/Tasks";
 
 const InfiniteScrollHandler: React.FC<{ indicator: Task[] }> = ({ indicator, children }) => {
   const { ref, inView } = useInView({ threshold: 1 });
-  const { visibleCount, setVisibleCount } = useDataViewStore();
+  const { setVisibleCount } = useDataViewStore();
 
   useEffect(() => {
     if (inView) {
@@ -18,7 +18,7 @@ const InfiniteScrollHandler: React.FC<{ indicator: Task[] }> = ({ indicator, chi
       {children}
       <div ref={ref} />
       <div className="h-10 mt-4 text-center text-gray-500">
-        {visibleCount < indicator.length ? "Loading more tasks..." : "No more tasks"}
+        {!indicator.length ? "Loading more tasks..." : "No more tasks"}
       </div>
     </div>
   );
