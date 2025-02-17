@@ -34,13 +34,22 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
     <div className="flex gap-2 items-center">
       <div className="flex gap-2 items-center">
         {isEditing ? (
-          <Button
-            onClick={handleSaveClick}
-            variant="outline"
-            className="text-green-600 hover:bg-green-100 flex items-center gap-2"
-          >
-            <CheckCircle className="w-5 h-5" /> Save
-          </Button>
+            <>
+            <Button
+              onClick={handleSaveClick}
+              variant="outline"
+              className="text-green-600 hover:bg-green-100 flex items-center gap-2"
+            >
+              <CheckCircle className="w-5 h-5" />
+            </Button>
+            <Button
+              onClick={() => setIsEditing(false)}
+              variant="ghost"
+              className="text-gray-600 hover:bg-gray-100"
+            >
+              X
+            </Button>
+            </>
         ) : (
           <Button
             onClick={() => setIsEditing(true)}
