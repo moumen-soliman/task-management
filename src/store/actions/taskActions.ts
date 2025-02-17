@@ -1,4 +1,5 @@
-import { PRIORITIES_LIST, STORAGE_KEY } from "@/constants/tasks";
+import { PRIORITIES_LIST, STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
+import { useDataViewStore } from "../useDataViewStore";
 
 export const taskActions = (set, get) => ({
   addTask: (task) => {
@@ -48,6 +49,60 @@ export const taskActions = (set, get) => ({
     return get().tasks.find((task) => task.id === taskId);
   },
 
+  addCustomColumn: (column) => {
+    const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]");
+    const newColumn = { ...column, id: existingColumns.length + 1 };
+    const updatedColumns = [...get().customColumns, newColumn];
+    set({ customColumns: updatedColumns });
+    const mergedColumns = [...existingColumns, newColumn];
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(mergedColumns));
+
+    get().tasks.forEach((task) => {
+      const updatedTask = { ...task, [newColumn.key]: newColumn.defaultValue };
+      get().updateTask(task.id, updatedTask);
+    });
+  },
+
+  removeCustomColumn: (columnKey) => {
+    const updatedColumns = get().customColumns.filter((col) => col.key !== columnKey);
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
+    set({ customColumns: updatedColumns });
+
+    const updatedTasks = get().tasks.map((task) => {
+      const { [columnKey]: _, ...rest } = task;
+      return rest;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+    set({ tasks: updatedTasks });
+  },
+
+  updateCustomColumn: (columnKey, newColumn) => {
+    const updatedColumns = get().customColumns.map((col) =>
+      col.key === columnKey ? newColumn : col
+    );
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
+    set({ customColumns: updatedColumns });
+  },
+  updateCustomColumnFilter: (columnKey, filterStatus, filterValue) => {
+    const updatedColumns = get().customColumns.map((col) =>
+      col.key === columnKey
+        ? {
+            ...col,
+            filter: filterStatus,
+            filterValue: filterStatus ? filterValue : undefined,
+          }
+        : col
+    );
+    localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
+    set({ customColumns: updatedColumns });
+
+    // Clear the filter value from DataViewStore when disabling filter
+    if (!filterStatus) {
+      const setFilter = useDataViewStore.getState().setFilter;
+
+      setFilter({ [columnKey]: undefined });
+    }
+  },
   moveTask: (fromIndexOrId, toIndexOrPriority, isKanban) => {
     set((state) => {
       let tasks = [...state.tasks];
@@ -81,7 +136,7 @@ export const taskActions = (set, get) => ({
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-      return { tasks: [...tasks] }; // Ensure state updates correctly
+      return { tasks: [...tasks] };
     });
   },
 });

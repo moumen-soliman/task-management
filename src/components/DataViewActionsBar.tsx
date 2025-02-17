@@ -5,8 +5,15 @@ import { useRouter } from "next/navigation";
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Kanban, Table } from "lucide-react";
+import { Kanban, Table, X } from "lucide-react";
 import DropdownFilter from "./DropdownFilter";
+import CustomColumnForm from "./CustomColumnForm";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useTaskStore } from "@/store/useTaskStore";
 
 const DataViewActionsBar: React.FC = () => {
   const setFilter = useDataViewStore((state) => state.setFilter);
@@ -18,8 +25,9 @@ const DataViewActionsBar: React.FC = () => {
   const openSheet = useSheetStore((state) => state.openSheet);
   const resetSheet = useSheetStore((state) => state.resetSheet);
   const router = useRouter();
+  const customColumns = useTaskStore((state) => state.customColumns);
 
-  const handleSortChange = (column: keyof Task, direction: "asc" | "desc" | null) => {
+  const handleSortChange = (column, direction) => {
     if (!direction) {
       setSortColumn(null);
       setSortDirection(null);
@@ -36,16 +44,22 @@ const DataViewActionsBar: React.FC = () => {
   };
 
   return (
-    <div className="md:flex flex-wrap items-center justify-between gap-4 py-5 space-x-5">
+    <div className="md:grid grid-cols-7 flex-wrap items-center justify-between gap-4 py-5">
       <div>
         <Button onClick={handleAddTaskClick}>➕ Create Task</Button>
       </div>
 
-      <div className="">
+      <div className="relative flex items-center">
         <Input
           type="text"
           placeholder="Search by title"
+          value={filters.title || ""}
           onChange={(e) => setFilter({ title: e.target.value })}
+        />
+        <X
+          className="absolute right-2 cursor-pointer"
+          size={16}
+          onClick={() => setFilter({ title: undefined })}
         />
       </div>
 
@@ -70,8 +84,17 @@ const DataViewActionsBar: React.FC = () => {
         options={["asc", "desc"]}
         placeholder="All"
         value={filters.title}
-        onChange={(value) => handleSortChange("title", value as "asc" | "desc" | null)}
+        onChange={(value) => handleSortChange("title", value)}
       />
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Custom Field ▼</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-4 w-64">
+          <CustomColumnForm />
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <div className="flex">
         <Button
@@ -89,6 +112,35 @@ const DataViewActionsBar: React.FC = () => {
           <Kanban name="kanban" />
         </Button>
       </div>
+
+      {customColumns
+        .filter((column) => column.filter)
+        .map((column) => (
+          <div key={`${column.id}-${column.key}`} className="relative flex items-center">
+            {column.type === "checkbox" ? (
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={filters[column.id] || false}
+                  onChange={(e) => setFilter({ [column.id]: e.target.checked })}
+                />
+                <label className="ml-2">{column.label}</label>
+                <X
+                  className="absolute right-2 cursor-pointer"
+                  size={16}
+                  onClick={() => setFilter({ [column.id]: "" })}
+                />
+              </div>
+            ) : (
+              <Input
+                type={column.type}
+                placeholder={`Search by ${column.label}`}
+                value={filters[column.id] || ""}
+                onChange={(e) => setFilter({ [column.id]: e.target.value })}
+              />
+            )}
+          </div>
+        ))}
     </div>
   );
 };

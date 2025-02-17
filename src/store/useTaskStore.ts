@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { SPRINT_STORAGE_KEY, STORAGE_KEY, USER_STORAGE_KEY } from "@/constants/tasks";
+import {
+  CUSTOM_COLUMNS_KEY,
+  SPRINT_STORAGE_KEY,
+  STORAGE_KEY,
+  USER_STORAGE_KEY,
+} from "@/constants/tasks";
 import { Priorities, Status, TaskStore } from "@/types/Tasks";
 import { loadFromStorageOrFetch } from "@/utils";
 import { taskActions } from "./actions/taskActions";
@@ -13,6 +18,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   sprints: [],
   loading: true,
   customFields: [],
+  customColumns: [],
 
   fetchAllData: async () => {
     set({ loading: true });
@@ -23,9 +29,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       loadFromStorageOrFetch(SPRINT_STORAGE_KEY, "/api/sprints"),
     ]);
 
-    set({ tasks, users, sprints, loading: false });
+    set({
+      tasks,
+      users,
+      sprints,
+      customColumns: JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]"),
+      loading: false,
+    });
   },
-
   ...taskActions(set, get),
   ...userActions(set, get),
   ...sprintActions(set, get),
