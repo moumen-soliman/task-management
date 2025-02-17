@@ -36,6 +36,7 @@ const TaskDetailsModal: React.FC = () => {
         <DialogHeader>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
+              <InfoLabel name={`#${taskDetails?.id}`} />
               <InfoLabel name={taskDetails?.status} />
               {taskDetails?.sprints && (
                 <InfoLabel name={getSprintNames(taskDetails.sprints).join(", ") || "None"} />
