@@ -11,11 +11,9 @@ export const useTaskDetailsModalStore = create<ModalState>((set) => ({
   isOpen: false,
   taskDetails: null,
   openModal: (taskDetails) => {
-    console.log("Opening modal with task details:", taskDetails);
     set({ isOpen: true, taskDetails });
   },
   closeModal: () => {
-    console.log("Closing modal");
     set({ isOpen: false, taskDetails: null });
   },
 }));

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { CheckCircle, AlertTriangle, Flame, Circle, Zap } from "lucide-react";
 import { PRIORITIES_LIST } from "@/constants/tasks";
 
