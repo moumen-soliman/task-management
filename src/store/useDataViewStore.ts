@@ -24,6 +24,7 @@ interface DataViewState {
   setSortColumn: (column: keyof Task) => void;
   setSortDirection: (direction: "asc" | "desc") => void;
   setFilter: (filter: Partial<DataViewState["filters"]>) => void;
+  setSortColumnAndDirection: (column: keyof Task) => void;
 }
 
 export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
@@ -70,6 +71,15 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
 
     selectedIds.forEach((taskId) => updateTask(taskId, updates));
   },
+
+  setSortColumnAndDirection: (column) => {
+    const { sortColumn, sortDirection } = get();
+    if (sortColumn === column) {
+      set({ sortDirection: sortDirection === "asc" ? "desc" : "asc" });
+    } else {
+      set({ sortColumn: column, sortDirection: "asc" });
+    }
+  },
 }));
 
 export const useDataViewStore = createSelectorHooks(useDataViewStoreBase);
@@ -78,6 +88,8 @@ export const useFilteredTasks = () => {
   const { sortColumn, sortDirection, filters } = useDataViewStore();
   const allTasks = useTaskStore.getState().tasks;
   const customColumns = useTaskStore.getState().customColumns;
+
+  const priorityOrder = ["none", "low", "medium", "high", "urgent"];
 
   return useMemo(() => {
     console.time("FilteringTasks");
@@ -105,13 +117,19 @@ export const useFilteredTasks = () => {
         return true;
       });
 
-    if (sortColumn) {
+    if (sortColumn && sortColumn !== "assign" && sortColumn !== "sprint") {
       filteredTasks = filteredTasks.sort((a, b) => {
-        if (a[sortColumn as keyof Task] < b[sortColumn as keyof Task])
-          return sortDirection === "asc" ? -1 : 1;
-        if (a[sortColumn as keyof Task] > b[sortColumn as keyof Task])
-          return sortDirection === "asc" ? 1 : -1;
-        return 0;
+        if (sortColumn === "priority") {
+          return sortDirection === "asc"
+            ? priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
+            : priorityOrder.indexOf(b.priority) - priorityOrder.indexOf(a.priority);
+        } else {
+          if (a[sortColumn as keyof Task] < b[sortColumn as keyof Task])
+            return sortDirection === "asc" ? -1 : 1;
+          if (a[sortColumn as keyof Task] > b[sortColumn as keyof Task])
+            return sortDirection === "asc" ? 1 : -1;
+          return 0;
+        }
       });
     }
     console.timeEnd("FilteringTasks");

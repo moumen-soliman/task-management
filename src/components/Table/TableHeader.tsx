@@ -16,7 +16,7 @@ import { Button } from "../ui/button";
 import { TASK_COLUMNS } from "@/constants/tasks";
 
 export default function TableHeader() {
-  const { selectedIds, selectAll, clearSelection } = useDataViewStore();
+  const { selectedIds, selectAll, clearSelection, sortColumn, sortDirection, setSortColumnAndDirection } = useDataViewStore();
   const filteredTasks = useFilteredTasks();
   const isAllSelected = filteredTasks.length > 0 && selectedIds.length === filteredTasks.length;
   const { customColumns, removeCustomColumn, updateCustomColumnFilter } = useTaskStore();
@@ -33,6 +33,12 @@ export default function TableHeader() {
     updateCustomColumnFilter(columnKey, checked);
   };
 
+  const handleSort = (columnKey) => {
+    if (columnKey !== "assign" && columnKey !== "sprint") {
+      setSortColumnAndDirection(columnKey);
+    }
+  };
+
   return (
     <thead className="border bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
       <tr className="h-12">
@@ -42,9 +48,15 @@ export default function TableHeader() {
         {TASK_COLUMNS.map((column) => (
           <th
             key={column.key}
-            className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
+            className={`px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate ${
+              column.key !== "assign" && column.key !== "sprint" ? "cursor-pointer" : ""
+            }`}
+            onClick={() => handleSort(column.key)}
           >
             {column.label}
+            {sortColumn === column.key && (
+              <span>{sortDirection === "asc" ? " ▲" : " ▼"}</span>
+            )}
           </th>
         ))}
         {customColumns.map((column, index) => (
