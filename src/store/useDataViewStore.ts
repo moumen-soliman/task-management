@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { useTaskStore } from "@/store/useTaskStore";
 import { createSelectorHooks } from "auto-zustand-selectors-hook";
 import { useMemo } from "react";
-import { CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
+import { CUSTOM_COLUMNS_KEY, PRIORITIES_LIST } from "@/constants/tasks";
 
 interface DataViewState {
   dataView: "table" | "kanban";
@@ -89,7 +89,7 @@ export const useFilteredTasks = () => {
   const allTasks = useTaskStore.getState().tasks;
   const customColumns = useTaskStore.getState().customColumns;
 
-  const priorityOrder = ["none", "low", "medium", "high", "urgent"];
+  const priorityOrder = PRIORITIES_LIST;
 
   return useMemo(() => {
     console.time("FilteringTasks");
