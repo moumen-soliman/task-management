@@ -3,7 +3,12 @@ import { useInView } from "react-intersection-observer";
 import { useDataViewStore } from "@/store/useDataViewStore";
 import { Task } from "@/types/Tasks";
 
-const InfiniteScrollHandler: React.FC<{ indicator: Task[] }> = ({ indicator, children }) => {
+interface InfiniteScrollHandlerProps {
+  indicator: Task[];
+  children: React.ReactNode;
+}
+
+export default function InfiniteScrollHandler({ indicator, children }: InfiniteScrollHandlerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { ref, inView } = useInView({ 
     threshold: 0.1,
@@ -38,6 +43,4 @@ const InfiniteScrollHandler: React.FC<{ indicator: Task[] }> = ({ indicator, chi
       ) : null}
     </div>
   );
-};
-
-export default InfiniteScrollHandler;
+}

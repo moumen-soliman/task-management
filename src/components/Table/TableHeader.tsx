@@ -15,7 +15,7 @@ import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { Button } from "../ui/button";
 import { TASK_COLUMNS } from "@/constants/tasks";
 
-const TableHeader: React.FC = () => {
+export default function TableHeader() {
   const { selectedIds, selectAll, clearSelection } = useDataViewStore();
   const filteredTasks = useFilteredTasks();
   const isAllSelected = filteredTasks.length > 0 && selectedIds.length === filteredTasks.length;
@@ -47,9 +47,9 @@ const TableHeader: React.FC = () => {
             {column.label}
           </th>
         ))}
-        {customColumns.map((column) => (
+        {customColumns.map((column, index) => (
           <th
-            key={column.key}
+            key={`${column.key}-${index}`}
             className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
           >
             {column.label}
@@ -82,5 +82,3 @@ const TableHeader: React.FC = () => {
     </thead>
   );
 };
-
-export default TableHeader;

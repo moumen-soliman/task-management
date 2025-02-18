@@ -9,7 +9,7 @@ import { DndProvider } from "react-dnd";
 import InfiniteScrollHandler from "../InfiniteScrollHandler";
 import { ScrollArea } from "../ui/scroll-area";
 
-const Table: React.FC = () => {
+export default function Table(){
   const tasks = useTaskStore((state) => state.tasks);
 
   return (
@@ -27,5 +27,3 @@ const Table: React.FC = () => {
     </DndProvider>
   );
 };
-
-export default Table;

@@ -23,7 +23,7 @@ import ConfirmDeleteDialog from "./ConfirmDeleteDialog";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
-const TaskDetailsModal: React.FC = () => {
+export default function TaskDetailsModal() {
   const { isOpen, taskDetails, closeModal } = useTaskDetailsModalStore();
   const getAssignedUser = useTaskStore((state) => state.getAssignedUser);
   const openSheet = useSheetStore((state) => state.openSheet);
@@ -108,5 +108,3 @@ const TaskDetailsModal: React.FC = () => {
     </Dialog>
   );
 };
-
-export default TaskDetailsModal;

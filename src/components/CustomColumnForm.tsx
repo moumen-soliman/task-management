@@ -19,10 +19,15 @@ const schema = z.object({
   label: z.string().min(1, "Field Name is required"),
   key: z.string().min(1, "Key is required"),
   type: z.enum(["text", "number", "checkbox"]),
-  defaultValue: z.union([z.string(), z.number(), z.boolean()]),
+  defaultValue: z.union([z.string(), z.number(), z.boolean()]).refine(
+    (value) => value !== undefined && value !== null && value !== "",
+    {
+      message: "Default value is required",
+    }
+  ),
 });
 
-const CustomColumnForm: React.FC = () => {
+export default function CustomColumnForm() {
   const { addCustomColumn, customColumns } = useTaskStore();
   const methods = useForm({
     resolver: zodResolver(schema),
@@ -59,52 +64,75 @@ const CustomColumnForm: React.FC = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-md"
       >
-        <Input
-          placeholder="Field Name"
-          {...register("label")}
-          onChange={(e) => {
-            setValue("label", e.target.value);
-            setValue("key", e.target.value.toLowerCase().replace(/\s/g, "_"));
-          }}
-        />
-        {errors.label && <FormMessage>{errors.label.message}</FormMessage>}
-
-        <Controller
-          name="type"
-          control={control}
-          render={({ field }) => (
-            <Select {...field} onValueChange={field.onChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Field Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="text">Text</SelectItem>
-                <SelectItem value="number">Number</SelectItem>
-                <SelectItem value="checkbox">Checkbox</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {errors.type && <FormMessage>{errors.type.message}</FormMessage>}
-
-        {type === "text" && <Input placeholder="Default Value" {...register("defaultValue")} />}
-        {type === "number" && (
+        <div className="space-y-2">
           <Input
-            type="number"
-            placeholder="Default Value"
-            {...register("defaultValue", { valueAsNumber: true })}
+            placeholder="Field Name"
+            {...register("label")}
+            required
+            onChange={(e) => {
+              setValue("label", e.target.value);
+              setValue("key", e.target.value.toLowerCase().replace(/\s/g, "_"));
+            }}
           />
-        )}
-        {type === "checkbox" && (
+          {errors.label && <FormMessage>{errors.label.message}</FormMessage>}
+        </div>
+
+        <div className="space-y-2">
           <Controller
-            name="defaultValue"
+            name="type"
             control={control}
+            rules={{ required: true }}
             render={({ field }) => (
-              <Checkbox checked={!!field.value} onCheckedChange={field.onChange} />
+              <Select {...field} onValueChange={field.onChange} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Field Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="text">Text</SelectItem>
+                  <SelectItem value="number">Number</SelectItem>
+                  <SelectItem value="checkbox">Checkbox</SelectItem>
+                </SelectContent>
+              </Select>
             )}
           />
-        )}
-        {errors.defaultValue && <FormMessage>{errors.defaultValue.message}</FormMessage>}
+          {errors.type && <FormMessage>{errors.type.message}</FormMessage>}
+        </div>
+
+        <div className="space-y-2">
+          {type === "text" && (
+            <Input 
+              placeholder="Default Value" 
+              {...register("defaultValue")}
+              required 
+            />
+          )}
+          {type === "number" && (
+            <Input
+              type="number"
+              placeholder="Default Value"
+              {...register("defaultValue", { valueAsNumber: true })}
+              required
+            />
+          )}
+          {type === "checkbox" && (
+            <Controller
+              name="defaultValue"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <div className="flex items-center gap-2">
+                  <Checkbox 
+                    checked={!!field.value} 
+                    onCheckedChange={field.onChange}
+                    required
+                  />
+                  <span className="text-sm">Default Value</span>
+                </div>
+              )}
+            />
+          )}
+          {errors.defaultValue && <FormMessage>{errors.defaultValue.message}</FormMessage>}
+        </div>
 
         <Button type="submit" className="w-full">
           Add Field
@@ -113,5 +141,3 @@ const CustomColumnForm: React.FC = () => {
     </FormProvider>
   );
 };
-
-export default CustomColumnForm;

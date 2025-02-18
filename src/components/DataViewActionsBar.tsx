@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTaskStore } from "@/store/useTaskStore";
 
-const DataViewActionsBar: React.FC = () => {
+export default function DataViewActionsBar() {
   const setFilter = useDataViewStore((state) => state.setFilter);
   const dataView = useDataViewStore((state) => state.dataView);
   const setDataView = useDataViewStore((state) => state.setDataView);
@@ -144,5 +144,3 @@ const DataViewActionsBar: React.FC = () => {
     </div>
   );
 };
-
-export default DataViewActionsBar;

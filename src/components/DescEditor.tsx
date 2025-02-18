@@ -96,7 +96,7 @@ interface DescEditorProps {
   onChange: (value: string) => void;
 }
 
-const DescEditor: React.FC<DescEditorProps> = ({ value, onChange }) => {
+export default function DescEditor({ value, onChange }: DescEditorProps) {
   return (
     <div className="border border-gray-200 rounded p-4">
       <EditorProvider
@@ -108,5 +108,3 @@ const DescEditor: React.FC<DescEditorProps> = ({ value, onChange }) => {
     </div>
   );
 };
-
-export default DescEditor;

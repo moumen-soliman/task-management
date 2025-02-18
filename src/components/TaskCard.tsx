@@ -25,7 +25,7 @@ interface TaskCardProps {
   index: number;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
+export default function TaskCard({ task, index }: TaskCardProps) {
   const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } =
     useTaskStore();
   const toggleSelection = useDataViewStore((state) => state.toggleSelection);
@@ -33,6 +33,25 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableTask, setEditableTask] = useState(task);
+
+  // Add this function to ensure we have default values
+  const startEditing = () => {
+    setEditableTask({
+      ...task,
+      title: task.title || '',
+      status: task.status || STATUS_LIST[0],
+      priority: task.priority || PRIORITIES_LIST[0],
+      // Ensure custom column values have defaults
+      ...Object.fromEntries(
+        customColumns.map(column => [
+          column.key,
+          task[column.key] ?? (column.type === 'checkbox' ? false : '')
+        ])
+      )
+    });
+    setIsEditing(true);
+  };
+
   const dataView = useDataViewStore((state) => state.dataView);
   const { openModal } = useTaskDetailsModalStore();
 
@@ -113,7 +132,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
 
   return (
     <tr
-      key={task.id}
+      key={`${index}-${task.id}`}
       onClick={handleCardClick}
       className={`cursor-pointer border-b h-12 table-fixed w-full hover:bg-gray-200 dark:hover:bg-gray-800 
         ${selectedIds.includes(task.id as number) ? "bg-gray-100 dark:bg-gray-800" : ""} 
@@ -129,7 +148,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
         {isEditing ? (
           <input
             type="text"
-            value={editableTask.title}
+            value={editableTask.title || ''}
             onChange={(e) => handleChange("title", e.target.value)}
             className="w-full border rounded px-2 py-1"
           />
@@ -193,13 +212,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
           {isEditing ? (
             column.type === "checkbox" ? (
               <Checkbox
-                checked={editableTask[column.key]}
+                checked={!!editableTask[column.key]}
                 onCheckedChange={(checked) => handleChange(column.key, checked)}
               />
             ) : (
               <Input
                 type={column.type}
-                value={editableTask[column.key]}
+                value={editableTask[column.key] || ''}
                 onChange={(e) => handleChange(column.key, e.target.value)}
                 className="w-full border rounded px-2 py-1"
               />
@@ -215,13 +234,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index }) => {
         <TableActions
           task={task}
           isEditing={isEditing}
-          setIsEditing={setIsEditing}
+          setIsEditing={(editing) => {
+            if (editing) {
+              startEditing();
+            } else {
+              setIsEditing(false);
+            }
+          }}
           softDeleteTask={softDeleteTask}
           editableTask={editableTask}
         />
       </td>
     </tr>
   );
-};
-
-export default TaskCard;
+}

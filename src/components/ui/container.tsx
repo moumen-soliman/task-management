@@ -5,8 +5,6 @@ interface ContainerProps {
   className?: string;
 }
 
-const Container: React.FC<ContainerProps> = ({ children, className = "" }) => {
+export default function Container({ children, className = "" }: ContainerProps) {
   return <div className={`mx-auto px-5 max-w-screen-xl w-full ${className}`}>{children}</div>;
-};
-
-export default Container;
+}
