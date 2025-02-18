@@ -37,7 +37,8 @@ const priorityStyles: Record<Priority, { bg: string; text: string; icon: JSX.Ele
 };
 
 export default function PriorityHandler({ priority = "none" }: PriorityHandlerProps) {
-  const { bg, text, icon } = priorityStyles[priority as keyof typeof priorityStyles] || priorityStyles.none;
+  const { bg, text, icon } =
+    priorityStyles[priority as keyof typeof priorityStyles] || priorityStyles.none;
 
   return (
     <span
@@ -47,4 +48,4 @@ export default function PriorityHandler({ priority = "none" }: PriorityHandlerPr
       {text}
     </span>
   );
-};
+}

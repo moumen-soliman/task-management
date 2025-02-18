@@ -38,16 +38,16 @@ export default function TaskCard({ task, index }: TaskCardProps) {
   const startEditing = () => {
     setEditableTask({
       ...task,
-      title: task.title || '',
+      title: task.title || "",
       status: task.status || STATUS_LIST[0],
       priority: task.priority || PRIORITIES_LIST[0],
       // Ensure custom column values have defaults
       ...Object.fromEntries(
-        customColumns.map(column => [
+        customColumns.map((column) => [
           column.key,
-          task[column.key] ?? (column.type === 'checkbox' ? false : '')
+          task[column.key] ?? (column.type === "checkbox" ? false : ""),
         ])
-      )
+      ),
     });
     setIsEditing(true);
   };
@@ -55,24 +55,28 @@ export default function TaskCard({ task, index }: TaskCardProps) {
   const dataView = useDataViewStore((state) => state.dataView);
   const { openModal } = useTaskDetailsModalStore();
 
-  const [{ isDragging }, drag] = useDrag({
-    type: "TASK",
-    item: { id: task.id, index, priority: task.priority },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
+  const [{ isDragging }, drag] =
+    dataView === "kanban"
+      ? useDrag({
+          type: "TASK",
+          item: { id: task.id, index, priority: task.priority },
+          collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+          }),
+        })
+      : [{ isDragging: false }, () => {}]; // Default values to avoid errors
 
-  // Only use drop for table view
-  const [, drop] = useDrop({
-    accept: "TASK",
-    hover(item: { index: number }) {
-        moveTask(item.index, index, false);
-        item.index = index;
-    },
-  });
+  const [, drop] =
+    dataView === "kanban"
+      ? useDrop({
+          accept: "TASK",
+          hover(item: { index: number }) {
+            moveTask(item.index, index, false);
+            item.index = index;
+          },
+        })
+      : [{} as any, () => {}]; // Default values to avoid
 
-  // Apply refs correctly based on view
   useEffect(() => {
     if (ref.current) {
       if (dataView === "kanban") {
@@ -135,20 +139,19 @@ export default function TaskCard({ task, index }: TaskCardProps) {
       key={`${index}-${task.id}`}
       onClick={handleCardClick}
       className={`cursor-pointer border-b h-12 table-fixed w-full hover:bg-gray-200 dark:hover:bg-gray-800 
-        ${selectedIds.includes(task.id as number) ? "bg-gray-100 dark:bg-gray-800" : ""} 
-        ${isDragging ? "opacity-50" : ""}`}
+        ${selectedIds.includes(task.id as number) ? "bg-gray-100 dark:bg-gray-800" : ""}`}
     >
       <td className="py-2 pl-2">
         <Checkbox
           checked={selectedIds.includes(task.id as number)}
-          onClick={() => toggleSelection(task.id  as number)}
+          onClick={() => toggleSelection(task.id as number)}
         />
       </td>
       <td className="w-[420px] truncate whitespace-wrap overflow-hidden">
         {isEditing ? (
           <input
             type="text"
-            value={editableTask.title || ''}
+            value={editableTask.title || ""}
             onChange={(e) => handleChange("title", e.target.value)}
             className="w-full border rounded px-2 py-1"
           />
@@ -218,7 +221,7 @@ export default function TaskCard({ task, index }: TaskCardProps) {
             ) : (
               <Input
                 type={column.type}
-                value={editableTask[column.key] || ''}
+                value={editableTask[column.key] || ""}
                 onChange={(e) => handleChange(column.key, e.target.value)}
                 className="w-full border rounded px-2 py-1"
               />

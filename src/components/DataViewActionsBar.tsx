@@ -22,6 +22,7 @@ export default function DataViewActionsBar() {
   const setSortColumn = useDataViewStore((state) => state.setSortColumn);
   const filters = useDataViewStore((state) => state.filters);
   const setSortDirection = useDataViewStore((state) => state.setSortDirection);
+  const sortDirection = useDataViewStore((state) => state.sortDirection);
   const openSheet = useSheetStore((state) => state.openSheet);
   const resetSheet = useSheetStore((state) => state.resetSheet);
   const router = useRouter();
@@ -82,8 +83,8 @@ export default function DataViewActionsBar() {
       <DropdownFilter
         label="Sort by Title"
         options={["asc", "desc"]}
-        placeholder="All"
-        value={filters.title}
+        placeholder="Sort By Title"
+        value={sortDirection}
         onChange={(value) => handleSortChange("title", value)}
       />
 
@@ -143,4 +144,4 @@ export default function DataViewActionsBar() {
         ))}
     </div>
   );
-};
+}

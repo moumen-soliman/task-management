@@ -14,7 +14,13 @@ import { useSheetStore } from "@/store/useSheetStore";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { Task } from "@/types/Tasks";
 
-const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableTask }: {
+const TableActions = ({
+  task,
+  isEditing,
+  setIsEditing,
+  softDeleteTask,
+  editableTask,
+}: {
   task: { id: number | string };
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
@@ -41,7 +47,7 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
     <div className="flex gap-2 items-center">
       <div className="flex gap-2 items-center">
         {isEditing ? (
-            <>
+          <>
             <Button
               onClick={handleSaveClick}
               variant="outline"
@@ -56,7 +62,7 @@ const TableActions = ({ task, isEditing, setIsEditing, softDeleteTask, editableT
             >
               X
             </Button>
-            </>
+          </>
         ) : (
           <Button
             onClick={() => setIsEditing(true)}

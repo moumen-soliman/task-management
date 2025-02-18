@@ -25,6 +25,10 @@ interface DataViewState {
   setSortDirection: (direction: "asc" | "desc") => void;
   setFilter: (filter: Partial<DataViewState["filters"]>) => void;
   setSortColumnAndDirection: (column: keyof Task) => void;
+  currentPage: number;
+  pageSize: number;
+  setCurrentPage: (page: number) => void;
+  setPageSize: (size: number) => void;
 }
 
 export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
@@ -39,6 +43,8 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
     priority: "",
     status: "",
   },
+  currentPage: 1,
+  pageSize: 10,
   setDataView: (dataView) => set({ dataView }),
   setVisibleCount: (fn) =>
     set((state) => ({
@@ -80,14 +86,17 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
       set({ sortColumn: column, sortDirection: "asc" });
     }
   },
+  setCurrentPage: (page) => set({ currentPage: page }),
+  setPageSize: (size) => set({ pageSize: size, currentPage: 1 }), // Reset to first page on page size change
 }));
 
 export const useDataViewStore = createSelectorHooks(useDataViewStoreBase);
 
 export const useFilteredTasks = () => {
-  const { sortColumn, sortDirection, filters } = useDataViewStore();
-  const allTasks = useTaskStore.getState().tasks;
-  const customColumns = useTaskStore.getState().customColumns;
+  const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView } =
+    useDataViewStore();
+  const allTasks = useTaskStore((state) => state.tasks); // Subscribe to tasks list
+  const customColumns = useTaskStore((state) => state.customColumns); // Subscribe to custom columns
 
   const priorityOrder = PRIORITIES_LIST;
 
@@ -132,7 +141,23 @@ export const useFilteredTasks = () => {
         }
       });
     }
+
+    if (dataView === "table") {
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      filteredTasks = filteredTasks.slice(startIndex, endIndex);
+    }
+
     console.timeEnd("FilteringTasks");
     return filteredTasks;
-  }, [allTasks, sortColumn, sortDirection, filters, customColumns]);
+  }, [
+    allTasks,
+    sortColumn,
+    sortDirection,
+    filters,
+    customColumns,
+    currentPage,
+    pageSize,
+    dataView,
+  ]);
 };

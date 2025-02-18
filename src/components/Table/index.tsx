@@ -1,29 +1,25 @@
-"use client";
-
 import React from "react";
-import { useTaskStore } from "@/store/useTaskStore";
+import { useFilteredTasks } from "@/store/useDataViewStore";
 import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { DndProvider } from "react-dnd";
-import InfiniteScrollHandler from "../InfiniteScrollHandler";
 import { ScrollArea } from "../ui/scroll-area";
+import PaginationControls from "../PaginationControls";
 
-export default function Table(){
-  const tasks = useTaskStore((state) => state.tasks);
-
+export default function Table() {
   return (
-    <DndProvider backend={HTML5Backend}>
+    <div className="relative w-full">
       <ScrollArea className="max-h-[80vh] w-full overflow-y-auto overflow-x-auto rounded-lg border snap-start">
         <div className="w-full overflow-scroll">
-          <InfiniteScrollHandler indicator={tasks}>
-            <table className="min-w-full table-fixed border-collapse border border-gray-300 dark:border-gray-800">
-              <TableHeader />
-              <TableBody />
-            </table>
-          </InfiniteScrollHandler>
+          <table className="min-w-full table-fixed border-collapse border border-gray-300 dark:border-gray-800">
+            <TableHeader />
+            <TableBody />
+          </table>
         </div>
       </ScrollArea>
-    </DndProvider>
+
+      <div className="sticky bottom-0 left-0 w-full bg-white dark:bg-gray-900 shadow-md border-t z-50">
+        <PaginationControls />
+      </div>
+    </div>
   );
-};
+}

@@ -19,12 +19,11 @@ const schema = z.object({
   label: z.string().min(1, "Field Name is required"),
   key: z.string().min(1, "Key is required"),
   type: z.enum(["text", "number", "checkbox"]),
-  defaultValue: z.union([z.string(), z.number(), z.boolean()]).refine(
-    (value) => value !== undefined && value !== null && value !== "",
-    {
+  defaultValue: z
+    .union([z.string(), z.number(), z.boolean()])
+    .refine((value) => value !== undefined && value !== null && value !== "", {
       message: "Default value is required",
-    }
-  ),
+    }),
 });
 
 export default function CustomColumnForm() {
@@ -100,11 +99,7 @@ export default function CustomColumnForm() {
 
         <div className="space-y-2">
           {type === "text" && (
-            <Input 
-              placeholder="Default Value" 
-              {...register("defaultValue")}
-              required 
-            />
+            <Input placeholder="Default Value" {...register("defaultValue")} required />
           )}
           {type === "number" && (
             <Input
@@ -121,11 +116,7 @@ export default function CustomColumnForm() {
               rules={{ required: true }}
               render={({ field }) => (
                 <div className="flex items-center gap-2">
-                  <Checkbox 
-                    checked={!!field.value} 
-                    onCheckedChange={field.onChange}
-                    required
-                  />
+                  <Checkbox checked={!!field.value} onCheckedChange={field.onChange} required />
                   <span className="text-sm">Default Value</span>
                 </div>
               )}
@@ -140,4 +131,4 @@ export default function CustomColumnForm() {
       </form>
     </FormProvider>
   );
-};
+}

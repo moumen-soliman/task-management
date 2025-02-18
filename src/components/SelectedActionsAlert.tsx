@@ -27,22 +27,34 @@ const SelectedActionsAlert = () => {
   const selectedIds = useDataViewStore((state) => state.selectedIds);
   const clearSelection = useDataViewStore((state) => state.clearSelection);
   const updateTaskStatus = useTaskStore((state) => state.updateTaskStatus);
+  const updateTaskPriroty = useTaskStore((state) => state.updateTaskPriority);
   const softDeleteTask = useTaskStore((state) => state.softDeleteTask);
 
   const [showAlert, setShowAlert] = useState(false);
+  const [newStatus, setNewStatus] = useState("none");
+  const [newPriority, setNewPriority] = useState("none");
 
   useEffect(() => {
     setShowAlert(selectedIds.length > 0);
   }, [selectedIds]);
 
-  const handleStatusChange = (newStatus) => {
-    if (newStatus === "none") return;
-    selectedIds.forEach((id) => updateTaskStatus(id, newStatus));
+  const handleStatusChange = (status) => {
+    setNewStatus(status);
   };
 
-  const handlePriorityChange = (newPriority) => {
-    if (newPriority === "none") return;
-    selectedIds.forEach((id) => updateTaskStatus(id, newPriority));
+  const handlePriorityChange = (priority) => {
+    setNewPriority(priority);
+  };
+
+  const applyChanges = () => {
+    if (newStatus !== "none") {
+      selectedIds.forEach((id) => updateTaskStatus(id, newStatus));
+    }
+    if (newPriority !== "none") {
+      selectedIds.forEach((id) => updateTaskPriroty(id, newPriority));
+    }
+    clearSelection();
+    setShowAlert(false);
   };
 
   const handleBulkDelete = () => {
@@ -107,8 +119,7 @@ const SelectedActionsAlert = () => {
             <DialogFooter>
               <Button
                 onClick={() => {
-                  setShowAlert(false);
-                  clearSelection();
+                  applyChanges();
                 }}
               >
                 Done

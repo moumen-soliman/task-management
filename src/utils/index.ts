@@ -24,3 +24,17 @@ export const subscribeToTaskUpdates = (onUpdate) => {
 
   return () => window.removeEventListener("storage", handleStorageChange);
 };
+
+export const generatePageSizeOptions = (totalTasks: number): number[] => {
+  const pageSizeOptions: number[] = [];
+  let size = 10;
+
+  while (size <= totalTasks) {
+    pageSizeOptions.push(size);
+    if (size === 10) size = 20;
+    else if (size === 20) size = 50;
+    else size += 50;
+  }
+
+  return pageSizeOptions;
+};

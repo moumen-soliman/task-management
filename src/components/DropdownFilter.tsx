@@ -30,7 +30,7 @@ export default function DropdownFilter<T extends string>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => onChange(null)}>{`All ${label}`}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onChange(null)}>{"None"}</DropdownMenuItem>
         {options.map((option) => (
           <DropdownMenuItem
             className="capitalize cursor-pointer"

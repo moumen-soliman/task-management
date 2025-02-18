@@ -16,7 +16,14 @@ import { Button } from "../ui/button";
 import { TASK_COLUMNS } from "@/constants/tasks";
 
 export default function TableHeader() {
-  const { selectedIds, selectAll, clearSelection, sortColumn, sortDirection, setSortColumnAndDirection } = useDataViewStore();
+  const {
+    selectedIds,
+    selectAll,
+    clearSelection,
+    sortColumn,
+    sortDirection,
+    setSortColumnAndDirection,
+  } = useDataViewStore();
   const filteredTasks = useFilteredTasks();
   const isAllSelected = filteredTasks.length > 0 && selectedIds.length === filteredTasks.length;
   const { customColumns, removeCustomColumn, updateCustomColumnFilter } = useTaskStore();
@@ -54,9 +61,7 @@ export default function TableHeader() {
             onClick={() => handleSort(column.key)}
           >
             {column.label}
-            {sortColumn === column.key && (
-              <span>{sortDirection === "asc" ? " ▲" : " ▼"}</span>
-            )}
+            {sortColumn === column.key && <span>{sortDirection === "asc" ? " ▲" : " ▼"}</span>}
           </th>
         ))}
         {customColumns.map((column, index) => (
@@ -93,4 +98,4 @@ export default function TableHeader() {
       </tr>
     </thead>
   );
-};
+}
