@@ -63,27 +63,37 @@ export default function TaskCard({ task, index }: TaskCardProps) {
           collect: (monitor) => ({
             isDragging: monitor.isDragging(),
           }),
+          canDrag: dataView === "kanban",
         })
       : [{ isDragging: false }, () => {}]; // Default values to avoid errors
 
-  const [, drop] =
+  const [{ isOver }, drop] =
     dataView === "kanban"
       ? useDrop({
           accept: "TASK",
-          hover(item: { index: number }) {
-            moveTask(item.index, index, false);
-            item.index = index;
+          canDrop: () => dataView === "kanban", // Only allow dropping in Kanban view
+          hover(item: { id: number; index: number; priority: string }) {
+            if (item.id !== task.id && item.priority === task.priority) {
+              // Reorder tasks within the same column
+              moveTask(item.id, item.priority, index);
+              item.index = index; // Update the dragged item's index
+            }
           },
+          drop(item: { id: number; priority: string }) {
+            if (item.priority !== task.priority) {
+              // Move task to a different column
+              moveTask(item.id, task.priority, index);
+            }
+          },
+          collect: (monitor) => ({
+            isOver: monitor.isOver(),
+          }),
         })
-      : [{} as any, () => {}]; // Default values to avoid
+      : [{} as any, () => {}]; // Default values to avoid errors// Default values to avoid
 
   useEffect(() => {
-    if (ref.current) {
-      if (dataView === "kanban") {
-        drag(ref.current);
-      } else {
-        drag(drop(ref.current));
-      }
+    if (ref.current && dataView === "kanban") {
+      drag(drop(ref.current));
     }
   }, [drag, drop, dataView]);
 
@@ -104,10 +114,18 @@ export default function TaskCard({ task, index }: TaskCardProps) {
   };
   if (dataView === "kanban") {
     return (
-      <div ref={ref} key={task.id}>
+      <div
+        ref={ref}
+        data-task-id={task.id} // Add data attribute for task ID
+        className={`transition-all duration-150 ${isDragging ? "opacity-50" : ""} ${
+          isOver ? "border-2 border-dashed border-blue-500" : ""
+        }`}
+      >
         <Card
           onClick={handleCardClick}
-          className={`${selectedIds.includes(task.id) && "border-gray-500 "} ${isDragging ? "opacity-50" : ""} cursor-pointer hover:border-black`}
+          className={`${selectedIds.includes(task.id) && "border-gray-500 "} ${
+            isDragging ? "opacity-50" : ""
+          } cursor-pointer hover:border-black`}
         >
           <CardHeader className="flex">
             <div className="flex items-center gap-3">

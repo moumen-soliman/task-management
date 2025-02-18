@@ -1,4 +1,3 @@
-"use client";
 import { DndProvider, useDrop } from "react-dnd";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TaskCard from "@/components/TaskCard";
@@ -14,14 +13,18 @@ export default function TaskColumn({ priority }: { priority: string }) {
   const { updateTaskPriority } = useTaskStore();
   const filteredTasks = useFilteredTasks();
 
-  const moveTask = (taskId: number, newPriority: string) => {
-    updateTaskPriority(taskId, newPriority);
-  };
   const [{ isOver }, drop] = useDrop({
     accept: "TASK",
-    drop: (item: { id: number; priority: string }) => {
-      if (item.priority !== priority) {
-        moveTask(item.id, priority);
+    drop: (item: { id: number; priority: string }, monitor) => {
+      const clientOffset = monitor.getClientOffset();
+      const dropTargetIndex = calculateDropIndex(clientOffset?.y || 0);
+
+      // If the task is dropped in the same column, reorder it
+      if (item.priority === priority) {
+        updateTaskPriority(item.id, priority, dropTargetIndex);
+      } else {
+        // If the task is dropped in a different column, move it to the new column
+        updateTaskPriority(item.id, priority, dropTargetIndex);
       }
     },
     collect: (monitor) => ({
@@ -29,9 +32,38 @@ export default function TaskColumn({ priority }: { priority: string }) {
     }),
   });
 
+  const calculateDropIndex = (clientY: number) => {
+    const tasksInColumn = filteredTasks
+      .filter((task) => task.priority === priority && !task.deleted)
+      .sort((a, b) => (a.index || 0) - (b.index || 0));
+
+    const columnElement = document.querySelector(`[data-priority="${priority}"]`);
+    if (!columnElement) return tasksInColumn.length;
+
+    const columnRect = columnElement.getBoundingClientRect();
+    const relativeY = clientY - columnRect.top;
+
+    // Calculate the drop index based on the position of the task cards
+    for (let i = 0; i < tasksInColumn.length; i++) {
+      const taskElement = document.querySelector(`[data-task-id="${tasksInColumn[i].id}"]`);
+      if (taskElement) {
+        const taskRect = taskElement.getBoundingClientRect();
+        const taskMidpoint = taskRect.top - columnRect.top + taskRect.height / 2;
+
+        if (relativeY < taskMidpoint) {
+          return i; // Drop above this task
+        }
+      }
+    }
+
+    // If dropped below all tasks, place at the end
+    return tasksInColumn.length;
+  };
+
   return (
     <ScrollArea
       ref={drop}
+      data-priority={priority}
       className={`flex-1 p-4 rounded-lg border h-[85vh] min-w-[320px] max-w-xs snap-start ${
         isOver ? "bg-gray-100 dark:bg-gray-800" : ""
       }`}
@@ -42,8 +74,16 @@ export default function TaskColumn({ priority }: { priority: string }) {
       </div>
       <div className="space-y-2">
         {filteredTasks
-          ?.filter((task) => task.priority === priority)
-          .map((task) => <TaskCard index={task.id} key={task.id} task={task} />)}
+          ?.filter((task) => task.priority === priority && !task.deleted)
+          .sort((a, b) => (a.index || 0) - (b.index || 0))
+          .map((task) => (
+            <TaskCard
+              index={task.index || 0}
+              key={task.id}
+              task={task}
+              data-task-id={task.id} // Add data attribute for task ID
+            />
+          ))}
       </div>
     </ScrollArea>
   );

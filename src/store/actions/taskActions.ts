@@ -3,8 +3,15 @@ import { useDataViewStore } from "../useDataViewStore";
 
 export const taskActions = (set, get) => ({
   addTask: (task) => {
-    const newTask = { id: get().tasks.length + 1, ...task, deleted: false };
-    const updatedTasks = [newTask, ...get().tasks];
+    const tasks = get().tasks;
+    const maxIndex = Math.max(...tasks.map((t) => t.index || 0), -1);
+    const newTask = {
+      id: tasks.length + 1,
+      ...task,
+      deleted: false,
+      index: maxIndex + 1,
+    };
+    const updatedTasks = [newTask, ...tasks];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set({ tasks: updatedTasks });
   },
@@ -36,11 +43,53 @@ export const taskActions = (set, get) => ({
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set({ tasks: updatedTasks });
   },
-  updateTaskPriority: (taskId, newPriority) => {
+  updateTaskPriority: (taskId, newPriority, newIndex) => {
     set((state) => {
-      const updatedTasks = state.tasks.map((task) =>
-        task.id === taskId ? { ...task, priority: newPriority } : task
+      let updatedTasks = [...state.tasks];
+      const taskIndex = updatedTasks.findIndex((t) => t.id === taskId);
+      if (taskIndex === -1) return state;
+
+      const task = updatedTasks[taskIndex];
+      updatedTasks.splice(taskIndex, 1);
+
+      // Get tasks in target priority column
+      const targetColumnTasks = updatedTasks.filter((t) => t.priority === newPriority);
+
+      // Calculate new index
+      let insertAtIndex;
+      if (newIndex !== undefined) {
+        insertAtIndex = newIndex;
+      } else {
+        // If no index specified, put at end of target column
+        insertAtIndex = targetColumnTasks.length;
+      }
+
+      // Reindex all tasks in the target column
+      const baseIndex =
+        targetColumnTasks.length > 0 ? Math.min(...targetColumnTasks.map((t) => t.index || 0)) : 0;
+
+      targetColumnTasks.forEach((t, idx) => {
+        t.index = baseIndex + idx;
+      });
+
+      // Insert task at correct position
+      const updatedTask = {
+        ...task,
+        priority: newPriority,
+        index: baseIndex + insertAtIndex,
+      };
+
+      // Find position in full array
+      const insertPosition = updatedTasks.findIndex(
+        (t) => t.priority === newPriority && (t.index || 0) > baseIndex + insertAtIndex
       );
+
+      if (insertPosition === -1) {
+        updatedTasks.push(updatedTask);
+      } else {
+        updatedTasks.splice(insertPosition, 0, updatedTask);
+      }
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
       return { tasks: updatedTasks };
     });
