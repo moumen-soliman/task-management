@@ -12,7 +12,10 @@ export default function Table() {
     <div className="relative w-full">
       <ScrollArea className="max-h-[80vh] w-full overflow-y-auto overflow-x-auto rounded-lg border snap-start">
         <div className="w-full overflow-scroll">
-          <table className="min-w-full table-fixed border-collapse border border-gray-300 dark:border-gray-800">
+          <table
+            aria-label="Tasks Tabl "
+            className="min-w-full table-fixed border-collapse border border-gray-300 dark:border-gray-800"
+          >
             <TableHeader filteredTasks={filteredTasks} />
             <TableBody filteredTasks={filteredTasks} />
           </table>

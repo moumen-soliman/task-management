@@ -11,6 +11,7 @@ import { useDataViewStore } from "@/store/useDataViewStore";
 import SelectedActionsAlert from "./SelectedActionsAlert";
 import TaskDetailsModal from "./TaskDetailsModal";
 import { FilteredTasksProvider } from "@/providers/FilteredTasksProvider";
+import SkeletonTable from "./Table/SkeletonTable";
 
 export const TaskActionContext = createContext({ handleAddTaskClick: () => {} });
 
@@ -19,6 +20,7 @@ export default function BoardContainer() {
   const searchParams = useSearchParams();
   const dataView = useDataViewStore((state) => state.dataView);
   const fetchAllData = useTaskStore((state) => state.fetchAllData);
+  const loading = useTaskStore((state) => state.loading);
 
   useEffect(() => {
     fetchAllData();
@@ -37,7 +39,7 @@ export default function BoardContainer() {
     <div className="p-4">
       <FilteredTasksProvider />
       <DataViewActionsBar />
-      {dataView?.includes("table") ? <Table /> : <Kanban />}
+      {loading ? <SkeletonTable /> : dataView?.includes("table") ? <Table /> : <Kanban />}
       <SelectedActionsAlert />
       <TaskDetailsModal />
     </div>
