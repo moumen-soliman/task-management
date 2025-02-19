@@ -24,7 +24,7 @@ export default function PaginationControls() {
   }, [page, setCurrentPage]);
 
   return (
-    <div className="bg-white dark:bg-gray-900 shadow-md border-t flex items-center justify-between p-4 z-10">
+    <div className="bg-white dark:bg-gray-900 shadow-md border-t flex flex-col sm:flex-row items-center justify-between p-3 sm:p-4 z-10 gap-4 sm:gap-0">
       {/* Page Size Selector */}
       <div className="flex items-center gap-3">
         <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -45,7 +45,7 @@ export default function PaginationControls() {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
         <Button
           onClick={() => setPage(Math.max(page - 1, 1))}
           disabled={page === 1}
@@ -53,7 +53,7 @@ export default function PaginationControls() {
           className="p-2 rounded-md text-sm flex items-center gap-1"
         >
           <ChevronLeft size={16} />
-          Previous
+          <span className="hidden sm:inline">Previous</span>
         </Button>
 
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -66,7 +66,7 @@ export default function PaginationControls() {
           variant="outline"
           className="p-2 rounded-md text-sm flex items-center gap-1"
         >
-          Next
+          <span className="hidden sm:inline">Next</span>
           <ChevronRight size={16} />
         </Button>
       </div>

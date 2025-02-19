@@ -81,8 +81,8 @@ export default function DataViewActionsBar() {
       
       <Separator />
 
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex gap-2">
+      <div className="md:flex items-center justify-between gap-4 space-y-5">
+        <div className="md:flex gap-2">
           <Button variant="outline" onClick={undo} title="Undo">
             <Undo2 size={16} className="mr-2" /> Undo
           </Button>
@@ -100,7 +100,7 @@ export default function DataViewActionsBar() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex gap-2">
+        <div className="md:flex gap-2">
           <Button
             variant="ghost"
             onClick={() => setDataView("table")}
@@ -118,7 +118,7 @@ export default function DataViewActionsBar() {
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         {customColumns.filter((column) => column.filter).map((column) => (
             <div key={`${column.id}-${column.key}`} className="relative flex items-center space-x-2">
             {column.type === "checkbox" ? (
