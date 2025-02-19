@@ -1,8 +1,7 @@
 import TaskRow from "./TaskRow";
-import { useFilteredTasks } from "@/store/useDataViewStore";
+import { Task } from "@/types/Tasks";
 
-const TableBody = () => {
-  const filteredTasks = useFilteredTasks();
+const TableBody = ({ filteredTasks }: { filteredTasks: Task[] }) => {
   return (
     <tbody>
       {filteredTasks.map((task) => (

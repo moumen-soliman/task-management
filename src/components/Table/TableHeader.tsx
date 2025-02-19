@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useDataViewStore, useFilteredTasks } from "@/store/useDataViewStore";
+import { useDataViewStore } from "@/store/useDataViewStore";
 import { useTaskStore } from "@/store/useTaskStore";
 import { Settings, SortAscIcon, SortDescIcon } from "lucide-react";
 import {
@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
 import { TASK_COLUMNS } from "@/constants/tasks";
+import { Task } from "@/types/Tasks";
 
-export default function TableHeader() {
+export default function TableHeader({ filteredTasks }: { filteredTasks: Task[] }) {
   const {
     selectedIds,
     selectAll,
@@ -22,7 +23,6 @@ export default function TableHeader() {
     sortDirection,
     setSortColumnAndDirection,
   } = useDataViewStore();
-  const filteredTasks = useFilteredTasks();
   const isAllSelected = filteredTasks.length > 0 && selectedIds.length === filteredTasks.length;
   const { customColumns, removeCustomColumn, updateCustomColumnFilter } = useTaskStore();
 

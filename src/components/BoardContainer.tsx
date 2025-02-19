@@ -10,6 +10,7 @@ import DataViewActionsBar from "./DataViewActionsBar";
 import { useDataViewStore } from "@/store/useDataViewStore";
 import SelectedActionsAlert from "./SelectedActionsAlert";
 import TaskDetailsModal from "./TaskDetailsModal";
+import { FilteredTasksProvider } from "@/providers/FilteredTasksProvider";
 
 export const TaskActionContext = createContext({ handleAddTaskClick: () => {} });
 
@@ -34,6 +35,7 @@ export default function BoardContainer() {
 
   return (
     <div className="p-4">
+      <FilteredTasksProvider />
       <DataViewActionsBar />
       {dataView?.includes("table") ? <Table /> : <Kanban />}
       <SelectedActionsAlert />

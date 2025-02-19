@@ -4,13 +4,13 @@ import TaskCard from "@/components/TaskCard";
 import { useSheetStore } from "@/store/useSheetStore";
 import { Button } from "@/components/ui/button";
 import { useTaskStore } from "@/store/useTaskStore";
-import { useFilteredTasks } from "@/store/useDataViewStore";
 import { Priorities } from "@/types/Tasks";
+import { useFilteredTasksStore } from "@/store/useFilteredTasksStore";
 
 export default function TaskColumn({ priority }: { priority: string }) {
   const openSheet = useSheetStore((state) => state.openSheet);
   const { updateTaskPriority } = useTaskStore();
-  const filteredTasks = useFilteredTasks();
+  const filteredTasks = useFilteredTasksStore((state) => state.filteredTasks);
 
   const [{ isOver }, drop] = useDrop({
     accept: "TASK",
