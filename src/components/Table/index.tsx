@@ -7,7 +7,7 @@ import { useFilteredTasksStore } from "@/store/useFilteredTasksStore";
 
 export default function Table() {
   const filteredTasks = useFilteredTasksStore((state) => state.filteredTasks);
-  
+
   return (
     <div className="relative w-full">
       <ScrollArea className="max-h-[80vh] w-full overflow-y-auto overflow-x-auto rounded-lg border snap-start">

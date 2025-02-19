@@ -50,7 +50,7 @@ const SelectedActionsAlert = () => {
       selectedIds.forEach((id) => updateTask(id, { status: newStatus as Status }));
     }
     if (newPriority !== "none") {
-      selectedIds.forEach((id) =>  updateTask(id, { priority: newPriority as Priorities }));
+      selectedIds.forEach((id) => updateTask(id, { priority: newPriority as Priorities }));
     }
     clearSelection();
     setShowAlert(false);

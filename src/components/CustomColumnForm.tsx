@@ -22,7 +22,7 @@ const schema = z.object({
   defaultValue: z
     .union([z.string(), z.number(), z.boolean()])
     .transform((val) => {
-      if (typeof val === 'string' && val.match(/^\d+$/)) {
+      if (typeof val === "string" && val.match(/^\d+$/)) {
         return Number(val);
       }
       return val;
@@ -55,11 +55,16 @@ export default function CustomColumnForm() {
   } = methods;
   const type = watch("type");
 
-  const onSubmit = (data: { label: string; key: string; type: "text" | "number" | "checkbox"; defaultValue: string | number | boolean }) => {
+  const onSubmit = (data: {
+    label: string;
+    key: string;
+    type: "text" | "number" | "checkbox";
+    defaultValue: string | number | boolean;
+  }) => {
     if (customColumns.some((column) => column.key === data.key)) {
       methods.setError("key", {
         type: "manual",
-        message: "A column with this key already exists"
+        message: "A column with this key already exists",
       });
       return;
     }
@@ -121,7 +126,7 @@ export default function CustomColumnForm() {
               type="number"
               placeholder="Default Value"
               {...register("defaultValue", {
-                setValueAs: (value) => (value === "" ? undefined : Number(value))
+                setValueAs: (value) => (value === "" ? undefined : Number(value)),
               })}
               required
             />

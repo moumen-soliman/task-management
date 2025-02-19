@@ -12,7 +12,8 @@ interface TaskCardProps {
 }
 
 export default function TaskCard({ task, index }: TaskCardProps) {
-  const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } = useTaskStore();
+  const { softDeleteTask, getAssignedUser, getSprintNames, moveTask, customColumns } =
+    useTaskStore();
   const toggleSelection = useDataViewStore((state) => state.toggleSelection);
   const selectedIds = useDataViewStore((state) => state.selectedIds);
   const dataView = useDataViewStore((state) => state.dataView);

@@ -13,19 +13,13 @@ interface FilteredTasksState {
 export const useFilteredTasksStore = create<FilteredTasksState>((set, get) => {
   return {
     filteredTasks: [],
-    
+
     applyFilters: () => {
       console.time("FilteringTasks");
       const allTasks = useTaskStore.getState().tasks;
       const customColumns = useTaskStore.getState().customColumns;
-      const {
-        sortColumn,
-        sortDirection,
-        filters,
-        currentPage,
-        pageSize,
-        dataView,
-      } = useDataViewStore.getState();
+      const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView } =
+        useDataViewStore.getState();
 
       const priorityOrder = PRIORITIES_LIST;
 

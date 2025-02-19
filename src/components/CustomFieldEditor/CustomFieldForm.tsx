@@ -27,7 +27,7 @@ export default function CustomFieldForm({ task, onSave, onCancel }: CustomFieldF
   const handleSave = () => {
     const fieldExists = task && task[`${fieldName}`] !== undefined;
     if (fieldExists) {
-      setError('A field with this name already exists');
+      setError("A field with this name already exists");
       return;
     }
     setError(null);

@@ -95,7 +95,10 @@ export default function KanbanTaskCard({
         </CardHeader>
         <CardContent>
           <CardDescription className="text-sm text-gray-600">
-            <AssignedUsers assignedUserIds={task.assign?.map(Number)} getAssignedUser={getAssignedUser(task.assign?.map(Number))} />
+            <AssignedUsers
+              assignedUserIds={task.assign?.map(Number)}
+              getAssignedUser={getAssignedUser(task.assign?.map(Number))}
+            />
           </CardDescription>
           <div className="flex gap-2 items-center pt-5">
             <InfoLabel name={`#${task.id}`} />

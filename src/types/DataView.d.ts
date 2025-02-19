@@ -25,6 +25,5 @@ export interface DataViewState {
   setCurrentPage: (page: number) => void;
   setPageSize: (size: number) => void;
   setDataView: (dataView: dataView) => void;
-updateSelectedTasks: (updates: Partial<Task>) => void;
-
+  updateSelectedTasks: (updates: Partial<Task>) => void;
 }

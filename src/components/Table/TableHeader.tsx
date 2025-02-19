@@ -34,9 +34,7 @@ export default function TableHeader({ filteredTasks }: { filteredTasks: Task[] }
     }
   };
 
-  const handleFilterChange = ({columnKey, checked} : 
-    {columnKey: string, checked: boolean}
-  ) => {
+  const handleFilterChange = ({ columnKey, checked }: { columnKey: string; checked: boolean }) => {
     updateCustomColumnFilter(columnKey, checked);
   };
 
@@ -62,7 +60,17 @@ export default function TableHeader({ filteredTasks }: { filteredTasks: Task[] }
           >
             <div className="flex items-center gap-2">
               {column.label}
-              { column.key !== "assign" && column.key !== "sprint" ? sortColumn === column.key ? sortDirection === "asc" ? <SortAscIcon /> : <SortDescIcon /> : <SortAscIcon className="opacity-20" /> : null }
+              {column.key !== "assign" && column.key !== "sprint" ? (
+                sortColumn === column.key ? (
+                  sortDirection === "asc" ? (
+                    <SortAscIcon />
+                  ) : (
+                    <SortDescIcon />
+                  )
+                ) : (
+                  <SortAscIcon className="opacity-20" />
+                )
+              ) : null}
             </div>
           </th>
         ))}
@@ -83,7 +91,9 @@ export default function TableHeader({ filteredTasks }: { filteredTasks: Task[] }
                     id={`filter-${column.key}`}
                     className="mr-2"
                     checked={column.filter || false}
-                    onCheckedChange={(checked) => handleFilterChange({ columnKey: column.key, checked: checked as boolean })}
+                    onCheckedChange={(checked) =>
+                      handleFilterChange({ columnKey: column.key, checked: checked as boolean })
+                    }
                   />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-200" />

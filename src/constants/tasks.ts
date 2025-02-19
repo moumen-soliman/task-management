@@ -17,7 +17,7 @@ export const SKIPED_KEYS = [
   "sprints",
   "assign",
   "deleted",
-  "index"
+  "index",
 ];
 
 export const TASK_COLUMNS = [

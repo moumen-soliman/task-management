@@ -1,12 +1,15 @@
 import { STORAGE_KEY } from "@/constants/tasks";
 import { Task, TaskStore } from "@/types/Tasks";
 
-export const customFieldActions = (set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void, get: () => TaskStore) => ({
+export const customFieldActions = (
+  set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void,
+  get: () => TaskStore
+) => ({
   addCustomField: (fieldName: string, fieldType: string, fieldValue: any, taskId?: number) => {
     // Check if field name already exists
-    const fieldExists = get().customFields.some(field => field.name === fieldName);
+    const fieldExists = get().customFields.some((field) => field.name === fieldName);
     if (fieldExists) {
-      console.error('A field with this name already exists');
+      console.error("A field with this name already exists");
       return;
     }
 
@@ -46,13 +49,12 @@ export const customFieldActions = (set: (partial: TaskStore | ((state: TaskStore
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
-
   },
   updateCustomField: (taskId: number, fieldName: string, value: string | number | boolean) => {
     const updatedTasks = get().tasks.map((task) =>
       task.id === taskId ? { ...task, [fieldName]: value } : task
     ) as Task[];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));   
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
 });

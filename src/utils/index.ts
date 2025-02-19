@@ -16,7 +16,7 @@ export async function loadFromStorageOrFetch(key: string, endpoint: string) {
 export const subscribeToTaskUpdates = (onUpdate: (tasks: Task[]) => void) => {
   const handleStorageChange = (event: StorageEvent) => {
     if (event.key === STORAGE_KEY) {
-      const updatedTasks = JSON.parse(event.newValue || '[]');
+      const updatedTasks = JSON.parse(event.newValue || "[]");
       onUpdate(updatedTasks);
     }
   };

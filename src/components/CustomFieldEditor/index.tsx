@@ -24,7 +24,7 @@ export default function CustomFieldEditor() {
       updateCustomField(taskId, fieldName, fieldValue);
     } else {
       // @ts-ignore-next-line
-      addCustomField(fieldName,fieldType, fieldValue);
+      addCustomField(fieldName, fieldType, fieldValue);
     }
     setIsEditing(false);
   };

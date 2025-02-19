@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import { Checkbox } from "@/components/ui/checkbox";
 import AssignedUsers from "@/components/AssignedUsers";

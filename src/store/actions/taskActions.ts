@@ -10,7 +10,7 @@ export const taskActions = (
     const tasks = get().tasks;
     const maxIndex = Math.max(...tasks.map((t) => t.index || 0), -1);
     const newTask: Task = {
-      ...task as Task,
+      ...(task as Task),
       id: tasks.length + 1,
       deleted: false,
       index: maxIndex + 1,
@@ -48,7 +48,7 @@ export const taskActions = (
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
   updateTaskPriority: (taskId: number | string, newPriority: Priorities, newIndex?: number) => {
-    set((state: TaskStore): TaskStore => { 
+    set((state: TaskStore): TaskStore => {
       const updatedTasks = [...state.tasks];
       const taskIndex = updatedTasks.findIndex((t) => t.id === taskId);
       if (taskIndex === -1) return state;
@@ -102,7 +102,13 @@ export const taskActions = (
     return get().tasks.find((task) => task.id === taskId);
   },
 
-  addCustomColumn: (column: { name: string; type: string; value: string | boolean; key: string; filter?: boolean }) => {
+  addCustomColumn: (column: {
+    name: string;
+    type: string;
+    value: string | boolean;
+    key: string;
+    filter?: boolean;
+  }) => {
     const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]");
     const newColumn = { ...column, id: existingColumns.length + 1 };
     const updatedColumns = [...get().customColumns, newColumn];
@@ -130,9 +136,19 @@ export const taskActions = (
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
-},
+  },
 
-  updateCustomColumn: (columnKey: string, newColumn: { id: number; name: string; type: string; value: string | boolean; key: string; filter?: boolean }) => {
+  updateCustomColumn: (
+    columnKey: string,
+    newColumn: {
+      id: number;
+      name: string;
+      type: string;
+      value: string | boolean;
+      key: string;
+      filter?: boolean;
+    }
+  ) => {
     const updatedColumns = get().customColumns.map((col) =>
       col.key === columnKey ? newColumn : col
     );
@@ -159,8 +175,12 @@ export const taskActions = (
       setFilter({ [columnKey]: undefined });
     }
   },
-  moveTask: (fromIndexOrId: number | string, toIndexOrPriority: number | string, isKanban: boolean) => {
-    set((state: TaskStore): TaskStore => {      
+  moveTask: (
+    fromIndexOrId: number | string,
+    toIndexOrPriority: number | string,
+    isKanban: boolean
+  ) => {
+    set((state: TaskStore): TaskStore => {
       let tasks = state.tasks ? [...state.tasks] : [];
 
       if (isKanban && typeof toIndexOrPriority === "string") {

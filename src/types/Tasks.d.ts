@@ -25,8 +25,23 @@ export interface TaskStore {
   sprints: Sprint[];
   loading: boolean;
   error?: string | null;
-  customFields: { id: number; name: string | number; type: string; value: string | boolean; label?: string; key?: string | number }[];
-  customColumns: { id: number; name: string; type: string; value: string | boolean; key: string; filter?: boolean; label?: string; }[];
+  customFields: {
+    id: number;
+    name: string | number;
+    type: string;
+    value: string | boolean;
+    label?: string;
+    key?: string | number;
+  }[];
+  customColumns: {
+    id: number;
+    name: string;
+    type: string;
+    value: string | boolean;
+    key: string;
+    filter?: boolean;
+    label?: string;
+  }[];
   fetchAllData: () => Promise<void>;
   addTask: (task: Omit<Task, "id">) => void;
   updateTask: (id: number | string, updatedTask: Partial<Task>) => void;
@@ -41,14 +56,54 @@ export interface TaskStore {
   getTaskById: (id: number | string) => Task | undefined;
   undo: () => void;
   redo: () => void;
-  moveTask: (fromIndexOrId: number | string, toIndexOrPriority: number | string, isKanban: boolean) => void;
+  moveTask: (
+    fromIndexOrId: number | string,
+    toIndexOrPriority: number | string,
+    isKanban: boolean
+  ) => void;
   updateTaskPriority: (taskId: number | string, newPriority: Priorities, newIndex?: number) => void;
   updateTaskStatus: (taskId: number | string, newStatus: Status) => void;
-  addCustomColumn: (column: { name: string; type: string; value: string | boolean; key: string; filter?: boolean }) => void;
+  addCustomColumn: (column: {
+    name: string;
+    type: string;
+    value: string | boolean;
+    key: string;
+    filter?: boolean;
+  }) => void;
   removeCustomColumn: (columnKey: string) => void;
-  updateCustomColumn: (columnKey: string, newColumn: { id: number; name: string; type: string; value: string | boolean; key: string; filter?: boolean }) => void;
-  updateCustomColumnFilter: (columnKey: string, filterStatus: boolean, filterValue?: string) => void;
-  addCustomField: (field: { name: string | number; type: string; value: string | boolean; label?: string; key?: string | number }) => void;
+  updateCustomColumn: (
+    columnKey: string,
+    newColumn: {
+      id: number;
+      name: string;
+      type: string;
+      value: string | boolean;
+      key: string;
+      filter?: boolean;
+    }
+  ) => void;
+  updateCustomColumnFilter: (
+    columnKey: string,
+    filterStatus: boolean,
+    filterValue?: string
+  ) => void;
+  addCustomField: (field: {
+    name: string | number;
+    type: string;
+    value: string | boolean;
+    label?: string;
+    key?: string | number;
+  }) => void;
   removeCustomField: (fieldKey: string) => void;
-  updateCustomField: (fieldKey: string, newField: { id?: number; name: string | number; type: string; value: string | boolean; label?: string; key?: string | number }) => void;
+  updateCustomField: (
+    fieldKey: string,
+    newField: {
+      id?: number;
+      name: string | number;
+      type: string;
+      value: string | boolean;
+      label?: string;
+      key?: string | number;
+    }
+  ) => void;
 }
