@@ -1,10 +1,11 @@
 import { PRIORITIES_LIST, SKIPED_KEYS, STATUS_LIST } from "@/constants/tasks";
 import { TaskFormValues } from "@/schemas/taskSchema";
+import { TaskStore } from "@/types/Tasks";
 
 export function getDefaultValues(
   mode: "create" | "edit",
   task: TaskFormValues | undefined,
-  customFields: any[] = []
+  customFields: TaskStore["customFields"]
 ) {
   if (mode === "edit" && task) {
     const defaultValues = {
@@ -44,7 +45,7 @@ export function getDefaultValues(
     description: "",
     sprints: "",
     assign: [] as string[],
-    ...customFields.reduce((acc, field) => {
+    ...customFields.reduce((acc: Record<string, any>, field) => {
       acc[field.name] = field.type === "checkbox" ? false : "";
       return acc;
     }, {}),

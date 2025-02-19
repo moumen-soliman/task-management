@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import TaskRow from "./TaskRow";
 import { useFilteredTasks } from "@/store/useDataViewStore";
 

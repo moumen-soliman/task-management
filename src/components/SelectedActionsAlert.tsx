@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import { Status, Priorities } from "@/types/Tasks";
 
 const SelectedActionsAlert = () => {
   const selectedIds = useDataViewStore((state) => state.selectedIds);
@@ -38,20 +39,20 @@ const SelectedActionsAlert = () => {
     setShowAlert(selectedIds.length > 0);
   }, [selectedIds]);
 
-  const handleStatusChange = (status) => {
+  const handleStatusChange = (status: Status) => {
     setNewStatus(status);
   };
 
-  const handlePriorityChange = (priority) => {
+  const handlePriorityChange = (priority: Priorities) => {
     setNewPriority(priority);
   };
 
   const applyChanges = () => {
     if (newStatus !== "none") {
-      selectedIds.forEach((id) => updateTaskStatus(id, newStatus));
+      selectedIds.forEach((id) => updateTaskStatus(id, newStatus as Status));
     }
     if (newPriority !== "none") {
-      selectedIds.forEach((id) => updateTaskPriroty(id, newPriority));
+      selectedIds.forEach((id) => updateTaskPriroty(id, newPriority as Priorities));
     }
     clearSelection();
     setShowAlert(false);

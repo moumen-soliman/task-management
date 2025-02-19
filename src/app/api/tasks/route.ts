@@ -15,6 +15,7 @@ export async function GET() {
     const tasks = JSON.parse(fileContent);
     return NextResponse.json(tasks, { status: 200 });
   } catch (error) {
+    console.error("Failed to fetch tasks:", error);
     return NextResponse.json({ error: "Failed to fetch tasks" }, { status: 500 });
   }
 }

@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTaskStore } from "@/store/useTaskStore";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
+import { Task } from "@/types/Tasks";
 
 export default function DataViewActionsBar() {
   const undo = useTaskStore((state) => state.undo);
@@ -26,7 +27,7 @@ export default function DataViewActionsBar() {
   const dataView = useDataViewStore((state) => state.dataView);
   const setDataView = useDataViewStore((state) => state.setDataView);
   const setSortColumn = useDataViewStore((state) => state.setSortColumn);
-  const filters = useDataViewStore((state) => state.filters);
+  const filters: { [key: string]: any } = useDataViewStore((state) => state.filters);
   const setSortDirection = useDataViewStore((state) => state.setSortDirection);
   const sortDirection = useDataViewStore((state) => state.sortDirection);
   const openSheet = useSheetStore((state) => state.openSheet);
@@ -34,7 +35,7 @@ export default function DataViewActionsBar() {
   const router = useRouter();
   const customColumns = useTaskStore((state) => state.customColumns);
 
-  const handleSortChange = (column, direction) => {
+  const handleSortChange = ({column, direction} : {column: keyof Task, direction: "asc" | "desc"}) => {
     if (!direction) {
       setSortColumn(null);
       setSortDirection(null);
@@ -73,9 +74,9 @@ export default function DataViewActionsBar() {
           )}
         </div>
 
-        <DropdownFilter placeholder="Select Priority" label="Priorities" options={PRIORITIES_LIST} value={filters.priority} onChange={(value) => setFilter({ priority: value })} />
-        <DropdownFilter placeholder="Select Status"  label="Statuses" options={STATUS_LIST} value={filters.status} onChange={(value) => setFilter({ status: value })} />
-        <DropdownFilter placeholder="Sort Direction"  label="Sort by Title" options={["asc", "desc"]} value={sortDirection} onChange={(value) => handleSortChange("title", value)} />
+        <DropdownFilter placeholder="Select Priority" options={PRIORITIES_LIST} value={filters.priority} onChange={(value) => setFilter({ priority: value })} />
+        <DropdownFilter placeholder="Select Status"  options={STATUS_LIST} value={filters.status} onChange={(value) => setFilter({ status: value })} />
+        <DropdownFilter placeholder="Sort Direction" options={["asc", "desc"]} value={sortDirection} onChange={(value) => handleSortChange({ column: "title", direction: value as "asc" | "desc" })} />
       </div>
       
       <Separator />
@@ -125,7 +126,7 @@ export default function DataViewActionsBar() {
                 <div className="flex items-center gap-2">
 
                 <Checkbox
-                  checked={filters[column.id] || false}
+                  checked={Boolean(filters[column.id as string | number as keyof typeof filters])}
                   onCheckedChange={(checked) => setFilter({ [column.id]: checked })}
                 />              
                 <Label>{column.label}</Label>
@@ -141,7 +142,7 @@ export default function DataViewActionsBar() {
                 <Input
                   type={column.type}
                   placeholder={`Search by ${column.label}`}
-                  value={column.type === "number" ? Number(filters[column.id]) || "" : filters[column.id] || ""}
+                  value={column.type === "number" ? Number(filters[column.id as string | number]) || "" : filters[column.id as string | number] || ""}
                   onChange={(e) => setFilter({ [column.id]: e.target.value === "" ? "" : column.type === "number" ? Number(e.target.value) : e.target.value })}
                 />
                 </div>

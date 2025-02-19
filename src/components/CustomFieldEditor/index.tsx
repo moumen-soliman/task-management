@@ -22,7 +22,7 @@ export default function CustomFieldEditor() {
     if (task && mode === "edit") {
       updateCustomField(taskId, fieldName, fieldValue);
     } else {
-      addCustomField(fieldName, fieldType, fieldValue);
+      addCustomField({fieldName, fieldType, fieldValue});
     }
     setIsEditing(false);
   };

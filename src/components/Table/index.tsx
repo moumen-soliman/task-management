@@ -1,5 +1,4 @@
 import React from "react";
-import { useFilteredTasks } from "@/store/useDataViewStore";
 import TableHeader from "./TableHeader";
 import TableBody from "./TableBody";
 import { ScrollArea } from "../ui/scroll-area";

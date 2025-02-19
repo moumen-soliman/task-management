@@ -1,12 +1,11 @@
-import { DndProvider, useDrop } from "react-dnd";
+import { useDrop } from "react-dnd";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TaskCard from "@/components/TaskCard";
-import { Task } from "@/types/Tasks";
 import { useSheetStore } from "@/store/useSheetStore";
 import { Button } from "@/components/ui/button";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useFilteredTasks } from "@/store/useDataViewStore";
+import { Priorities } from "@/types/Tasks";
 
 export default function TaskColumn({ priority }: { priority: string }) {
   const openSheet = useSheetStore((state) => state.openSheet);
@@ -21,10 +20,10 @@ export default function TaskColumn({ priority }: { priority: string }) {
 
       // If the task is dropped in the same column, reorder it
       if (item.priority === priority) {
-        updateTaskPriority(item.id, priority, dropTargetIndex);
+        updateTaskPriority(item.id, priority as Priorities, dropTargetIndex);
       } else {
         // If the task is dropped in a different column, move it to the new column
-        updateTaskPriority(item.id, priority, dropTargetIndex);
+        updateTaskPriority(item.id, priority as Priorities, dropTargetIndex);
       }
     },
     collect: (monitor) => ({
@@ -62,6 +61,7 @@ export default function TaskColumn({ priority }: { priority: string }) {
 
   return (
     <ScrollArea
+      // @ts-ignore-next-line
       ref={drop}
       data-priority={priority}
       className={`flex-1 p-4 rounded-lg border h-[85vh] min-w-[320px] max-w-xs snap-start ${

@@ -6,7 +6,7 @@ import {
   STORAGE_KEY,
   USER_STORAGE_KEY,
 } from "@/constants/tasks";
-import { Priorities, Status, TaskStore } from "@/types/Tasks";
+import { TaskStore } from "@/types/Tasks";
 import { loadFromStorageOrFetch } from "@/utils";
 import { taskActions } from "./actions/taskActions";
 import { userActions } from "./actions/userActions";
@@ -15,7 +15,8 @@ import { customFieldActions } from "./actions/customFieldActions";
 
 // Define the store with the middleware
 export const useTaskStore = create<TaskStore>(
-  undoRedoMiddleware((set, get) => ({
+  undoRedoMiddleware(
+    (set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void, get: () => TaskStore) => ({
     tasks: [],
     users: [],
     sprints: [],
@@ -26,7 +27,7 @@ export const useTaskStore = create<TaskStore>(
     redoStack: [],
     
     fetchAllData: async () => {
-      set({ loading: true });
+      set((state) => ({ ...state, loading: true }));
 
       const [tasks, users, sprints] = await Promise.all([
         loadFromStorageOrFetch(STORAGE_KEY, "/api/tasks"),
@@ -34,13 +35,14 @@ export const useTaskStore = create<TaskStore>(
         loadFromStorageOrFetch(SPRINT_STORAGE_KEY, "/api/sprints"),
       ]);
 
-      set({
+      set((state) => ({
+        ...state,
         tasks,
         users,
         sprints,
         customColumns: JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]"),
         loading: false,
-      });
+      }));
     },
 
     ...taskActions(set, get),
