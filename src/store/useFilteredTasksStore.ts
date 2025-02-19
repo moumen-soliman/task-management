@@ -18,8 +18,10 @@ export const useFilteredTasksStore = create<FilteredTasksState>((set) => {
       console.time("FilteringTasks");
       const allTasks = useTaskStore.getState().tasks;
       const customColumns = useTaskStore.getState().customColumns;
-      const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView } =
+      const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView, setCurrentPage } =
         useDataViewStore.getState();
+
+      setCurrentPage(1); // Set currentPage to 1 when applying filters
 
       const priorityOrder = PRIORITIES_LIST;
 
