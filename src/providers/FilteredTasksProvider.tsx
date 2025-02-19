@@ -5,7 +5,7 @@ import { useDataViewStore } from "@/store/useDataViewStore";
 import { useShallow } from "zustand/shallow";
 
 export const FilteredTasksProvider = () => {
-  const applyFilters = useFilteredTasksStore((state) => state.applyFilters); // No need for useCallback
+  const applyFilters = useFilteredTasksStore((state) => state.applyFilters);
   const tasks = useTaskStore((state) => state.tasks);
 
   const { filters, sortColumn, sortDirection, currentPage, pageSize, dataView } = useDataViewStore(
