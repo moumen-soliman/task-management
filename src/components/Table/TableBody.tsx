@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import TaskRow from "./TaskRow";
 import { useFilteredTasks } from "@/store/useDataViewStore";
 
@@ -7,7 +6,7 @@ const TableBody = () => {
   return (
     <tbody>
       {filteredTasks.map((task) => (
-        <TaskRow key={`${task.id}`} task={task} index={task.id} />
+        <TaskRow key={`${task.id}`} task={task} index={Number(task.id)} />
       ))}
     </tbody>
   );

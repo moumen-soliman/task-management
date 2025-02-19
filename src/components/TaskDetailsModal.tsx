@@ -1,20 +1,15 @@
-import React, { use } from "react";
 import { useTaskDetailsModalStore } from "@/store/useTaskDetailsModalStore";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from "lucide-react";
 import AssignedUsers from "./AssignedUsers";
 import { useTaskStore } from "@/store/useTaskStore";
-import { useDataViewStore } from "@/store/useDataViewStore";
 import { useSheetStore } from "@/store/useSheetStore";
 import InfoLabel from "./InfoLabel";
 import PriorityHandler from "./PriorityHandler";
@@ -77,7 +72,7 @@ export default function TaskDetailsModal() {
                     {typeof value === "boolean" ? (
                       <Checkbox checked={value} disabled />
                     ) : (
-                      <span>{value}</span>
+                      <span>{value as React.ReactNode}</span>
                     )}
                   </div>
                 );

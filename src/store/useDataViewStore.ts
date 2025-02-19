@@ -3,33 +3,8 @@ import { create } from "zustand";
 import { useTaskStore } from "@/store/useTaskStore";
 import { createSelectorHooks } from "auto-zustand-selectors-hook";
 import { useMemo } from "react";
-import { CUSTOM_COLUMNS_KEY, PRIORITIES_LIST } from "@/constants/tasks";
-
-interface DataViewState {
-  dataView: "table" | "kanban";
-  filteredTasksList: Task[];
-  visibleCount: number;
-  sortColumn: keyof Task | null;
-  sortDirection: "asc" | "desc" | null;
-  filters: {
-    title: string;
-    priority: string;
-    status: string;
-  };
-  selectedIds: number[];
-  toggleSelection: (id: number) => void;
-  selectAll: (ids: number[]) => void;
-  clearSelection: () => void;
-  setVisibleCount: (count: number | ((prev: number) => number)) => void;
-  setSortColumn: (column: keyof Task) => void;
-  setSortDirection: (direction: "asc" | "desc") => void;
-  setFilter: (filter: Partial<DataViewState["filters"]>) => void;
-  setSortColumnAndDirection: (column: keyof Task) => void;
-  currentPage: number;
-  pageSize: number;
-  setCurrentPage: (page: number) => void;
-  setPageSize: (size: number) => void;
-}
+import { PRIORITIES_LIST } from "@/constants/tasks";
+import { dataView, DataViewState } from "@/types/DataView";
 
 export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
   dataView: "table",
@@ -45,7 +20,7 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
   },
   currentPage: 1,
   pageSize: 10,
-  setDataView: (dataView) => set({ dataView }),
+  setDataView: (dataView: dataView) => set({ dataView }),
   setVisibleCount: (fn) =>
     set((state) => ({
       visibleCount: typeof fn === "function" ? fn(state.visibleCount) : fn,
@@ -71,7 +46,7 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
 
   clearSelection: () => set({ selectedIds: [] }),
 
-  updateSelectedTasks: (updates) => {
+  updateSelectedTasks: (updates: Partial<Task>) => {
     const { selectedIds } = get();
     const { updateTask } = useTaskStore.getState();
 
@@ -115,9 +90,9 @@ export const useFilteredTasks = () => {
 
         for (const column of activeFilters) {
           if (
-            filters[column.id] !== undefined &&
-            filters[column.id] !== "" &&
-            task[column.key] !== filters[column.id]
+            filters[column.id as string | number | boolean as keyof DataViewState["filters"]] !== undefined &&
+            filters[column.id as  string | number | boolean as  keyof DataViewState["filters"]] !== "" &&
+            task[column.key] !== filters[column.id as unknown as keyof DataViewState["filters"]]
           ) {
             return false;
           }
@@ -152,6 +127,7 @@ export const useFilteredTasks = () => {
     return filteredTasks;
   }, [
     allTasks,
+    priorityOrder,
     sortColumn,
     sortDirection,
     filters,

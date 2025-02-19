@@ -1,20 +1,15 @@
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useMemo } from "react";
-
-interface User {
-  id: number;
-  name: string;
-  image?: { url?: string };
-}
+import { User } from "@/types/Users";
 
 interface AssignedUsersProps {
-  assignedUserIds: string[];
-  getAssignedUser: User[];
+  assignedUserIds: string[] | number[];
+  getAssignedUser: User[] | string[];
 }
 
 export default function AssignedUsers({ getAssignedUser }: AssignedUsersProps) {
-  const assignedUsers = useMemo(() => getAssignedUser, [getAssignedUser]);
+  const assignedUsers = useMemo(() => getAssignedUser as User[], [getAssignedUser]);
 
   return (
     <div className="flex -space-x-2 overflow-hidden">

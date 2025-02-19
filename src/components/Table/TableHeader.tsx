@@ -2,17 +2,15 @@ import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDataViewStore, useFilteredTasks } from "@/store/useDataViewStore";
 import { useTaskStore } from "@/store/useTaskStore";
-import { Settings, SortAscIcon, SortDesc, SortDescIcon } from "lucide-react";
+import { Settings, SortAscIcon, SortDescIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import ConfirmDeleteDialog from "../ConfirmDeleteDialog";
-import { Button } from "../ui/button";
 import { TASK_COLUMNS } from "@/constants/tasks";
 
 export default function TableHeader() {
@@ -32,15 +30,17 @@ export default function TableHeader() {
     if (isAllSelected) {
       clearSelection();
     } else {
-      selectAll(filteredTasks.map((task) => task.id));
+      selectAll(filteredTasks.map((task) => Number(task.id)));
     }
   };
 
-  const handleFilterChange = (columnKey, checked) => {
+  const handleFilterChange = ({columnKey, checked} : 
+    {columnKey: string, checked: boolean}
+  ) => {
     updateCustomColumnFilter(columnKey, checked);
   };
 
-  const handleSort = (columnKey) => {
+  const handleSort = (columnKey: string) => {
     if (columnKey !== "assign" && columnKey !== "sprint") {
       setSortColumnAndDirection(columnKey);
     }
@@ -71,7 +71,7 @@ export default function TableHeader() {
             key={`${column.key}-${index}`}
             className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
           >
-            {column.label}
+            {column.name}
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Settings className="h-4 w-4 inline-block ml-2" />
@@ -83,7 +83,7 @@ export default function TableHeader() {
                     id={`filter-${column.key}`}
                     className="mr-2"
                     checked={column.filter || false}
-                    onCheckedChange={(checked) => handleFilterChange(column.key, checked)}
+                    onCheckedChange={(checked) => handleFilterChange({ columnKey: column.key, checked: checked as boolean })}
                   />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-200" />

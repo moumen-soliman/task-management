@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, createContext, useState } from "react";
+import React, { useEffect, createContext } from "react";
 import { subscribeToTaskUpdates } from "@/utils";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useSheetStore } from "@/store/useSheetStore";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Kanban from "@/components/Kanaban";
 import Table from "./Table";
 import DataViewActionsBar from "./DataViewActionsBar";

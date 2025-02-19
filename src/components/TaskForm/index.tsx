@@ -11,6 +11,7 @@ import { TaskFormFields } from "./TaskFormFields";
 import { taskSchema, TaskFormValues } from "@/schemas/taskSchema";
 import { getDefaultValues } from "@/utils/formHelpers";
 import { useToast } from "@/hooks/use-toast";
+import { Task } from "@/types/Tasks";
 
 export default function TaskForm({ mode, task }: CreateTaskFormProps) {
   const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
@@ -34,6 +35,7 @@ export default function TaskForm({ mode, task }: CreateTaskFormProps) {
 
   const onSubmit = (values: TaskFormValues) => {
     const taskData = {
+      ...form.getValues(),
       description: values.description,
       sprints: values.sprints ? [Number(values.sprints)] : [],
       assign: (values.assign || []).map(Number),
@@ -47,13 +49,12 @@ export default function TaskForm({ mode, task }: CreateTaskFormProps) {
             {} as Record<string, any>
           )
         : {}),
-      ...form.getValues(),
     };
 
     if (mode === "create") {
       addTask(taskData);
     } else if (mode === "edit" && task?.id) {
-      updateTask(task?.id, taskData);
+      updateTask(task?.id, taskData as Task);
     }
     toast({
       title: `${values.title} has been saved`,

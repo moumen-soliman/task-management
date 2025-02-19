@@ -17,6 +17,7 @@ import { User } from "@/types/Users";
 import { Sprint } from "@/types/Sprints";
 import DescEditor from "@/components/DescEditor";
 import { useTaskStore } from "@/store/useTaskStore";
+import { useSheetStore } from "@/store/useSheetStore";
 
 interface TaskFormFieldsProps {
   form: UseFormReturn<TaskFormValues>;
@@ -25,7 +26,8 @@ interface TaskFormFieldsProps {
 }
 
 export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
-  const customColumns = useTaskStore((state) => state.customFields);
+  const { customColumns } = useTaskStore();
+  const mode = useSheetStore((state) => state.mode);
   return (
     <>
       <FormField
@@ -58,7 +60,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Priority</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value ?? undefined}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
@@ -82,7 +84,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Status</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value ?? undefined}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -121,7 +123,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Sprint</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value ?? undefined}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Sprint" />
@@ -140,17 +142,21 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
         )}
       />
       <CustomFieldEditor />
-      {customColumns?.map((column) =>
-        column && column.key ? (
+      {mode === "create" && customColumns?.map((column) =>
+        column ? (
           <FormField
             key={column.key}
             control={form.control}
-            name={column.key as keyof TaskFormValues}
+            name={column.key as string}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{column.label}</FormLabel>
+                <FormLabel>{column.name}</FormLabel>
                 <FormControl>
-                  <Input placeholder={column.label} {...field} />
+                <Input
+                  placeholder={column.label}
+                  {...field}
+                  value={(field.value ?? "") as string | number | readonly string[] | undefined}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -158,7 +164,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
           />
         ) : null
       )}
-      {Object.entries(form.getValues() || {}).map(([key, value]) => {
+      {mode === "edit" && Object.entries(form.getValues() || {}).map(([key, value]) => {
         if (!SKIPED_KEYS.includes(key)) {
           return (
             <FormItem key={key}>
@@ -166,16 +172,17 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
               <FormControl>
                 {typeof value === "boolean" ? (
                   <Checkbox
-                    {...form.register(key as keyof TaskFormValues)}
-                    checked={Boolean(form.watch(key as keyof TaskFormValues))}
+                    {...form.register(key as string)}
+                    checked={Boolean(form.watch(key as string))}
                     onCheckedChange={(checked) =>
-                      form.setValue(key as keyof TaskFormValues, checked as any)
+                      form.setValue(key as string, checked as any)
                     }
                   />
                 ) : (
                   <Input
-                    {...form.register(key as keyof TaskFormValues)}
-                    defaultValue={form.watch(key as keyof TaskFormValues) ?? ""}
+                    {...form.register(key as string | string)}
+                    type={typeof key === "number" ? "number" : "text"}
+                    defaultValue={String(form.watch(key as string) ?? "")}
                   />
                 )}
               </FormControl>

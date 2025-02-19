@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TaskStore } from "@/types/Tasks";
 
-export default function CustomFieldList({ customFields, onRemove }) {
+interface CustomFieldListProps {
+  customFields: TaskStore["customFields"];
+  onRemove: (id: string) => void;
+}
+
+export default function CustomFieldList({ customFields, onRemove }: CustomFieldListProps) {
   return (
     <div className="space-y-4">
       {customFields.map((field) => (
@@ -14,7 +20,7 @@ export default function CustomFieldList({ customFields, onRemove }) {
               {field.type === "checkbox" ? (field.value ? "Yes" : "No") : field.value}
             </div>
           </div>
-          <Button variant="destructive" size="sm" onClick={() => onRemove(field.id)}>
+          <Button variant="destructive" size="sm" onClick={() => onRemove(field.id.toString())}>
             Remove
           </Button>
         </div>

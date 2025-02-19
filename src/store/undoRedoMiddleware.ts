@@ -1,19 +1,24 @@
 import { STORAGE_KEY } from "@/constants/tasks";
+import { TaskStore } from "@/types/Tasks";
 
-const undoRedoMiddleware = (config) => (set, get) => {
-    return {
-      ...config((partialState) => {
+const undoRedoMiddleware = (config: any) => (
+  set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void,
+  get: () => TaskStore
+) => ({
+      ...config((partialState: any) => {
         const prevState = get();  // Save previous state before modification
   
-        set((state) => {
+        set((state: TaskStore) => {
           return {
             ...typeof partialState === "function" ? partialState(state) : partialState,  // Ensure function compatibility
+            // @ts-ignore-next-line
             history: [...state.history, prevState],  // Store previous state for undo
           };
         });
       }, get),
   
       undo: () => {
+        // @ts-ignore-next-line
         const { history, redoStack, tasks } = get();
         if (history.length === 0) return; // Prevent undoing when history is empty
       
@@ -33,6 +38,7 @@ const undoRedoMiddleware = (config) => (set, get) => {
         },
 
       redo: () => {
+        // @ts-ignore-next-line
         const { history, redoStack } = get();
         if (redoStack.length === 0) return;
 
@@ -44,8 +50,7 @@ const undoRedoMiddleware = (config) => (set, get) => {
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState.tasks)); // Update tasks storage
       }
-    };
-  };
+  })
   
   export default undoRedoMiddleware;
   

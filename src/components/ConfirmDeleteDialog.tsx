@@ -13,7 +13,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
-const ConfirmDeleteDialog = ({ onDelete }) => {
+interface ConfirmDeleteDialogProps {
+  onDelete: () => void;
+}
+
+const ConfirmDeleteDialog = ({ onDelete }: ConfirmDeleteDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = () => {

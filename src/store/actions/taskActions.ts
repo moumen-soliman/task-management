@@ -1,51 +1,55 @@
-import { PRIORITIES_LIST, STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
+import { STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
 import { useDataViewStore } from "../useDataViewStore";
+import { Priorities, Status, Task, TaskStore } from "@/types/Tasks";
 
-export const taskActions = (set, get) => ({
-  addTask: (task) => {
+export const taskActions = (
+  set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void,
+  get: () => TaskStore
+) => ({
+  addTask: (task: Omit<Task, "id">) => {
     const tasks = get().tasks;
     const maxIndex = Math.max(...tasks.map((t) => t.index || 0), -1);
-    const newTask = {
+    const newTask: Task = {
+      ...task as Task,
       id: tasks.length + 1,
-      ...task,
       deleted: false,
       index: maxIndex + 1,
     };
     const updatedTasks = [newTask, ...tasks];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
-  updateTask: (id, updatedTask) => {
+  updateTask: (id: number | string, updatedTask: Partial<Task>) => {
     const updatedTasks = get().tasks.map((task) =>
       task.id === id ? { ...task, ...updatedTask } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
-  softDeleteTask: (id) => {
+  softDeleteTask: (id: number | string) => {
     const updatedTasks = get().tasks.map((task) =>
       task.id === id ? { ...task, deleted: true } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
-  undoDeleteTask: (id) => {
+  undoDeleteTask: (id: number | string) => {
     const updatedTasks = get().tasks.map((task) =>
       task.id === id ? { ...task, deleted: false } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
-  updateTaskStatus: (taskId, newStatus) => {
+  updateTaskStatus: (taskId: number | string, newStatus: Status) => {
     const updatedTasks = get().tasks.map((task) =>
       task.id === taskId ? { ...task, status: newStatus } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
-  updateTaskPriority: (taskId, newPriority, newIndex) => {
-    set((state) => {
-      let updatedTasks = [...state.tasks];
+  updateTaskPriority: (taskId: number | string, newPriority: Priorities, newIndex?: number) => {
+    set((state: TaskStore): TaskStore => { 
+      const updatedTasks = [...state.tasks];
       const taskIndex = updatedTasks.findIndex((t) => t.id === taskId);
       if (taskIndex === -1) return state;
 
@@ -91,48 +95,51 @@ export const taskActions = (set, get) => ({
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-      return { tasks: updatedTasks };
+      return { ...state, tasks: updatedTasks };
     });
   },
-  getTaskById: (taskId) => {
+  getTaskById: (taskId: number | string) => {
     return get().tasks.find((task) => task.id === taskId);
   },
 
-  addCustomColumn: (column) => {
+  addCustomColumn: (column: { name: string; type: string; value: string | boolean; key: string; filter?: boolean }) => {
     const existingColumns = JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]");
     const newColumn = { ...column, id: existingColumns.length + 1 };
     const updatedColumns = [...get().customColumns, newColumn];
-    set({ customColumns: updatedColumns });
+    set((state: TaskStore) => ({ ...state, customColumns: updatedColumns }));
+
     const mergedColumns = [...existingColumns, newColumn];
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(mergedColumns));
 
     get().tasks.forEach((task) => {
-      const updatedTask = { ...task, [newColumn.key]: newColumn.defaultValue };
+      const updatedTask = { ...task, [newColumn.key]: newColumn.value };
       get().updateTask(task.id, updatedTask);
     });
   },
 
-  removeCustomColumn: (columnKey) => {
+  removeCustomColumn: (columnKey: string) => {
     const updatedColumns = get().customColumns.filter((col) => col.key !== columnKey);
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
-    set({ customColumns: updatedColumns });
+    set((state: TaskStore) => ({ ...state, customColumns: updatedColumns }));
 
     const updatedTasks = get().tasks.map((task) => {
-      const { [columnKey]: _, ...rest } = task;
-      return rest;
+      const rest = { ...task };
+      delete rest[columnKey]; // Remove the key dynamically
+      return rest as Task;
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
-  },
 
-  updateCustomColumn: (columnKey, newColumn) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+},
+
+  updateCustomColumn: (columnKey: string, newColumn: { id: number; name: string; type: string; value: string | boolean; key: string; filter?: boolean }) => {
     const updatedColumns = get().customColumns.map((col) =>
       col.key === columnKey ? newColumn : col
     );
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
-    set({ customColumns: updatedColumns });
+    set((state: TaskStore) => ({ ...state, customColumns: updatedColumns }));
   },
-  updateCustomColumnFilter: (columnKey, filterStatus, filterValue) => {
+  updateCustomColumnFilter: (columnKey: string, filterStatus: boolean, filterValue?: string) => {
     const updatedColumns = get().customColumns.map((col) =>
       col.key === columnKey
         ? {
@@ -143,7 +150,7 @@ export const taskActions = (set, get) => ({
         : col
     );
     localStorage.setItem(CUSTOM_COLUMNS_KEY, JSON.stringify(updatedColumns));
-    set({ customColumns: updatedColumns });
+    set((state: TaskStore) => ({ ...state, customColumns: updatedColumns }));
 
     // Clear the filter value from DataViewStore when disabling filter
     if (!filterStatus) {
@@ -152,16 +159,16 @@ export const taskActions = (set, get) => ({
       setFilter({ [columnKey]: undefined });
     }
   },
-  moveTask: (fromIndexOrId, toIndexOrPriority, isKanban) => {
-    set((state) => {
-      let tasks = [...state.tasks];
+  moveTask: (fromIndexOrId: number | string, toIndexOrPriority: number | string, isKanban: boolean) => {
+    set((state: TaskStore): TaskStore => {      
+      let tasks = state.tasks ? [...state.tasks] : [];
 
       if (isKanban && typeof toIndexOrPriority === "string") {
         // Kanban View: Change priority
         const taskIndex = tasks.findIndex((task) => task.id === fromIndexOrId);
         if (taskIndex !== -1) {
           tasks = tasks.map((task, index) =>
-            index === taskIndex ? { ...task, priority: toIndexOrPriority } : task
+            index === taskIndex ? { ...task, priority: toIndexOrPriority as Priorities } : task
           );
         }
       } else if (
@@ -185,7 +192,7 @@ export const taskActions = (set, get) => ({
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-      return { tasks: [...tasks] };
+      return { ...state, tasks };
     });
   },
 });

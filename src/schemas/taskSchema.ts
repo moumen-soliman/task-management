@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 
 export const taskSchema = z
   .object({
