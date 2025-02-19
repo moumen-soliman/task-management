@@ -17,6 +17,7 @@ import { User } from "@/types/Users";
 import { Sprint } from "@/types/Sprints";
 import DescEditor from "@/components/DescEditor";
 import { useTaskStore } from "@/store/useTaskStore";
+import { useSheetStore } from "@/store/useSheetStore";
 
 interface TaskFormFieldsProps {
   form: UseFormReturn<TaskFormValues>;
@@ -25,7 +26,8 @@ interface TaskFormFieldsProps {
 }
 
 export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
-  const customColumns = useTaskStore((state) => state.customFields);
+  const { customColumns } = useTaskStore();
+  const mode = useSheetStore((state) => state.mode);
   return (
     <>
       <FormField
@@ -140,7 +142,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
         )}
       />
       <CustomFieldEditor />
-      {customColumns?.map((column) =>
+      {mode === "create" && customColumns?.map((column) =>
         column && column.key ? (
           <FormField
             key={column.key}
@@ -158,7 +160,7 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
           />
         ) : null
       )}
-      {Object.entries(form.getValues() || {}).map(([key, value]) => {
+      {mode === "edit" && Object.entries(form.getValues() || {}).map(([key, value]) => {
         if (!SKIPED_KEYS.includes(key)) {
           return (
             <FormItem key={key}>
