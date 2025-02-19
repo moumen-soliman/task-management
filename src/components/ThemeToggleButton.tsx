@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 export function ThemeToggleButton() {
   const { theme, setTheme } = useTheme();
@@ -15,11 +16,11 @@ export function ThemeToggleButton() {
   if (!mounted) return null; // Prevents hydration errors
 
   return (
-    <button
+    <Button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className="absolute top-4 right-0 md:right-4 p-2 rounded-lg"
     >
       {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-    </button>
+    </Button>
   );
 }
