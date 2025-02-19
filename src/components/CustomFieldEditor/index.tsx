@@ -36,7 +36,7 @@ export default function CustomFieldEditor() {
       {!isEditing && <Button onClick={() => setIsEditing(true)}>➕ Add New Field</Button>}
 
       {isEditing && (
-        <CustomFieldForm onSave={handleAddField} onCancel={() => setIsEditing(false)} />
+        <CustomFieldForm task={task} onSave={handleAddField} onCancel={() => setIsEditing(false)} />
       )}
 
       {mode !== "edit" && (

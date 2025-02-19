@@ -129,7 +129,7 @@ export default function DataViewActionsBar() {
                   checked={Boolean(filters[column.id as string | number as keyof typeof filters])}
                   onCheckedChange={(checked) => setFilter({ [column.id]: checked })}
                 />              
-                <Label>{column.label}</Label>
+                <Label>{column.name}</Label>
               </div>
               <X
                 className="cursor-pointer"
@@ -141,7 +141,7 @@ export default function DataViewActionsBar() {
                 <div className="relative w-full max-w-sm">
                 <Input
                   type={column.type}
-                  placeholder={`Search by ${column.label}`}
+                  placeholder={`Search by ${column.name}`}
                   value={column.type === "number" ? Number(filters[column.id as string | number]) || "" : filters[column.id as string | number] || ""}
                   onChange={(e) => setFilter({ [column.id]: e.target.value === "" ? "" : column.type === "number" ? Number(e.target.value) : e.target.value })}
                 />

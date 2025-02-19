@@ -143,16 +143,20 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
       />
       <CustomFieldEditor />
       {mode === "create" && customColumns?.map((column) =>
-        column && column.key ? (
+        column ? (
           <FormField
             key={column.key}
             control={form.control}
             name={column.key as string}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{column.label}</FormLabel>
+                <FormLabel>{column.name}</FormLabel>
                 <FormControl>
-                  <Input placeholder={column.label} {...field} value={field.value as string | number | readonly string[] | undefined} />
+                <Input
+                  placeholder={column.label}
+                  {...field}
+                  value={(field.value ?? "") as string | number | readonly string[] | undefined}
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>

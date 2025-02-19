@@ -71,7 +71,7 @@ export default function TableHeader() {
             key={`${column.key}-${index}`}
             className="px-4 py-2 border-b-2 border-gray-300 dark:border-gray-800 text-left truncate"
           >
-            {column.label}
+            {column.name}
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Settings className="h-4 w-4 inline-block ml-2" />

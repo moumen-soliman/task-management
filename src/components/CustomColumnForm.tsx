@@ -57,6 +57,10 @@ export default function CustomColumnForm() {
 
   const onSubmit = (data: { label: string; key: string; type: "text" | "number" | "checkbox"; defaultValue: string | number | boolean }) => {
     if (customColumns.some((column) => column.key === data.key)) {
+      methods.setError("key", {
+        type: "manual",
+        message: "A column with this key already exists"
+      });
       return;
     }
     addCustomColumn({
@@ -137,7 +141,7 @@ export default function CustomColumnForm() {
           )}
           {errors.defaultValue && <FormMessage>{errors.defaultValue.message}</FormMessage>}
         </div>
-
+        <FormMessage>{errors.key?.message}</FormMessage>
         <Button type="submit" className="w-full">
           Add Field
         </Button>

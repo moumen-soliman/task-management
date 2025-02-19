@@ -3,6 +3,13 @@ import { Task, TaskStore } from "@/types/Tasks";
 
 export const customFieldActions = (set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void, get: () => TaskStore) => ({
   addCustomField: (fieldName: string, fieldType: string, fieldValue: any, taskId?: number) => {
+    // Check if field name already exists
+    const fieldExists = get().customFields.some(field => field.name === fieldName);
+    if (fieldExists) {
+      console.error('A field with this name already exists');
+      return;
+    }
+
     const newField = {
       id: get().customFields.length + 1,
       name: fieldName,

@@ -16,7 +16,7 @@ export default function Table() {
         </div>
       </ScrollArea>
 
-      <div className="sticky bottom-0 left-0 w-full bg-white dark:bg-gray-900 shadow-md border-t z-50">
+      <div className="sticky bottom-0 left-0 w-full bg-white dark:bg-gray-900 shadow-md border-t z-10">
         <PaginationControls />
       </div>
     </div>

@@ -27,10 +27,8 @@ import { Status, Priorities } from "@/types/Tasks";
 const SelectedActionsAlert = () => {
   const selectedIds = useDataViewStore((state) => state.selectedIds);
   const clearSelection = useDataViewStore((state) => state.clearSelection);
-  const updateTaskStatus = useTaskStore((state) => state.updateTaskStatus);
-  const updateTaskPriroty = useTaskStore((state) => state.updateTaskPriority);
   const softDeleteTask = useTaskStore((state) => state.softDeleteTask);
-
+  const updateTask = useTaskStore((state) => state.updateTask);
   const [showAlert, setShowAlert] = useState(false);
   const [newStatus, setNewStatus] = useState("none");
   const [newPriority, setNewPriority] = useState("none");
@@ -49,10 +47,10 @@ const SelectedActionsAlert = () => {
 
   const applyChanges = () => {
     if (newStatus !== "none") {
-      selectedIds.forEach((id) => updateTaskStatus(id, newStatus as Status));
+      selectedIds.forEach((id) => updateTask(id, { status: newStatus as Status }));
     }
     if (newPriority !== "none") {
-      selectedIds.forEach((id) => updateTaskPriroty(id, newPriority as Priorities));
+      selectedIds.forEach((id) =>  updateTask(id, { priority: newPriority as Priorities }));
     }
     clearSelection();
     setShowAlert(false);
