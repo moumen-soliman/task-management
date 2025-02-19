@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import undoRedoMiddleware from "./undoRedoMiddleware"; // Import the middleware
 import {
   CUSTOM_COLUMNS_KEY,
   SPRINT_STORAGE_KEY,
@@ -12,33 +13,39 @@ import { userActions } from "./actions/userActions";
 import { sprintActions } from "./actions/sprintActions";
 import { customFieldActions } from "./actions/customFieldActions";
 
-export const useTaskStore = create<TaskStore>((set, get) => ({
-  tasks: [],
-  users: [],
-  sprints: [],
-  loading: true,
-  customFields: [],
-  customColumns: [],
+// Define the store with the middleware
+export const useTaskStore = create<TaskStore>(
+  undoRedoMiddleware((set, get) => ({
+    tasks: [],
+    users: [],
+    sprints: [],
+    loading: true,
+    customFields: [],
+    customColumns: [],
+    history: [],
+    redoStack: [],
+    
+    fetchAllData: async () => {
+      set({ loading: true });
 
-  fetchAllData: async () => {
-    set({ loading: true });
+      const [tasks, users, sprints] = await Promise.all([
+        loadFromStorageOrFetch(STORAGE_KEY, "/api/tasks"),
+        loadFromStorageOrFetch(USER_STORAGE_KEY, "/api/users"),
+        loadFromStorageOrFetch(SPRINT_STORAGE_KEY, "/api/sprints"),
+      ]);
 
-    const [tasks, users, sprints] = await Promise.all([
-      loadFromStorageOrFetch(STORAGE_KEY, "/api/tasks"),
-      loadFromStorageOrFetch(USER_STORAGE_KEY, "/api/users"),
-      loadFromStorageOrFetch(SPRINT_STORAGE_KEY, "/api/sprints"),
-    ]);
+      set({
+        tasks,
+        users,
+        sprints,
+        customColumns: JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]"),
+        loading: false,
+      });
+    },
 
-    set({
-      tasks,
-      users,
-      sprints,
-      customColumns: JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]"),
-      loading: false,
-    });
-  },
-  ...taskActions(set, get),
-  ...userActions(set, get),
-  ...sprintActions(set, get),
-  ...customFieldActions(set, get),
-}));
+    ...taskActions(set, get),
+    ...userActions(set, get),
+    ...sprintActions(set, get),
+    ...customFieldActions(set, get),
+  }))
+);

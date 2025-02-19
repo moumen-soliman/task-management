@@ -21,6 +21,12 @@ const schema = z.object({
   type: z.enum(["text", "number", "checkbox"]),
   defaultValue: z
     .union([z.string(), z.number(), z.boolean()])
+    .transform((val) => {
+      if (typeof val === 'string' && val.match(/^\d+$/)) {
+        return Number(val);
+      }
+      return val;
+    })
     .refine((value) => value !== undefined && value !== null && value !== "", {
       message: "Default value is required",
     }),
@@ -105,7 +111,9 @@ export default function CustomColumnForm() {
             <Input
               type="number"
               placeholder="Default Value"
-              {...register("defaultValue", { valueAsNumber: true })}
+              {...register("defaultValue", {
+                setValueAs: (value) => (value === "" ? undefined : Number(value))
+              })}
               required
             />
           )}

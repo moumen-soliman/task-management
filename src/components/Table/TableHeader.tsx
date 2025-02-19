@@ -2,7 +2,7 @@ import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDataViewStore, useFilteredTasks } from "@/store/useDataViewStore";
 import { useTaskStore } from "@/store/useTaskStore";
-import { Settings } from "lucide-react";
+import { Settings, SortAscIcon, SortDesc, SortDescIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,8 +60,10 @@ export default function TableHeader() {
             }`}
             onClick={() => handleSort(column.key)}
           >
-            {column.label}
-            {sortColumn === column.key && <span>{sortDirection === "asc" ? " ▲" : " ▼"}</span>}
+            <div className="flex items-center gap-2">
+              {column.label}
+              { column.key !== "assign" && column.key !== "sprint" ? sortColumn === column.key ? sortDirection === "asc" ? <SortAscIcon /> : <SortDescIcon /> : <SortAscIcon className="opacity-20" /> : null }
+            </div>
           </th>
         ))}
         {customColumns.map((column, index) => (
