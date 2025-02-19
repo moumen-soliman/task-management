@@ -127,6 +127,7 @@ export const useFilteredTasks = () => {
     return filteredTasks;
   }, [
     allTasks,
+    priorityOrder,
     sortColumn,
     sortDirection,
     filters,

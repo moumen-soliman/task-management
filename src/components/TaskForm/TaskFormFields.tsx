@@ -145,12 +145,12 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
           <FormField
             key={column.key}
             control={form.control}
-            name={column.key as keyof TaskFormValues}
+            name={column.key as string}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{column.label}</FormLabel>
                 <FormControl>
-                  <Input placeholder={column.label} {...field} />
+                  <Input placeholder={column.label} {...field} value={field.value as string | number | readonly string[] | undefined} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -166,16 +166,17 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
               <FormControl>
                 {typeof value === "boolean" ? (
                   <Checkbox
-                    {...form.register(key as keyof TaskFormValues)}
-                    checked={Boolean(form.watch(key as keyof TaskFormValues))}
+                    {...form.register(key as string)}
+                    checked={Boolean(form.watch(key as string))}
                     onCheckedChange={(checked) =>
-                      form.setValue(key as keyof TaskFormValues, checked as any)
+                      form.setValue(key as string, checked as any)
                     }
                   />
                 ) : (
                   <Input
-                    {...form.register(key as keyof TaskFormValues)}
-                    defaultValue={form.watch(key as keyof TaskFormValues) ?? ""}
+                    {...form.register(key as string | string)}
+                    type={typeof key === "number" ? "number" : "text"}
+                    defaultValue={String(form.watch(key as string) ?? "")}
                   />
                 )}
               </FormControl>

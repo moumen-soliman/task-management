@@ -50,5 +50,5 @@ export interface TaskStore {
   updateCustomColumnFilter: (columnKey: string, filterStatus: boolean, filterValue?: string) => void;
   addCustomField: (field: { name: string | number; type: string; value: string | boolean; label?: string; key?: string | number }) => void;
   removeCustomField: (fieldKey: string) => void;
-  updateCustomField: (fieldKey: string, newField: { id: number; name: string | number; type: string; value: string | boolean; label?: string; key?: string | number }) => void;
+  updateCustomField: (fieldKey: string, newField: { id?: number; name: string | number; type: string; value: string | boolean; label?: string; key?: string | number }) => void;
 }

@@ -11,7 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export default function CustomFieldForm({ onSave, onCancel }) {
+interface CustomFieldFormProps {
+  onSave: (fieldName: string, fieldType: string, fieldValue: string | number | boolean) => void;
+  onCancel: () => void;
+}
+
+export default function CustomFieldForm({ onSave, onCancel }: CustomFieldFormProps) {
   const [fieldName, setFieldName] = useState("");
   const [fieldType, setFieldType] = useState("text");
   const [fieldValue, setFieldValue] = useState<string | number | boolean>("");

@@ -39,8 +39,8 @@ export default function CustomColumnForm() {
     defaultValues: {
       label: "",
       key: "",
-      type: "text",
-      defaultValue: "",
+      type: "text" as "text" | "number" | "checkbox",
+      defaultValue: "" as string | number | boolean,
     },
   });
 
@@ -55,11 +55,16 @@ export default function CustomColumnForm() {
   } = methods;
   const type = watch("type");
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: { label: string; key: string; type: "text" | "number" | "checkbox"; defaultValue: string | number | boolean }) => {
     if (customColumns.some((column) => column.key === data.key)) {
       return;
     }
-    addCustomColumn(data);
+    addCustomColumn({
+      name: data.label,
+      key: data.key,
+      type: data.type,
+      value: String(data.defaultValue),
+    });
     reset();
   };
 

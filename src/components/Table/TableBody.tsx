@@ -6,7 +6,7 @@ const TableBody = () => {
   return (
     <tbody>
       {filteredTasks.map((task) => (
-        <TaskRow key={`${task.id}`} task={task} index={task.id} />
+        <TaskRow key={`${task.id}`} task={task} index={Number(task.id)} />
       ))}
     </tbody>
   );

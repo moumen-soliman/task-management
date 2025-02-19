@@ -30,13 +30,13 @@ export default function PaginationControls() {
         <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
           Tasks per page:
         </span>
-        <Select value={pageSize} onValueChange={(value) => setPageSize(Number(value))}>
+        <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
           <SelectTrigger className="w-20 border rounded px-3 py-1 text-sm">
             <SelectValue placeholder={pageSize} />
           </SelectTrigger>
           <SelectContent>
             {pageSizeOptions.map((size) => (
-              <SelectItem key={size} value={size}>
+              <SelectItem key={size} value={String(size)}>
                 {size}
               </SelectItem>
             ))}

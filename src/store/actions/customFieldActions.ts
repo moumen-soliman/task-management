@@ -1,7 +1,8 @@
 import { STORAGE_KEY } from "@/constants/tasks";
+import { Task, TaskStore } from "@/types/Tasks";
 
-export const customFieldActions = (set, get) => ({
-  addCustomField: (fieldName, fieldType, fieldValue, taskId?) => {
+export const customFieldActions = (set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void, get: () => TaskStore) => ({
+  addCustomField: (fieldName: string, fieldType: string, fieldValue: any, taskId?: number) => {
     const newField = {
       id: get().customFields.length + 1,
       name: fieldName,
@@ -9,38 +10,42 @@ export const customFieldActions = (set, get) => ({
       value: fieldValue,
     };
     const updatedFields = [...get().customFields, newField];
-    set({ customFields: updatedFields });
+    set((state: TaskStore) => ({ ...state, customFields: updatedFields }));
 
     if (taskId) {
       const updatedTasks = get().tasks.map((task) =>
         task.id === taskId
           ? {
               ...task,
-              [fieldName]: fieldType === "checkbox" ? false : "",
+              [fieldName]: fieldType === "checkbox" ? false : fieldValue,
             }
           : task
       );
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-      set({ tasks: updatedTasks });
+      set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
     }
   },
-  removeCustomField: (id) => {
+  removeCustomField: (id: number) => {
     const fieldToRemove = get().customFields.find((field) => field.id === id);
+    if (!fieldToRemove) return;
+
     const updatedFields = get().customFields.filter((field) => field.id !== id);
-    set({ customFields: updatedFields });
+    set((state: TaskStore) => ({ ...state, customFields: updatedFields }));
 
     const updatedTasks = get().tasks.map((task) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [fieldToRemove.name]: _, ...rest } = task;
-      return rest;
+      return { ...rest } as Task;
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+
   },
-  updateCustomField: (taskId, fieldName, value) => {
+  updateCustomField: (taskId: number, fieldName: string, value: string | number | boolean) => {
     const updatedTasks = get().tasks.map((task) =>
-      task.id === taskId ? Object.assign({}, task, { [fieldName]: value }) : task
-    );
+      task.id === taskId ? { ...task, [fieldName]: value } : task
+    ) as Task[];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
-    set({ tasks: updatedTasks });
+    set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));   
   },
 });
