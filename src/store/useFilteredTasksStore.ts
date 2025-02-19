@@ -10,11 +10,12 @@ interface FilteredTasksState {
   applyFilters: () => void;
 }
 
-export const useFilteredTasksStore = create<FilteredTasksState>((set, get) => {
+export const useFilteredTasksStore = create<FilteredTasksState>((set) => {
   return {
     filteredTasks: [],
 
     applyFilters: () => {
+      console.time("FilteringTasks");
       const allTasks = useTaskStore.getState().tasks;
       const customColumns = useTaskStore.getState().customColumns;
       const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView } =

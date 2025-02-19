@@ -21,7 +21,7 @@ export const FilteredTasksProvider = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [tasks, filters, sortColumn, sortDirection, currentPage, pageSize, dataView]);
+  }, [tasks, filters, sortColumn, sortDirection, currentPage, pageSize, dataView, applyFilters]);
 
   return null;
 };
