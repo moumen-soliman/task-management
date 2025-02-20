@@ -147,6 +147,7 @@ export default function CustomColumnForm() {
           {errors.defaultValue && <FormMessage>{errors.defaultValue.message}</FormMessage>}
         </div>
         <FormMessage>{errors.key?.message}</FormMessage>
+        <span className="text-xs text-center">Changes will apply on all tasks</span>
         <Button type="submit" className="w-full">
           Add Field
         </Button>
