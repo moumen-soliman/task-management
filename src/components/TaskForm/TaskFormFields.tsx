@@ -180,8 +180,8 @@ export function TaskFormFields({ form, users, sprints }: TaskFormFieldsProps) {
                     />
                   ) : (
                     <Input
-                      {...form.register(key as string | string)}
-                      type={typeof key === "number" ? "number" : "text"}
+                      {...form.register(key as string)}
+                      type={typeof value === "number" ? "number" : "text"}
                       defaultValue={String(form.watch(key as string) ?? "")}
                     />
                   )}

@@ -29,6 +29,9 @@ export default function CustomFieldForm({ task, onSave, onCancel }: CustomFieldF
     if (fieldExists) {
       setError("A field with this name already exists");
       return;
+    } else if (!fieldName || !fieldValue) {
+      setError("Field name and value are required");
+      return;
     }
     setError(null);
     onSave(fieldName, fieldType, fieldValue);
@@ -44,6 +47,7 @@ export default function CustomFieldForm({ task, onSave, onCancel }: CustomFieldF
           placeholder="Field Name"
           value={fieldName}
           onChange={(e) => setFieldName(e.target.value)}
+          required
         />
         <Select
           onValueChange={(value) => {
