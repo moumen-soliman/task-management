@@ -1,6 +1,7 @@
 import { STORAGE_KEY } from "@/constants/tasks";
 import { TaskStore } from "@/types/Tasks";
 
+// Provides actions to manage users within tasks, including assigning and removing users from tasks.
 export const userActions = (
   set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void,
   get: () => TaskStore

@@ -2,6 +2,10 @@ import { PRIORITIES_LIST, SKIPED_KEYS, STATUS_LIST } from "@/constants/tasks";
 import { TaskFormValues } from "@/schemas/taskSchema";
 import { TaskStore } from "@/types/Tasks";
 
+// Returns default values for the task form based on the mode and task data
+// If mode is "edit" and task is provided, it will return the task data
+// If mode is "create" or task is not provided, it will return default values
+// Custom fields are also included in the default values
 export function getDefaultValues(
   mode: "create" | "edit",
   task: TaskFormValues | undefined,

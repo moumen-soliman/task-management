@@ -4,6 +4,10 @@ import { useTaskStore } from "@/store/useTaskStore";
 import { createSelectorHooks } from "auto-zustand-selectors-hook";
 import { dataView, DataViewState } from "@/types/DataView";
 
+// This store is used to filter and sort tasks based on the filters and sort options
+// It uses the tasks from the useTaskStore and the filters and sort options from the useDataViewStore
+// It also uses the custom columns from the useTaskStore to filter tasks based on custom fields
+// The applyFilters function is used to filter and sort tasks based on the current filters and sort options
 export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
   dataView: "table",
   filteredTasksList: [],

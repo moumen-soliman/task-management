@@ -1,6 +1,7 @@
 import { STORAGE_KEY } from "@/constants/tasks";
 import { Task, TaskStore } from "@/types/Tasks";
 
+// Provides actions to manage custom fields, including adding, removing, and updating custom fields.
 export const customFieldActions = (
   set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void,
   get: () => TaskStore

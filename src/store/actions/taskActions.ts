@@ -2,6 +2,7 @@ import { STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
 import { useDataViewStore } from "../useDataViewStore";
 import { Priorities, Status, Task, TaskStore } from "@/types/Tasks";
 
+// Provides actions to manage tasks, including adding, updating, and deleting tasks.
 export const taskActions = (
   set: (partial: TaskStore | ((state: TaskStore) => TaskStore)) => void,
   get: () => TaskStore

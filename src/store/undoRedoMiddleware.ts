@@ -1,6 +1,9 @@
 import { STORAGE_KEY } from "@/constants/tasks";
 import { TaskStore } from "@/types/Tasks";
 
+// Middleware to add undo and redo functionality to the store
+// This middleware saves the previous state before each modification
+// It also provides undo and redo functions to revert or reapply changes
 const undoRedoMiddleware =
   (config: any) =>
   (

@@ -1,3 +1,4 @@
+//Provides actions to manage tasks within sprints, including adding, removing, and retrieving sprint names.
 import { STORAGE_KEY } from "@/constants/tasks";
 import { TaskStore } from "@/types/Tasks";
 

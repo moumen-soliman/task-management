@@ -13,7 +13,8 @@ import { userActions } from "./actions/userActions";
 import { sprintActions } from "./actions/sprintActions";
 import { customFieldActions } from "./actions/customFieldActions";
 
-// Define the store with the middleware
+// This store is used to manage the state of the task component
+// The task component is used to create, edit, or view tasks
 export const useTaskStore = create<TaskStore>(
   undoRedoMiddleware(
     (
