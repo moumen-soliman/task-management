@@ -22,10 +22,10 @@ export default function TaskDetailsModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal}>
-      <DialogContent className="w-full max-w-[70vw]">
+      <DialogContent className="w-full md:max-w-[70vw]">
         <DialogHeader>
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
               <InfoLabel name={`#${taskDetails?.id}`} />
               <InfoLabel name={taskDetails?.status} />
               {taskDetails?.sprints && (
