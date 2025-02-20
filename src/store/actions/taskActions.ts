@@ -28,9 +28,7 @@ export const taskActions = (
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
   softDeleteTask: (id: number | string) => {
-    const updatedTasks = get().tasks.map((task) =>
-      task.id === id ? { ...task, deleted: true } : task
-    );
+    const updatedTasks = get().tasks.filter((task) => task.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
