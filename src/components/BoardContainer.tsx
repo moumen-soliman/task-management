@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, createContext } from "react";
+import React, { useEffect } from "react";
 import { subscribeToTaskUpdates } from "@/utils";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useSheetStore } from "@/store/useSheetStore";
@@ -31,7 +31,7 @@ export default function BoardContainer() {
     if (taskId) {
       openSheet?.("edit", Number(taskId));
     }
-  }, [searchParams]);
+  }, [searchParams, openSheet]);
 
   return (
     <div className="p-4">
