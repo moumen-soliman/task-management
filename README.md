@@ -9,8 +9,7 @@ App Link: https://task-management-seven-chi.vercel.app/
 Diagram online link: https://app.eraser.io/workspace/piySng7PGRpGW188G47G
 
 ## Implemented Features
-- Core Requirements (1 to 6 Milestones)
-- Bonus Milestones (7 to 10 Milestones)
+- Core/Bonus Milestones
 - Add Custom field for each task
 - Assigned Sprints/Users for each task
 - Dark/Light Theme
