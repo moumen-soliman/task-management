@@ -111,4 +111,13 @@ export interface TaskStore {
   setUsers: (users: User[]) => void;
   setSprints: (sprints: Sprint[]) => void;
   setLoading: (loading: boolean) => void;
+  setCustomColumns: (columns: {
+    id: number;
+    name: string;
+    type: string;
+    value: string | boolean;
+    key: string;
+    filter?: boolean;
+    label?: string;
+  }[]) => void;
 }

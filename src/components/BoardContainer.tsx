@@ -15,7 +15,7 @@ import { taskService } from "@/services/taskService";
 
 export default function BoardContainer() {
   const { openSheet } = useSheetStore();
-  const { setTasks, setUsers, setSprints, setLoading } = useTaskStore();
+  const { setTasks, setUsers, setSprints, setCustomColumns, setLoading } = useTaskStore();
   const searchParams = useSearchParams();
   const dataView = useDataViewStore((state) => state.dataView);
   const loading = useTaskStore((state) => state.loading);
@@ -31,6 +31,7 @@ export default function BoardContainer() {
       setTasks(tasks);
       setUsers(users);
       setSprints(sprints);
+      setCustomColumns(taskService.fetchCustomColumns());
       setLoading(false);
     }
 

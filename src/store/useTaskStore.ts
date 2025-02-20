@@ -27,6 +27,7 @@ export const useTaskStore = create<TaskStore>(
       setTasks: (tasks: Task[]) => set((state) => ({ ...state, tasks })),
       setUsers: (users: User[]) => set((state) => ({ ...state, users })),
       setSprints: (sprints: Sprint[]) => set((state) => ({ ...state, sprints })),
+      setCustomColumns: (columns: TaskStore["customColumns"]) => set((state) => ({...state, customColumns: columns })),
       setLoading: (loading: boolean) => set((state) => ({ ...state, loading })),
       ...taskActions(set, get),
       ...userActions(set, get),
