@@ -17,7 +17,7 @@ export default function AssignedUsers({ getAssignedUser }: AssignedUsersProps) {
           {assignedUsers.map((user, index) => (
             <Tooltip key={`${user.id}-${index}`}>
               <TooltipTrigger>
-                <Avatar className="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-gray-200">
+                <Avatar className="inline-block h-8 w-8 rounded-full bg-gray-200 border border-white">
                   <AvatarImage src={user.image?.url ?? ""} alt={user.name ?? ""} />
                   <AvatarFallback>{user.name?.charAt(0) || "?"}</AvatarFallback>
                 </Avatar>
