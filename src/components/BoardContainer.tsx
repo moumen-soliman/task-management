@@ -13,8 +13,6 @@ import TaskDetailsModal from "./TaskDetailsModal";
 import { FilteredTasksProvider } from "@/providers/FilteredTasksProvider";
 import SkeletonTable from "./Table/SkeletonTable";
 
-export const TaskActionContext = createContext({ handleAddTaskClick: () => {} });
-
 export default function BoardContainer() {
   const { openSheet } = useSheetStore();
   const searchParams = useSearchParams();
@@ -30,10 +28,10 @@ export default function BoardContainer() {
 
   useEffect(() => {
     const taskId = searchParams.get("task");
-    if (taskId && openSheet) {
-      openSheet("edit", Number(taskId));
+    if (taskId) {
+      openSheet?.("edit", Number(taskId));
     }
-  }, [searchParams, openSheet]);
+  }, [searchParams]);
 
   return (
     <div className="p-4">
