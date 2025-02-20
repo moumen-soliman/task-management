@@ -20,9 +20,13 @@ export const customFieldActions = (
       type: fieldType,
       value: fieldValue,
     };
-    const updatedFields = [...get().customFields, newField];
-    set((state: TaskStore) => ({ ...state, customFields: updatedFields }));
 
+    set((state: TaskStore) => ({
+      ...state,
+      customFields: [...state.customFields, newField],
+    }));
+
+    // Only update tasks if taskId is provided (edit mode)
     if (taskId) {
       const updatedTasks = get().tasks.map((task) =>
         task.id === taskId
@@ -57,5 +61,8 @@ export const customFieldActions = (
     ) as Task[];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+  },
+  clearCustomFields: () => {
+    set((state: TaskStore) => ({ ...state, customFields: [] }));
   },
 });

@@ -22,8 +22,15 @@ export const useFilteredTasksStore = create<FilteredTasksState>((set) => {
       console.time("FilteringTasks");
       const allTasks = useTaskStore.getState().tasks;
       const customColumns = useTaskStore.getState().customColumns;
-      const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView, setCurrentPage } =
-        useDataViewStore.getState();
+      const {
+        sortColumn,
+        sortDirection,
+        filters,
+        currentPage,
+        pageSize,
+        dataView,
+        setCurrentPage,
+      } = useDataViewStore.getState();
 
       setCurrentPage(1); // Set currentPage to 1 when applying filters
 
@@ -43,8 +50,8 @@ export const useFilteredTasksStore = create<FilteredTasksState>((set) => {
             const filterValue = filters[column.id as unknown as keyof DataViewState["filters"]];
             if (filterValue !== undefined && filterValue !== "") {
               const taskValue = task[column.key];
-    
-             if (typeof taskValue === "string" && typeof filterValue === "string") {
+
+              if (typeof taskValue === "string" && typeof filterValue === "string") {
                 // For strings, perform case-insensitive comparison
                 if (!taskValue.toLowerCase().includes(filterValue.toLowerCase())) {
                   return false;

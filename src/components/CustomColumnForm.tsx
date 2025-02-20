@@ -72,7 +72,7 @@ export default function CustomColumnForm() {
       name: data.label,
       key: data.key,
       type: data.type,
-      value: data.type === 'checkbox' ? Boolean(!!data.defaultValue) : String(data.defaultValue),
+      value: data.type === "checkbox" ? Boolean(!!data.defaultValue) : String(data.defaultValue),
     });
     reset();
   };

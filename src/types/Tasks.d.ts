@@ -94,7 +94,8 @@ export interface TaskStore {
     label?: string;
     key?: string | number;
   }) => void;
-  removeCustomField: (fieldKey: string) => void;
+  removeCustomField: (fieldKey: number) => void;
+  clearCustomFields: () => void;
   updateCustomField: (
     fieldKey: string,
     newField: {

@@ -4,7 +4,7 @@ import { TaskStore } from "@/types/Tasks";
 
 interface CustomFieldListProps {
   customFields: TaskStore["customFields"];
-  onRemove: (id: string) => void;
+  onRemove: (id: number) => void; // Changed from string to number
 }
 
 export default function CustomFieldList({ customFields, onRemove }: CustomFieldListProps) {
@@ -20,7 +20,7 @@ export default function CustomFieldList({ customFields, onRemove }: CustomFieldL
               {field.type === "checkbox" ? (field.value ? "Yes" : "No") : field.value}
             </div>
           </div>
-          <Button variant="destructive" size="sm" onClick={() => onRemove(field.id.toString())}>
+          <Button type="button" variant="destructive" size="sm" onClick={() => onRemove(field.id)}>
             Remove
           </Button>
         </div>

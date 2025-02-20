@@ -25,8 +25,8 @@ export default function MultiSelect({
       options={options}
       value={options.filter((opt) => value.includes(opt.value))}
       onChange={(selected) => onChange(selected.map((item) => item.value))}
-      className="text-black"
-      classNamePrefix="react-select"
+      className="text-black my-react-select-container"
+      classNamePrefix="react-select my-react-select"
       placeholder={placeholder}
     />
   );

@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Task } from "@/types/Tasks";
 
 export default function TaskForm({ mode, task }: CreateTaskFormProps) {
-  const { addTask, updateTask, users, sprints, customFields } = useTaskStore();
+  const { addTask, updateTask, users, sprints, customFields, clearCustomFields } = useTaskStore();
   const { closeSheet, taskDefaults } = useSheetStore();
   const { toast } = useToast();
 
@@ -27,11 +27,13 @@ export default function TaskForm({ mode, task }: CreateTaskFormProps) {
   });
 
   useEffect(() => {
-    form.reset({
-      ...getDefaultValues(mode, mode === "edit" ? task : undefined, []),
-      ...(taskDefaults || {}),
-    });
-  }, [task, mode, form, customFields, taskDefaults]);
+    if (task || mode === "edit" || taskDefaults) {
+      form.reset({
+        ...getDefaultValues(mode, mode === "edit" ? task : undefined, []),
+        ...(taskDefaults || {}),
+      });
+    }
+  }, [task, mode, taskDefaults]);
 
   const onSubmit = (values: TaskFormValues) => {
     const taskData = {
@@ -53,6 +55,7 @@ export default function TaskForm({ mode, task }: CreateTaskFormProps) {
 
     if (mode === "create") {
       addTask(taskData);
+      clearCustomFields(); // Clear custom fields after creating task
     } else if (mode === "edit" && task?.id) {
       updateTask(task?.id, taskData as Task);
     }
