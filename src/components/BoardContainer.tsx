@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect } from "react";
-import { subscribeToTaskUpdates } from "@/utils";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useSheetStore } from "@/store/useSheetStore";
 import { useSearchParams } from "next/navigation";
@@ -12,19 +11,31 @@ import SelectedActionsAlert from "./SelectedActionsAlert";
 import TaskDetailsModal from "./TaskDetailsModal";
 import { FilteredTasksProvider } from "@/providers/FilteredTasksProvider";
 import SkeletonTable from "./Table/SkeletonTable";
+import { taskService } from "@/services/taskService";
 
 export default function BoardContainer() {
   const { openSheet } = useSheetStore();
+  const { setTasks, setUsers, setSprints, setLoading } = useTaskStore();
   const searchParams = useSearchParams();
   const dataView = useDataViewStore((state) => state.dataView);
-  const fetchAllData = useTaskStore((state) => state.fetchAllData);
   const loading = useTaskStore((state) => state.loading);
 
   useEffect(() => {
-    fetchAllData();
-    const unsubscribe = subscribeToTaskUpdates(fetchAllData);
-    return () => unsubscribe();
-  }, [fetchAllData]);
+    async function fetchData() {
+      setLoading(true);
+      const [tasks, users, sprints] = await Promise.all([
+        taskService.fetchTasks(),
+        taskService.fetchUsers(),
+        taskService.fetchSprints(),
+      ]);
+      setTasks(tasks);
+      setUsers(users);
+      setSprints(sprints);
+      setLoading(false);
+    }
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const taskId = searchParams.get("task");

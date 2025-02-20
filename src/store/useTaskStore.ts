@@ -1,17 +1,12 @@
 import { create } from "zustand";
-import undoRedoMiddleware from "./undoRedoMiddleware"; // Import the middleware
-import {
-  CUSTOM_COLUMNS_KEY,
-  SPRINT_STORAGE_KEY,
-  STORAGE_KEY,
-  USER_STORAGE_KEY,
-} from "@/constants/tasks";
-import { TaskStore } from "@/types/Tasks";
-import { loadFromStorageOrFetch } from "@/utils";
+import undoRedoMiddleware from "./undoRedoMiddleware";
+import { Task, TaskStore } from "@/types/Tasks";
 import { taskActions } from "./actions/taskActions";
 import { userActions } from "./actions/userActions";
 import { sprintActions } from "./actions/sprintActions";
 import { customFieldActions } from "./actions/customFieldActions";
+import { User } from "@/types/Users";
+import { Sprint } from "@/types/Sprints";
 
 // This store is used to manage the state of the task component
 // The task component is used to create, edit, or view tasks
@@ -29,26 +24,10 @@ export const useTaskStore = create<TaskStore>(
       customColumns: [],
       history: [],
       redoStack: [],
-
-      fetchAllData: async () => {
-        set((state) => ({ ...state, loading: true }));
-
-        const [tasks, users, sprints] = await Promise.all([
-          loadFromStorageOrFetch(STORAGE_KEY, "/api/tasks"),
-          loadFromStorageOrFetch(USER_STORAGE_KEY, "/api/users"),
-          loadFromStorageOrFetch(SPRINT_STORAGE_KEY, "/api/sprints"),
-        ]);
-
-        set((state) => ({
-          ...state,
-          tasks,
-          users,
-          sprints,
-          customColumns: JSON.parse(localStorage.getItem(CUSTOM_COLUMNS_KEY) || "[]"),
-          loading: false,
-        }));
-      },
-
+      setTasks: (tasks: Task[]) => set((state) => ({ ...state, tasks })),
+      setUsers: (users: User[]) => set((state) => ({ ...state, users })),
+      setSprints: (sprints: Sprint[]) => set((state) => ({ ...state, sprints })),
+      setLoading: (loading: boolean) => set((state) => ({ ...state, loading })),
       ...taskActions(set, get),
       ...userActions(set, get),
       ...sprintActions(set, get),

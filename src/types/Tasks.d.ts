@@ -107,4 +107,8 @@ export interface TaskStore {
       key?: string | number;
     }
   ) => void;
+  setTasks: (tasks: Task[]) => void;
+  setUsers: (users: User[]) => void;
+  setSprints: (sprints: Sprint[]) => void;
+  setLoading: (loading: boolean) => void;
 }
