@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { generatePageSizeOptions } from "@/utils";
+import { useFilteredTasksStore } from "@/store/useFilteredTasksStore";
 
 export default function PaginationControls() {
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useDataViewStore();
@@ -18,6 +19,7 @@ export default function PaginationControls() {
   const totalPages = Math.max(1, Math.ceil(totalTasks / pageSize));
   const [page, setPage] = useState(currentPage);
   const pageSizeOptions = generatePageSizeOptions(totalTasks);
+  const { filteredTasks } = useFilteredTasksStore()
 
   useEffect(() => {
     setCurrentPage(page);
@@ -62,7 +64,7 @@ export default function PaginationControls() {
 
         <Button
           onClick={() => setPage(Math.min(page + 1, totalPages))}
-          disabled={page === totalPages}
+          disabled={filteredTasks.length < pageSize ||  page === totalPages}
           variant="outline"
           className="p-2 rounded-md text-sm flex items-center gap-1"
         >
