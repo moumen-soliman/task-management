@@ -10,7 +10,7 @@ export default function Table() {
 
   return (
     <div className="relative w-full">
-      <ScrollArea className="max-h-[80vh] w-full overflow-y-auto overflow-x-auto rounded-lg border snap-start">
+      <ScrollArea className="max-h-[80vh] w-full overflow-y-auto overflow-x-hidden rounded-lg border snap-start">
         <div className="w-full overflow-scroll">
           <table
             aria-label="Tasks Tabl "

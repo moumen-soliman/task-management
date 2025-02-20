@@ -40,12 +40,21 @@ export const useFilteredTasksStore = create<FilteredTasksState>((set) => {
           const activeFilters = customColumns.filter((column) => column.filter === true);
 
           for (const column of activeFilters) {
-            if (
-              filters[column.id as unknown as keyof DataViewState["filters"]] !== undefined &&
-              filters[column.id as unknown as keyof DataViewState["filters"]] !== "" &&
-              task[column.key] !== filters[column.id as unknown as keyof DataViewState["filters"]]
-            ) {
-              return false;
+            const filterValue = filters[column.id as unknown as keyof DataViewState["filters"]];
+            if (filterValue !== undefined && filterValue !== "") {
+              const taskValue = task[column.key];
+    
+             if (typeof taskValue === "string" && typeof filterValue === "string") {
+                // For strings, perform case-insensitive comparison
+                if (!taskValue.toLowerCase().includes(filterValue.toLowerCase())) {
+                  return false;
+                }
+              } else {
+                // Fallback for other types (direct comparison)
+                if (taskValue !== filterValue) {
+                  return false;
+                }
+              }
             }
           }
 
