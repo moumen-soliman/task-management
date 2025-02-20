@@ -29,10 +29,7 @@ export const useFilteredTasksStore = create<FilteredTasksState>((set) => {
         currentPage,
         pageSize,
         dataView,
-        setCurrentPage,
       } = useDataViewStore.getState();
-
-      setCurrentPage(1); // Set currentPage to 1 when applying filters
 
       const priorityOrder = PRIORITIES_LIST;
 
