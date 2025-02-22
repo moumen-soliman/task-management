@@ -4,6 +4,8 @@ Task Management app support 2 views Table/Kanban, Have filters, sorting, dark/li
 
 App Link: https://task-management-seven-chi.vercel.app/
 
+Built with: NextJS/TS/TailwindCSS/Shadcn/NodeJS
+
 ## Design decisions
 
 ![Design Diagram](public/diagram.png)
