@@ -378,26 +378,7 @@ export default function ActionIsland() {
           {/* Undo / redo */}
           {iconButton(<Undo2 size={15} />, "Undo", undo)}
           {iconButton(<Redo2 size={15} />, "Redo", redo)}
-
-          {/* Custom fields */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                title="Custom fields"
-                aria-label="Custom fields"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground outline-none transition-[transform,background-color,color] duration-200 ease-out focus-visible:scale-110 focus-visible:bg-muted hover:text-foreground active:scale-95"
-              >
-                <SlidersHorizontal size={14} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="center" className="w-72 p-3">
-              <CustomColumnForm />
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
-
-        {separator}
 
         <Button
           onClick={handleNewTask}
@@ -550,7 +531,6 @@ export default function ActionIsland() {
 
       {entriesCount > 0 && (
         <>
-          {separator}
           <NativeDelete
             size="sm"
             buttonText="Clear"
