@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { ThemeToggleButton } from "@/components/ThemeToggleButton";
 import Container from "@/components/ui/container";
-
-const inter = Inter({ subsets: ["latin"] });
+import Sidebar from "@/components/Sidebar";
+import ActionIsland from "@/components/ActionIsland";
 
 export const metadata: Metadata = {
   title: "Task Manager",
@@ -20,10 +20,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`}>
+      <body className={`${GeistSans.className} ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <ThemeProvider>
-          <ThemeToggleButton />
-          <Container>{children}</Container>
+          <Sidebar />
+          <div className="h-dvh overflow-y-auto md:pl-[var(--sidebar-w,14rem)]">
+            <Container>{children}</Container>
+          </div>
+          {/* Persistent - morphs between page views instead of remounting */}
+          <ActionIsland />
         </ThemeProvider>
       </body>
     </html>

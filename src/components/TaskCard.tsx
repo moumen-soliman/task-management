@@ -1,7 +1,7 @@
 import React from "react";
 import { useTaskStore } from "@/store/useTaskStore";
 import { useDataViewStore } from "@/store/useDataViewStore";
-import { useTaskDetailsModalStore } from "@/store/useTaskDetailsModalStore";
+import { useSheetStore } from "@/store/useSheetStore";
 import { Task } from "@/types/Tasks";
 import KanbanTaskCard from "./Kanaban/KanbanTaskCard";
 import TableTaskCard from "./Table/TableTaskCard";
@@ -17,7 +17,9 @@ export default function TaskCard({ task, index }: TaskCardProps) {
   const toggleSelection = useDataViewStore((state) => state.toggleSelection);
   const selectedIds = useDataViewStore((state) => state.selectedIds);
   const dataView = useDataViewStore((state) => state.dataView);
-  const { openModal } = useTaskDetailsModalStore();
+  const openSheet = useSheetStore((state) => state.openSheet);
+  // Clicking an issue opens the right-side sheet as a directly-editable details panel.
+  const openDetails = (clicked: Task) => openSheet("edit", Number(clicked.id));
 
   if (dataView === "kanban") {
     return (
@@ -29,7 +31,7 @@ export default function TaskCard({ task, index }: TaskCardProps) {
         moveTask={moveTask}
         getAssignedUser={getAssignedUser}
         getSprintNames={getSprintNames}
-        openModal={openModal}
+        openModal={openDetails}
       />
     );
   }
@@ -42,7 +44,7 @@ export default function TaskCard({ task, index }: TaskCardProps) {
       toggleSelection={toggleSelection}
       getAssignedUser={getAssignedUser}
       getSprintNames={getSprintNames}
-      openModal={openModal}
+      openModal={openDetails}
       customColumns={customColumns}
       softDeleteTask={softDeleteTask}
       moveTask={moveTask}

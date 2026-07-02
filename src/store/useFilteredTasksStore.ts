@@ -7,6 +7,7 @@ import { DataViewState } from "@/types/DataView";
 
 interface FilteredTasksState {
   filteredTasks: Task[];
+  totalFilteredCount: number;
   applyFilters: () => void;
 }
 
@@ -57,11 +58,6 @@ const sortTasks = (tasks: Task[], sortColumn: string | null, sortDirection: stri
   });
 };
 
-const paginateTasks = (tasks: Task[], currentPage: number, pageSize: number): Task[] => {
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  return tasks.slice(startIndex, endIndex);
-};
 
 // This store is used to filter and sort tasks based on the filters and sort options
 // It uses the tasks from the useTaskStore and the filters and sort options from the useDataViewStore
@@ -69,13 +65,13 @@ const paginateTasks = (tasks: Task[], currentPage: number, pageSize: number): Ta
 // The applyFilters function is used to filter and sort tasks based on the current filters and sort options
 export const useFilteredTasksStore = create<FilteredTasksState>((set) => ({
   filteredTasks: [],
+  totalFilteredCount: 0,
 
   applyFilters: () => {
-    console.time("FilteringTasks");
-
     const allTasks = useTaskStore.getState().tasks;
     const customColumns = useTaskStore.getState().customColumns;
-    const { sortColumn, sortDirection, filters, currentPage, pageSize, dataView } = useDataViewStore.getState();
+    const { sortColumn, sortDirection, filters, visibleCount, dataView } =
+      useDataViewStore.getState();
 
     let filteredTasks = allTasks
       .filter((task) => !task.deleted)
@@ -84,13 +80,20 @@ export const useFilteredTasksStore = create<FilteredTasksState>((set) => ({
       .filter((task) => filterByStatus(task, filters.status))
       .filter((task) => filterByCustomColumns(task, filters, customColumns));
 
-    filteredTasks = sortTasks(filteredTasks, typeof sortColumn === 'string' ? sortColumn : null, sortDirection as string);
+    filteredTasks = sortTasks(
+      filteredTasks,
+      typeof sortColumn === "string" ? sortColumn : null,
+      sortDirection as string
+    );
 
+    const totalFilteredCount = filteredTasks.length;
+
+    // Table view is an infinite-scroll list: reveal a growing window of rows.
+    // Kanban keeps the full set (grouped into columns).
     if (dataView === "table") {
-      filteredTasks = paginateTasks(filteredTasks, currentPage, pageSize);
+      filteredTasks = filteredTasks.slice(0, visibleCount);
     }
 
-    console.timeEnd("FilteringTasks");
-    set({ filteredTasks });
+    set({ filteredTasks, totalFilteredCount });
   },
 }));

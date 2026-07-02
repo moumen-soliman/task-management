@@ -6,6 +6,8 @@ type Priority = (typeof PRIORITIES_LIST)[number];
 
 interface PriorityHandlerProps {
   priority?: Priority;
+  /** "pill" keeps the badge (details view); "compact" is icon-only for dense rows (Linear-style). */
+  variant?: "pill" | "compact";
 }
 
 const priorityStyles: Record<Priority, { bg: string; text: string; icon: JSX.Element }> = {
@@ -36,9 +38,23 @@ const priorityStyles: Record<Priority, { bg: string; text: string; icon: JSX.Ele
   },
 };
 
-export default function PriorityHandler({ priority = "none" }: PriorityHandlerProps) {
+export default function PriorityHandler({ priority = "none", variant = "pill" }: PriorityHandlerProps) {
   const { bg, text, icon } =
     priorityStyles[priority as keyof typeof priorityStyles] || priorityStyles.none;
+
+  if (variant === "compact") {
+    return (
+      <span
+        title={`Priority: ${text}`}
+        aria-label={`Priority: ${text}`}
+        className={`flex shrink-0 items-center justify-center ${
+          priority === "none" ? "opacity-40" : ""
+        }`}
+      >
+        {icon}
+      </span>
+    );
+  }
 
   return (
     <span

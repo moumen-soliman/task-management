@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* App shell: the window itself never scrolls - pages scroll inside the
+   content wrapper (layout.tsx), and the issues list scrolls internally. */
+html,
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 @layer base {
@@ -16,15 +21,15 @@ body {
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
+    --secondary: 240 4.8% 97%;
     --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
+    --muted: 240 4.8% 97%;
+    --muted-foreground: 240 3.8% 50%;
+    --accent: 240 4.8% 97%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
+    --border: 240 5.9% 92%;
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
     --chart-1: 12 76% 61%;
@@ -33,6 +38,11 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --sidebar: 240 5% 97.5%;
+    /* Shadow-as-border (make-interfaces-feel-better/surfaces): a 1px ring + soft
+       lift that adapts to any background - used for elevated cards. */
+    --shadow-border: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --shadow-border-hover: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.09);
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -43,15 +53,15 @@ body {
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 240 3.7% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --muted: 240 3.7% 12%;
+    --muted-foreground: 240 5% 60%;
+    --accent: 240 3.7% 12%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 4% 12.5%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
     --chart-1: 220 70% 50%;
@@ -59,6 +69,11 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --sidebar: 240 8% 2.7%;
+    /* Dark mode: a single white ring (layered depth shadows aren't visible on
+       dark surfaces), plus a soft ambient lift on hover. */
+    --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.09);
+    --shadow-border-hover: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 6px 20px -4px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -108,8 +123,80 @@ body {
   overflow-x: auto !important;
 }
 
+/* Shimmer sweep for the agent's process text - constant motion, so linear easing */
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+/* Soft exit for panels: fade + blur in place - no slide (subtle-exit pattern).
+   Radix waits for this animation to finish before unmounting. */
+.sheet-soft-exit[data-state="closed"] {
+  animation: sheet-soft-exit 220ms ease-in forwards;
+}
+
+@keyframes sheet-soft-exit {
+  to {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-soft-exit[data-state="closed"] {
+    animation: sheet-soft-exit 150ms ease-in forwards;
+  }
+  @keyframes sheet-soft-exit {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+/* Kanban card elevation. Written as a plain class (not a Tailwind arbitrary
+   `shadow-[var(...)]`, which Tailwind can misread as a shadow *color* and drop)
+   so the shadow-as-border always renders and overrides Card's base `shadow`. */
+.kanban-card {
+  box-shadow: var(--shadow-border);
+  margin: 1px;
+  transition:
+    box-shadow 200ms ease-out,
+    transform 150ms ease-out;
+}
+.kanban-card:hover {
+  box-shadow: var(--shadow-border-hover);
+}
+/* Selected wins over hover (declared last, equal specificity). */
+.kanban-card[data-selected="true"] {
+  box-shadow: 0 0 0 1.5px hsl(var(--primary));
+}
+
 .tiptap {
-  min-height: 15.625rem;
+  min-height: 10rem;
+  outline: none;
+
+  /* Placeholder for the boxless description editor */
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    color: hsl(var(--muted-foreground) / 0.5);
+  }
 
   /* List styles */
   ul,
@@ -172,7 +259,7 @@ body {
     background: var(--black);
     border-radius: 0.5rem;
     color: var(--white);
-    font-family: "JetBrainsMono", monospace;
+    font-family: var(--font-geist-mono, monospace);
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
 

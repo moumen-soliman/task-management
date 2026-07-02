@@ -9,8 +9,7 @@ import {
 import { PRIORITIES_LIST, STATUS_LIST } from "@/constants/tasks";
 import { Checkbox } from "@/components/ui/checkbox";
 import AssignedUsers from "@/components/AssignedUsers";
-import InfoLabel from "@/components/InfoLabel";
-import TableActions from "@/components/Table/TableActions";
+import StatusHandler from "@/components/StatusHandler";
 import { Input } from "@/components/ui/input";
 import { Task } from "@/types/Tasks";
 import PriorityHandler from "../PriorityHandler";
@@ -37,32 +36,21 @@ export default function TableTaskCard({
   getSprintNames,
   openModal,
   customColumns,
-  softDeleteTask,
 }: TableTaskCardProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  // Inline row editing is currently dormant (its pencil/actions triggers were
+  // removed) - the branches below stay for when it returns.
+  const [isEditing] = useState(false);
   const [editableTask, setEditableTask] = useState(task);
 
-  const startEditing = () => {
-    setEditableTask({
-      ...task,
-      title: task.title || "",
-      status: task.status || STATUS_LIST[0],
-      priority: task.priority || PRIORITIES_LIST[0],
-      ...Object.fromEntries(
-        customColumns.map((column) => [
-          column.key,
-          task[column.key] ?? (column.type === "checkbox" ? false : ""),
-        ])
-      ),
-    });
-    setIsEditing(true);
-  };
+  const isSelected = selectedIds.includes(task.id);
+  const sprintNames = getSprintNames(task.sprints);
+  const sprintLabel = sprintNames.join(", ");
 
   const handleChange = (field: keyof typeof editableTask, value: any) => {
     setEditableTask({ ...editableTask, [field]: value });
   };
 
-  const handleCardClick = (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (isEditing) return;
 
     if ((e.target as HTMLElement).closest("button") || (e.target as HTMLElement).closest("input")) {
@@ -74,83 +62,83 @@ export default function TableTaskCard({
   };
 
   return (
-    <tr
+    <div
+      role="row"
       key={`${index}-${task.id}`}
+      data-selected={isSelected}
       onClick={handleCardClick}
-      className={`cursor-pointer border-b h-12 table-fixed w-full hover:bg-gray-200 dark:hover:bg-gray-800 
-        ${selectedIds.includes(task.id) ? "bg-gray-100 dark:bg-gray-800" : ""}`}
+      className="group flex h-11 cursor-pointer items-center gap-3 px-3 text-sm transition-colors hover:bg-muted/60 data-[selected=true]:bg-muted"
     >
-      <td className="py-2 pl-2">
+      {/* Identifier - swaps to a checkbox on hover or when selected (Linear pattern) */}
+      <div className="relative flex w-10 shrink-0 items-center justify-center">
+        <span className="text-xs tabular-nums text-muted-foreground transition-opacity group-hover:opacity-0 group-data-[selected=true]:opacity-0">
+          #{task.id}
+        </span>
         <Checkbox
-          checked={selectedIds.includes(task.id)}
-          onClick={() => toggleSelection(task.id as number)}
+          className="absolute left-1/2 -translate-x-1/2 opacity-0 transition-opacity group-hover:opacity-100 group-data-[selected=true]:opacity-100"
+          checked={isSelected}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSelection(task.id as number);
+          }}
         />
-      </td>
-      <td className="w-[420px] truncate whitespace-wrap overflow-hidden">
+      </div>
+
+      {/* Title - the only flexible cell; metadata columns after it stay aligned across rows */}
+      {isEditing ? (
+        <input
+          type="text"
+          value={editableTask.title || ""}
+          onChange={(e) => handleChange("title", e.target.value)}
+          className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm"
+        />
+      ) : (
+        <span className="min-w-0 flex-1 truncate font-medium text-foreground">{task.title}</span>
+      )}
+
+      {/* Priority */}
+      <div className="flex w-6 shrink-0 justify-center">
         {isEditing ? (
-          <input
-            type="text"
-            value={editableTask.title || ""}
-            onChange={(e) => handleChange("title", e.target.value)}
-            className="w-full border rounded px-2 py-1"
-          />
-        ) : (
-          task.title
-        )}
-      </td>
-      <td className="py-2 px-2">
-        {isEditing ? (
-          <Select
-            onValueChange={(value) => handleChange("status", value)}
-            value={editableTask.status}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={editableTask.status} />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUS_LIST.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <InfoLabel name={task.status} />
-        )}
-      </td>
-      <td className="py-2 px-2">
-        {isEditing ? (
-          <Select
-            onValueChange={(value) => handleChange("priority", value)}
-            value={editableTask.priority}
-          >
-            <SelectTrigger className="w-[180px]">
+          <Select onValueChange={(value) => handleChange("priority", value)} value={editableTask.priority}>
+            <SelectTrigger className="h-8 w-[120px] text-xs capitalize">
               <SelectValue placeholder={editableTask.priority} />
             </SelectTrigger>
             <SelectContent>
               {PRIORITIES_LIST.map((priority) => (
-                <SelectItem key={priority} value={priority}>
+                <SelectItem key={priority} value={priority} className="capitalize">
                   {priority}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         ) : (
-          <PriorityHandler priority={task.priority} />
+          <PriorityHandler priority={task.priority} variant="compact" />
         )}
-      </td>
-      <td className="py-2 px-4">
-        <AssignedUsers
-          assignedUserIds={task.assign?.map(Number)}
-          getAssignedUser={getAssignedUser(task.assign?.map(Number))}
-        />
-      </td>
-      <td className="py-2 px-4">
-        <InfoLabel name={getSprintNames(task.sprints).join(", ") || "None"} />
-      </td>
+      </div>
+
+      {/* Status / process */}
+      <div className="hidden w-28 shrink-0 sm:flex sm:items-center">
+        {isEditing ? (
+          <Select onValueChange={(value) => handleChange("status", value)} value={editableTask.status}>
+            <SelectTrigger className="h-8 w-[140px] text-xs capitalize">
+              <SelectValue placeholder={editableTask.status} />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_LIST.map((status) => (
+                <SelectItem key={status} value={status} className="capitalize">
+                  {status.replaceAll("_", " ")}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <StatusHandler status={task.status} />
+        )}
+      </div>
+
+      {/* Custom columns */}
       {customColumns.map((column) => (
-        <td key={column.key} className="py-2 px-4">
+        <div key={column.key} className="hidden w-24 shrink-0 text-xs text-muted-foreground lg:block">
           {isEditing ? (
             column.type === "checkbox" ? (
               <Checkbox
@@ -162,31 +150,37 @@ export default function TableTaskCard({
                 type={column.type}
                 value={editableTask[column.key] || ""}
                 onChange={(e) => handleChange(column.key, e.target.value)}
-                className="w-full border rounded px-2 py-1"
+                className="h-8 w-24 rounded-md border px-2 text-xs"
               />
             )
           ) : column.type === "checkbox" ? (
             <Checkbox checked={task[column.key]} disabled />
           ) : (
-            task[column.key]
+            <span className="block max-w-[120px] truncate">{task[column.key]}</span>
           )}
-        </td>
+        </div>
       ))}
-      <td className="py-2 px-4">
-        <TableActions
-          task={task}
-          isEditing={isEditing}
-          setIsEditing={(editing) => {
-            if (editing) {
-              startEditing();
-            } else {
-              setIsEditing(false);
-            }
-          }}
-          softDeleteTask={softDeleteTask}
-          editableTask={editableTask}
+
+      {/* Sprint - fixed-width cell (empty when none) so columns line up */}
+      <div className="hidden w-28 shrink-0 md:flex md:items-center">
+        {sprintLabel && (
+          <span className="inline-flex max-w-full items-center truncate rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+            {sprintLabel}
+          </span>
+        )}
+      </div>
+
+      {/* Assignees - w-14 fits exactly 3 stacked sm circles (24 + 16 + 16px) */}
+      <div className="w-14 shrink-0">
+        <AssignedUsers
+          assignedUserIds={task.assign?.map(Number)}
+          getAssignedUser={getAssignedUser(task.assign?.map(Number))}
+          size="sm"
+          showEmptyText={false}
+          max={3}
         />
-      </td>
-    </tr>
+      </div>
+
+    </div>
   );
 }

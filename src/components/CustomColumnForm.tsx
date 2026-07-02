@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormMessage } from "./ui/form";
+import { NativeDelete } from "./ui/native-delete";
+import { Label } from "./ui/label";
 
 const schema = z.object({
   label: z.string().min(1, "Field Name is required"),
@@ -33,7 +35,8 @@ const schema = z.object({
 });
 
 export default function CustomColumnForm() {
-  const { addCustomColumn, customColumns } = useTaskStore();
+  const { addCustomColumn, customColumns, removeCustomColumn, updateCustomColumnFilter } =
+    useTaskStore();
   const methods = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -78,6 +81,7 @@ export default function CustomColumnForm() {
   };
 
   return (
+    <div className="flex flex-col gap-3">
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -153,5 +157,40 @@ export default function CustomColumnForm() {
         </Button>
       </form>
     </FormProvider>
+
+      {customColumns.length > 0 && (
+        <div className="flex flex-col gap-1 rounded-lg border p-2">
+          <span className="px-1 pb-1 text-xs font-medium text-muted-foreground">Manage fields</span>
+          {customColumns.map((column, index) => (
+            <div
+              key={`${column.key}-${index}`}
+              className="flex items-center justify-between gap-2 rounded-md px-1 py-1 hover:bg-muted/60"
+            >
+              <span className="truncate text-sm">{column.name}</span>
+              <div className="flex shrink-0 items-center gap-2">
+                <Label
+                  htmlFor={`filter-${column.key}`}
+                  className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground"
+                >
+                  <Checkbox
+                    id={`filter-${column.key}`}
+                    checked={column.filter || false}
+                    onCheckedChange={(checked) =>
+                      updateCustomColumnFilter(column.key, checked as boolean)
+                    }
+                  />
+                  Filter
+                </Label>
+                <NativeDelete
+                  size="sm"
+                  showIcon={false}
+                  onDelete={() => removeCustomColumn(column.key)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

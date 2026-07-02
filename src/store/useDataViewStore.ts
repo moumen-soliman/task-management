@@ -12,7 +12,7 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
   dataView: "table",
   filteredTasksList: [],
   selectedIds: [],
-  visibleCount: 10,
+  visibleCount: 20,
   sortColumn: null,
   sortDirection: null,
   filters: {
@@ -32,6 +32,7 @@ export const useDataViewStoreBase = create<DataViewState>((set, get) => ({
   setFilter: (filter) =>
     set((state) => ({
       filters: { ...state.filters, ...filter },
+      visibleCount: 20, // reset the infinite-scroll window to the top on any filter change
     })),
   toggleSelection: (id) => {
     set((state) => {

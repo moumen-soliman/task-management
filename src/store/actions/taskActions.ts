@@ -1,6 +1,34 @@
 import { STORAGE_KEY, CUSTOM_COLUMNS_KEY } from "@/constants/tasks";
 import { useDataViewStore } from "../useDataViewStore";
+import { useActivityStore } from "../useActivityStore";
 import { Priorities, Status, Task, TaskStore } from "@/types/Tasks";
+
+const logActivity = (entry: Parameters<ReturnType<typeof useActivityStore.getState>["logActivity"]>[0]) =>
+  useActivityStore.getState().logActivity(entry);
+
+/** Human summary of what actually changed - empty array means nothing meaningful changed. */
+const describeChanges = (prev: Task, updates: Partial<Task>): string[] => {
+  const changes: string[] = [];
+  if (updates.status && updates.status !== prev.status) {
+    changes.push(`status → ${updates.status.replaceAll("_", " ")}`);
+  }
+  if (updates.priority && updates.priority !== prev.priority) {
+    changes.push(`priority → ${updates.priority}`);
+  }
+  if (updates.title && updates.title !== prev.title) {
+    changes.push(`renamed to "${updates.title}"`);
+  }
+  if (updates.description !== undefined && updates.description !== prev.description) {
+    changes.push("description edited");
+  }
+  if (updates.assign && JSON.stringify(updates.assign) !== JSON.stringify(prev.assign)) {
+    changes.push("assignees changed");
+  }
+  if (updates.sprints && JSON.stringify(updates.sprints) !== JSON.stringify(prev.sprints)) {
+    changes.push("sprint changed");
+  }
+  return changes;
+};
 
 // Provides actions to manage tasks, including adding, updating, and deleting tasks.
 export const taskActions = (
@@ -19,18 +47,40 @@ export const taskActions = (
     const updatedTasks = [newTask, ...tasks];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+    logActivity({ action: "created", taskId: newTask.id, taskTitle: newTask.title });
   },
   updateTask: (id: number | string, updatedTask: Partial<Task>) => {
+    const prev = get().tasks.find((task) => task.id === id);
     const updatedTasks = get().tasks.map((task) =>
       task.id === id ? { ...task, ...updatedTask } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+    if (prev) {
+      const changes = describeChanges(prev, updatedTask);
+      if (changes.length) {
+        logActivity({
+          action: "updated",
+          taskId: id,
+          taskTitle: updatedTask.title || prev.title,
+          detail: changes.join(", "),
+        });
+      }
+    }
   },
   softDeleteTask: (id: number | string) => {
+    const target = get().tasks.find((task) => task.id === id);
     const updatedTasks = get().tasks.filter((task) => task.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+    if (target) {
+      logActivity({
+        action: "deleted",
+        taskId: target.id,
+        taskTitle: target.title,
+        snapshot: target,
+      });
+    }
   },
   undoDeleteTask: (id: number | string) => {
     const updatedTasks = get().tasks.map((task) =>
@@ -40,13 +90,31 @@ export const taskActions = (
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
   },
   updateTaskStatus: (taskId: number | string, newStatus: Status) => {
+    const prev = get().tasks.find((task) => task.id === taskId);
     const updatedTasks = get().tasks.map((task) =>
       task.id === taskId ? { ...task, status: newStatus } : task
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
     set((state: TaskStore) => ({ ...state, tasks: updatedTasks }));
+    if (prev && prev.status !== newStatus) {
+      logActivity({
+        action: "updated",
+        taskId,
+        taskTitle: prev.title,
+        detail: `status → ${newStatus.replaceAll("_", " ")}`,
+      });
+    }
   },
   updateTaskPriority: (taskId: number | string, newPriority: Priorities, newIndex?: number) => {
+    const prevTask = get().tasks.find((task) => task.id === taskId);
+    if (prevTask && prevTask.priority !== newPriority) {
+      logActivity({
+        action: "updated",
+        taskId,
+        taskTitle: prevTask.title,
+        detail: `priority → ${newPriority}`,
+      });
+    }
     set((state: TaskStore): TaskStore => {
       const updatedTasks = [...state.tasks];
       const taskIndex = updatedTasks.findIndex((t) => t.id === taskId);
@@ -186,6 +254,15 @@ export const taskActions = (
         // Kanban View: Change priority
         const taskIndex = tasks.findIndex((task) => task.id === fromIndexOrId);
         if (taskIndex !== -1) {
+          const prevTask = tasks[taskIndex];
+          if (prevTask.priority !== toIndexOrPriority) {
+            logActivity({
+              action: "updated",
+              taskId: prevTask.id,
+              taskTitle: prevTask.title,
+              detail: `priority → ${toIndexOrPriority}`,
+            });
+          }
           tasks = tasks.map((task, index) =>
             index === taskIndex ? { ...task, priority: toIndexOrPriority as Priorities } : task
           );

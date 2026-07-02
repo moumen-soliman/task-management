@@ -1,20 +1,28 @@
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
+import Placeholder from "@tiptap/extension-placeholder";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
 import { EditorButtonProps } from "@/types/Form";
 
 const EditorButton: React.FC<EditorButtonProps> = ({ onClick, isActive = false, children }) => (
-  <Badge onClick={onClick} className="cursor-pointer" variant={isActive ? "default" : "outline"}>
+  <button
+    type="button"
+    onClick={onClick}
+    className={`rounded-md pr-2 py-1 text-[11px] font-medium transition-colors ${
+      isActive
+        ? "text-foreground"
+        : "text-muted-foreground hover:text-foreground"
+    }`}
+  >
     {children}
-  </Badge>
+  </button>
 );
 
 const HeadingButtons = ({ editor }: { editor: any }) => {
-  const headingLevels = [1, 2, 3, 4, 5, 6] as const;
+  const headingLevels = [1, 2, 3] as const;
 
   return headingLevels.map((level) => (
     <EditorButton
@@ -44,7 +52,7 @@ const MenuBar = ({ onChange }: { onChange: (value: string) => void }) => {
   if (!editor) return null;
 
   return (
-    <div className="space-x-2 mb-5">
+    <div className="mb-1 flex flex-wrap items-center gap-0.5">
       <EditorButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive("bold")}
@@ -64,13 +72,13 @@ const MenuBar = ({ onChange }: { onChange: (value: string) => void }) => {
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         isActive={editor.isActive("bulletList")}
       >
-        Bullet list
+        List
       </EditorButton>
       <EditorButton
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         isActive={editor.isActive("orderedList")}
       >
-        Ordered list
+        1. List
       </EditorButton>
     </div>
   );
@@ -89,6 +97,7 @@ const editorExtensions = [
       keepAttributes: false,
     },
   }),
+  Placeholder.configure({ placeholder: "Add a description…" }),
 ];
 
 interface DescEditorProps {
@@ -96,9 +105,10 @@ interface DescEditorProps {
   onChange: (value: string) => void;
 }
 
+/** Free-form description editing - no box; the text sits directly on the page. */
 export default function DescEditor({ value, onChange }: DescEditorProps) {
   return (
-    <div className="border border-gray-200 rounded p-4">
+    <div className="text-sm">
       <EditorProvider
         slotBefore={<MenuBar onChange={onChange} />}
         extensions={editorExtensions}

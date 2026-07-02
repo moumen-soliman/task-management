@@ -8,20 +8,19 @@ export const FilteredTasksProvider = () => {
   const applyFilters = useFilteredTasksStore((state) => state.applyFilters);
   const tasks = useTaskStore((state) => state.tasks);
 
-  const { filters, sortColumn, sortDirection, currentPage, pageSize, dataView } = useDataViewStore(
+  const { filters, sortColumn, sortDirection, visibleCount, dataView } = useDataViewStore(
     useShallow((state) => ({
       filters: state.filters,
       sortColumn: state.sortColumn,
       sortDirection: state.sortDirection,
-      currentPage: state.currentPage,
-      pageSize: state.pageSize,
+      visibleCount: state.visibleCount,
       dataView: state.dataView,
     }))
   );
 
   useEffect(() => {
     applyFilters();
-  }, [tasks, filters, sortColumn, sortDirection, currentPage, pageSize, dataView, applyFilters]);
+  }, [tasks, filters, sortColumn, sortDirection, visibleCount, dataView, applyFilters]);
 
   return null;
 };
