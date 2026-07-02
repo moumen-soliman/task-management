@@ -11,7 +11,6 @@ import {
   Search,
   Undo2,
   Redo2,
-  SlidersHorizontal,
   ArrowUpDown,
   Check,
 } from "lucide-react";
@@ -20,7 +19,6 @@ import { NativeDelete } from "@/components/ui/native-delete";
 import { Input } from "@/components/ui/input";
 import PriorityHandler from "./PriorityHandler";
 import StatusHandler from "./StatusHandler";
-import CustomColumnForm from "./CustomColumnForm";
 import {
   DropdownMenu,
   DropdownMenuContent,
